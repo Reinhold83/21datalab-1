@@ -38,7 +38,7 @@ packaging==20.3           # via bokeh
  
  
  
-pillow==7.0.0             # via bokeh
+pillow==7.1.0             # via bokeh
  
 prompt-toolkit==3.0.3     # via ipython, jupyter-console
 ptyprocess==0.6.0         # via pexpect, terminado
