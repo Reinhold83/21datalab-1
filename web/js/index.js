@@ -579,25 +579,38 @@ function show_context_menu(e,modelPath)
 }
 
 //path: the pointer to the widget.selected
-function get_variables(data)//selectableVariablesRoot,selectedIds)
+function get_variables(data,forY2)//selectableVariablesRoot,selectedIds)
 {
 
     var selectableVariablesRoot = data.selectableVariables[".properties"].forwardRefs[0];
     var selectedIds = data.selectedVariables[".properties"].leavesIds;
+
     var selectedVariablesId = data.selectedVariables[".properties"].id;
+    var hasY2 = false;
+    var y2Ids = [];
+    var selectedVariablesY2Id = null;
+    if (("hasY2Axis" in data) && (data.hasY2Axis[".properties"].value))
+    {
+        hasY2=true;
+        y2Ids = data.selectedVariablesY2[".properties"].leavesIds;
+        selectedVariablesY2Id = data.selectedVariablesY2[".properties"].id;
+    }
+
+
 
     var path = selectableVariablesRoot;
     var query = {"node":path,"depth":100,"ignore":[]};
     data = http_post_sync( "_getbranchpretty", true, query );
     var vars = JSON.parse(data.response);
-    var menu = recursive_search(vars,selectedIds,selectedVariablesId);
+    var menu = recursive_search(vars,selectedIds,selectedVariablesId,hasY2,y2Ids,forY2,selectedVariablesY2Id);
     console.log("ready");
     return menu;
 }
 
-function recursive_search(data,selectedIds,selectedVariablesId)
+function recursive_search(data,selectedIds,selectedVariablesId,hasY2,y2Ids,forY2,selectedVariablesY2Id)
 {
     var menu = [];
+
     for(var key in data)
     {
         if (key == ".properties") continue;
@@ -608,31 +621,56 @@ function recursive_search(data,selectedIds,selectedVariablesId)
         {
             console.log("look deeper in "+entry[".properties"].name);
             var submenu;
-            submenu = recursive_search(entry,selectedIds,selectedVariablesId);
+            submenu = recursive_search(entry,selectedIds,selectedVariablesId,hasY2,y2Ids,forY2,selectedVariablesY2Id);
             var menuentry = {
                 label:"<i>"+entry[".properties"].name+"</i>",
                 submenu:submenu
             };
             menu.push(menuentry);
-
         }
         else if (entry[".properties"].type == "timeseries")
         {
-            console.log("show"+entry[".properties"].name);
 
+           //for the standard (left y axis)
+            console.log("show"+entry[".properties"].name);
             let icon = "far fa-square";
-            if (selectedIds.includes(entry[".properties"].id)) icon = "far fa-check-square";
+            if (!hasY2)
+            {
+                if (selectedIds.includes(entry[".properties"].id)) icon = "far fa-check-square";
+            }
+            else
+            {
+                //has y2, are we generating the menue for y1 or y2:
+                if (!forY2)
+                {
+                   if (selectedIds.includes(entry[".properties"].id)) icon = "far fa-check-square";
+                }
+                else
+                {
+                    if (y2Ids.includes(entry[".properties"].id)) icon = "far fa-check-square";
+                }
+            }
             var menuentry = {
                 label:"<i>"+entry[".properties"].name+"</i>",
                 icon:icon,
                 nodeId:entry[".properties"].id,
                 selectedVariablesId: selectedVariablesId,
                 isVariable:true,
+                hasY2:hasY2,
+                forY2:forY2,
+                selectedVariablesY2Id:selectedVariablesY2Id,
                 action: function(option, contextMenuIndex, optionIndex){
                     var opt = option;
                     var idx = contextMenuIndex;
                     var optIdx = optionIndex;
-                    context_menu_variable_select_click(opt,idx,optIdx);
+                    if (hasY2 && forY2)
+                    {
+                       context_menu_variable_select_click(opt,idx,optIdx);
+                    }
+                    else
+                    {
+                        context_menu_variable_select_click(opt,idx,optIdx);
+                    }
                 }
 
 
@@ -906,13 +944,27 @@ function context_menu_variable_select_click(option,contextMenuIndex, optionIndex
     if (option.icon == "far fa-check-square")
     {
          option.icon = "far fa-square";
-         var query = {parent:option.selectedVariablesId,remove:[option.nodeId]}
+         if (option.hasY2 && option.forY2)
+         {
+            var query = { parent:option.selectedVariablesY2Id,remove:[option.nodeId]};
+         }
+         else
+         {
+            var query = {parent:option.selectedVariablesId,remove:[option.nodeId]};
+         }
     }
     else
     {
         option.icon = "far fa-check-square";
-        var query = {parent:option.selectedVariablesId,add:[option.nodeId]}
-        //todo also remove potential score, expected etc.
+         if (option.hasY2 && option.forY2)
+         {
+            var query = { parent:option.selectedVariablesY2Id,add:[option.nodeId]};
+         }
+         else
+         {
+            var query = {parent:option.selectedVariablesId,add:[option.nodeId]}
+            //todo also remove potential score, expected etc.
+         }
     }
     http_post("/_references",JSON.stringify(query),null,null,null);
 
@@ -1559,7 +1611,7 @@ function prepare_context_menu(dataString,modelPath)
 
     try
     {
-        var subMenuVariables = get_variables(data);//variablesRoot,data.selectedVariables[".properties"].leavesIds);//modelPath+".selectableVariables");
+        var subMenuVariables = get_variables(data,false);//variablesRoot,data.selectedVariables[".properties"].leavesIds);//modelPath+".selectableVariables");
     }
     catch
     {
@@ -1617,6 +1669,7 @@ function prepare_context_menu(dataString,modelPath)
         {
             entry.submenu = variablesSubmenu;
             delete entry.icon;
+            if (("hasY2Axis" in data) && (data["hasY2Axis"][".properties"].value == true)) entry.label = "variables y1-left";
         }
         if ((element == "events") && (hasEvents == true))
         {
@@ -1625,6 +1678,57 @@ function prepare_context_menu(dataString,modelPath)
 
         showSubmenu.push(entry);
     }
+
+    //adding the second y axis if needed
+    if (("hasY2Axis" in data) && (data["hasY2Axis"][".properties"].value == true))
+    {
+        try
+            {
+                var subMenuVariables = get_variables(data,true);//variablesRoot,data.selectedVariables[".properties"].leavesIds);//modelPath+".selectableVariables");
+            }
+            catch
+            {
+                console.log("error getting variables for context menu")
+                var subMenuVariables =[];
+            }
+
+            var entry = {
+                label:"(all)",
+                icon:"fas fa-square",
+                entry:" all",
+                selectedVariablesId : data.selectedVariables[".properties"].id,
+                action: function(option, contextMenuIndex, optionIndex){
+                        var opt = option;
+                        var idx = contextMenuIndex; var
+                        optIdx = optionIndex;
+                        context_menu_variables_deselect_all(opt,idx,optIdx);
+                    }
+            }
+            var variables2Submenu = [entry];
+            variables2Submenu=variables2Submenu.concat(subMenuVariables);
+
+            var entry = {
+                //icon: icon, no icon
+                label:"variables y2-right",
+                path : modelPath,
+                data : jsonValue,
+                currentValue : true,
+                action: function(option, contextMenuIndex, optionIndex){
+                            var opt = option;
+                            var idx = contextMenuIndex; var
+                            optIdx = optionIndex;
+                            context_menu_click_show(opt,idx,optIdx);
+                        }
+            };
+            entry.submenu=variables2Submenu;
+            showSubmenu.push(entry);
+
+
+
+    }
+
+
+
 
 
     //now the extra entries for showHIde
