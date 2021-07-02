@@ -386,6 +386,7 @@ function on_first_load () {
     initialize_progress_bar();
     initialize_context_menu();
     initialize_alarms();
+    initialize_settings();
 
 } //on_first_load;
 
@@ -2397,10 +2398,6 @@ function context_menu_jump_date(opt,idx,optIdx)
     http_post("_get",JSON.stringify([opt.modelPath+".startTime",opt.modelPath+".endTime"]),opt.modelPath,null,function(isLast,status,data,params)   {
         if (status==200)
         {
-            console.log("jump date");
-
-
-            console.log(params);
             var res = JSON.parse(data);
 
             var startMoment = moment(res[0].value)  ;
@@ -2783,13 +2780,7 @@ function new_view(parameter,name)
     });
 }
 
-
-
-
 $( document ).ready(function() {
     console.log( "ready!" );
     on_first_load();
 });
-
-
-

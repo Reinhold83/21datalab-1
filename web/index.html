@@ -1,51 +1,56 @@
 <html>
-<head>
+  <head>
     <title>21datalab workbench 0.1</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Declare the bootstrap and jstree style sheets empty, based on the stored theme (dark/light) they shall be populated -->
-    <link id="bootstrap_theme" rel="stylesheet"/>
-    <link id="jstree_theme" rel="stylesheet"/>
+    <link id="bootstrap_theme" rel="stylesheet" />
+    <link id="jstree_theme" rel="stylesheet" />
 
     <script src="modules/jquery/jquery.js"></script>
 
     <!-- Execute this script here, in order to set the bootstrap and jstree theme as soon as possible, thus avoiding the flickering page issue -->
     <script>
-        // Retrieve the theme from the local storage
-        var datalabGlobalTheme = localStorage.getItem("21datalabTheme");
+      // Retrieve the theme from the local storage
+      var datalabGlobalTheme = localStorage.getItem("21datalabTheme");
 
-        // Set the default path to the light theme
-        let pageThemePath = "/modules/bootswatch/dist/darkly/bootstrap.min.css"
-        let treeThemePath = "/modules/jstree/dist/themes/default-dark/style.min.css";
+      // Set the default path to the light theme
+      let pageThemePath = "/modules/bootswatch/dist/darkly/bootstrap.min.css";
+      let treeThemePath =
+        "/modules/jstree/dist/themes/default-dark/style.min.css";
 
-        // set the theme to dark in case it was not defined
-        datalabGlobalTheme = datalabGlobalTheme || "dark";
+      // set the theme to dark in case it was not defined
+      datalabGlobalTheme = datalabGlobalTheme || "dark";
 
-        // In case the theme is set to dark, set the proper paths
-        if (datalabGlobalTheme == "dark") {
-            pageThemePath = "/modules/bootswatch/dist/darkly/bootstrap.min.css"
-            treeThemePath = "/modules/jstree/dist/themes/default-dark/style.min.css";
-        }
-        if (datalabGlobalTheme == "light") {
-            pageThemePath = "/modules/bootswatch/dist/flatly/bootstrap.min.css";
-            treeThemePath = "/modules/jstree/dist/themes/default/style.min.css";
-        }
+      // In case the theme is set to dark, set the proper paths
 
-        // Apply the themes
-        $('#bootstrap_theme').attr('href', pageThemePath);
-        $('#jstree_theme').attr('href', treeThemePath);
+      pageThemePath = "/modules/bootswatch/dist/darkly/bootstrap.min.css";
+      treeThemePath = "/modules/jstree/dist/themes/default-dark/style.min.css";
+
+      // Apply the themes
+      $("#bootstrap_theme").attr("href", pageThemePath);
+      $("#jstree_theme").attr("href", treeThemePath);
     </script>
 
-    <link rel="stylesheet" href="modules/bootstrap-select/dist/css/bootstrap-select.min.css"/>
-    <link rel="stylesheet" href="modules/font-awesome/css/all.css"/>
-    <link rel="stylesheet" href="modules/bootstrap-navbar-sidebar/dist/navbar-fixed-left.css"/>
-    <link rel="stylesheet" href="modules/supercontextmenu-master/dist/context-menu.min.css"/>
-    <link rel="stylesheet" href="css/style.css"/>
-    <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+    <link
+      rel="stylesheet"
+      href="modules/bootstrap-select/dist/css/bootstrap-select.min.css"
+    />
+    <link rel="stylesheet" href="modules/font-awesome/css/all.css" />
+    <link
+      rel="stylesheet"
+      href="modules/bootstrap-navbar-sidebar/dist/navbar-fixed-left.css"
+    />
+    <link
+      rel="stylesheet"
+      href="modules/supercontextmenu-master/dist/context-menu.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
     <script src="modules/other/popper.min.js"></script>
-	<script src="modules/jstree/dist/jstree.js"></script>
+    <script src="modules/jstree/dist/jstree.js"></script>
     <script src="modules/jstree-grid/jstreegrid.js"></script>
     <script src="modules/bootstrap/js/bootstrap.js"></script>
     <script src="modules/font-awesome/js/all.js"></script>
@@ -56,530 +61,741 @@
     <script src="modules/supercontextmenu-master/src/context-menu.js"></script>
 
     <script src="js/utils.js"></script>
-	<script src="js/tree.js"></script>
+    <script src="js/tree.js"></script>
     <script src="modules/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="js/index.js"></script>
-</head>
+    <script src="js/settings.js"></script>
+  </head>
 
-<body >
-    <nav class="navbar navbar-expand-lg fixed-left navbar-dark bg-primary text-center pl-0 pr-0">
-        <div class="text-center nav-brand-image mt-2">
-            <a href="http://www.21data.io">
-                <img src="img/logo.png" height="30" alt="21data.io" class="rounded">
+  <body>
+    <nav
+      class="
+        navbar navbar-expand-lg
+        fixed-left
+        navbar-dark
+        bg-primary
+        text-center
+        pl-0
+        pr-0
+      "
+    >
+      <div class="text-center nav-brand-image mt-2">
+        <a href="http://www.21data.io">
+          <img src="img/logo.png" height="30" alt="21data.io" class="rounded" />
+        </a>
+      </div>
+      <button
+        class="navbar-toggler collapsed"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarResponsive"
+        aria-controls="navbarResponsive"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse collapse mt-4" id="navbarResponsive">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-data"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-database"></i>
+              </h3>
+              <div class="nav-item-text">Data</div>
             </a>
-        </div>
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse mt-4" id="navbarResponsive">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-data" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-database"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Data
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover active" href="#nav-modelling" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-network-wired"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Modelling
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-expert" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-tv"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Expert
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-self-service" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Self-service
-                        </div>
-                    </a>
-                </li>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover active"
+              href="#nav-modelling"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-network-wired"></i>
+              </h3>
+              <div class="nav-item-text">Modelling</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-expert"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-tv"></i>
+              </h3>
+              <div class="nav-item-text">Expert</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-self-service"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-chalkboard-teacher"></i>
+              </h3>
+              <div class="nav-item-text">Self-service</div>
+            </a>
+          </li>
 
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-deployment" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-cubes"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Deployment
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-settings" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-cog"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Settings
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-meter" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-tachometer-alt"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Live Monitor
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-item-hover" href="#nav-alarms" data-toggle="tab">
-                        <h3>
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </h3>
-                        <div class="nav-item-text">
-                            Alarms
-                        </div>
-                    </a>
-                </li>
-
-
-
-
-            </ul>
-        </div>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-deployment"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-cubes"></i>
+              </h3>
+              <div class="nav-item-text">Deployment</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-settings"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-cog"></i>
+              </h3>
+              <div class="nav-item-text">Settings</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-meter"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-tachometer-alt"></i>
+              </h3>
+              <div class="nav-item-text">Live Monitor</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-item-hover"
+              href="#nav-alarms"
+              data-toggle="tab"
+            >
+              <h3>
+                <i class="fas fa-exclamation-triangle"></i>
+              </h3>
+              <div class="nav-item-text">Alarms</div>
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
     <div class="container-fluid">
-        <div class="tab-content">
-            <div id="nav-data" class="tab-pane fade">
-                <div class="container mt-4">
-                    <div class="row mb-4">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-header">
-                                    Files
-                                </div>
-                                <div class="card-body">
-                                    <div class="row" id="fileuploadRow">
-                                        <div class="col" id="fileuploadCol">
-                                            <input id="fileupload" type="file" name="file" data-url="/_upload" multiple="multiple" text="generic test">
-                                        </div>
-                                    </div>
-                                    <div class="row hidden pt-2" id="uploadStatusRow">
-                                        <div class="col">
-                                            <p id="uploadStatusProgress"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      <div class="tab-content">
+        <div id="nav-data" class="tab-pane fade">
+          <div class="container mt-4">
+            <div class="row mb-4">
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">Files</div>
+                  <div class="card-body">
+                    <div class="row" id="fileuploadRow">
+                      <div class="col" id="fileuploadCol">
+                        <input
+                          id="fileupload"
+                          type="file"
+                          name="file"
+                          data-url="/_upload"
+                          multiple="multiple"
+                          text="generic test"
+                        />
+                      </div>
                     </div>
-                </div>
-            </div>
-            <div id="nav-modelling" class="tab-pane fade active show">
-                <div class="col" id ="ui-layout-workbench"  uiinfo='{"path":"root.deployment.ui.layout.workbench"}'> </div>
-            </div>
-            <div id="nav-self-service" class="tab-pane fade">
-                <div class="col" id ="ui-layout-self-service"  uiinfo='{"path":"root.deployment.ui.layout.selfservice"}'> </div>
-            </div>
-            <div id="nav-expert" class="tab-pane fade">
-                <div class="col" id ="ui-layout-expert"  uiinfo='{"path":"root.deployment.ui.layout.expert"}'> </div>
-            </div>
-
-            <div id="nav-deployment" class="tab-pane fade">
-                <div class="container mt-4">
-                    <div class="row mb-4">
-                        <div class="col">
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <h5>Services</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="offset-1 col-5">
-                                    UI self-service production 2
-                                </div>
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-play"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-power-off"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-redo-alt"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="offset-1 col-5">
-                                    OPC UA Client - AB01
-                                </div>
-                                <div class="col">
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-play"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-power-off"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-redo-alt"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="offset-1 col-5">
-                                    OPC UA Server - EE23
-                                </div>
-                                <div class="col">
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-play"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-power-off"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-redo-alt"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                            <div class="row mb-1">
-                                <div class="offset-1 col-5">
-                                    Regression model - 23E
-                                </div>
-                                <div class="col">
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-play"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-power-off"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-redo-alt"></i></button>
-                                    <button type="button" class="btn btn-secondary"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-1">
-                                <div class="offset-1 col-5">
-                                    <select class="form-control">
-                                        <option value="" disabled selected></option>
-                                        <option>OPC UA Cient</option>
-                                        <option>OPC UA Server</option>
-                                        <option>Regression Model</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class="row hidden pt-2" id="uploadStatusRow">
+                      <div class="col">
+                        <p id="uploadStatusProgress"></p>
+                      </div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-            <div id="nav-settings" class="tab-pane fade">
-                <div class="container mt-4">
-                    <div class="row mb-4">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-header">
-                                    Settings
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group row mb-0">
-                                        <label class="col">Theme</label>
-                                        <div class="col">
-                                            <select class="form-control" id="themeSelect">
-                                                <option>dark</option>
-                                                <option>light</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-primary btn-sm" id="applySettings">Apply</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-header">
-                                    Documentation
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group row mb-0">
-                                        <label class="col"><a href="manual.pdf">Manual</a></label>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-
-
-                </div>
-            </div>
-
-            <div id="nav-meter" class ="tab-pane fade">
-                <div>
-                    id nav-meter
-                </div>
-            </div>
-
-            <div id="nav-alarms" class ="tab-pane fade">
-                <div class="container mt-8">
-                    <div class="container mt-4">
-
-
-                        <div class="card">
-                             <div class="card-header">
-                                   <div class="row mb-4">
-                                        <div class="col-3">
-                                            Time
-                                        </div>
-                                        <div class="col-4">
-                                            Message
-                                        </div>
-                                        <div class="col-2">
-                                            status
-                                        </div>
-                                        <div class="col-3">
-                                            action
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-
-                                <div class="card-body">
-                                    <div id="alarmcontainer"> no entries </div>
-                                </div>
-
-
-
-
-
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+          </div>
         </div>
+        <div id="nav-modelling" class="tab-pane fade active show">
+          <div
+            class="col"
+            id="ui-layout-workbench"
+            uiinfo='{"path":"root.deployment.ui.layout.workbench"}'
+          ></div>
+        </div>
+        <div id="nav-self-service" class="tab-pane fade">
+          <div
+            class="col"
+            id="ui-layout-self-service"
+            uiinfo='{"path":"root.deployment.ui.layout.selfservice"}'
+          ></div>
+        </div>
+        <div id="nav-expert" class="tab-pane fade">
+          <div
+            class="col"
+            id="ui-layout-expert"
+            uiinfo='{"path":"root.deployment.ui.layout.expert"}'
+          ></div>
+        </div>
+
+        <div id="nav-deployment" class="tab-pane fade">
+          <div class="container mt-4">
+            <div class="row mb-4">
+              <div class="col">
+                <div class="row mb-2">
+                  <div class="col">
+                    <h5>Services</h5>
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div class="offset-1 col-5">UI self-service production 2</div>
+                  <div class="col-md-6">
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-power-off"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div class="offset-1 col-5">OPC UA Client - AB01</div>
+                  <div class="col">
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-power-off"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div class="offset-1 col-5">OPC UA Server - EE23</div>
+                  <div class="col">
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-power-off"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div class="offset-1 col-5">Regression model - 23E</div>
+                  <div class="col">
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-power-off"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group row mb-1">
+                  <div class="offset-1 col-5">
+                    <select class="form-control">
+                      <option value="" disabled selected></option>
+                      <option>OPC UA Cient</option>
+                      <option>OPC UA Server</option>
+                      <option>Regression Model</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="nav-settings" class="tab-pane fade">
+          <div class="container mt-4">
+            <div class="row mb-4">
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">Settings</div>
+                  <div class="card-body" id="settingContainer">
+                    <div class="form-group row mb-2">
+                      <label class="col-2">Theme</label>
+                      <select class="form-control col-7" id="themeSelect">
+                        <option>dark</option>
+                        <option>light</option>
+                      </select>
+                      <button
+                        class="btn btn-primary btn-sm col-1 ml-2"
+                        id="applySettings"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <button class="btn btn-primary btn-sm" id="applySettings">
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--
+            <div class="row mb-4">
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">Documentation</div>
+                  <div class="card-body">
+                    <div class="form-group row mb-0">
+                      <label class="col"><a href="manual.pdf">Manual</a></label>
+                    </div>
+                  </div>
+                  <div class="card-footer"></div>
+                </div>
+              </div>
+            </div>
+            -->
+          </div>
+        </div>
+
+        <div id="nav-meter" class="tab-pane fade">
+          <div>id nav-meter</div>
+        </div>
+
+        <div id="nav-alarms" class="tab-pane fade">
+          <div class="container mt-8">
+            <div class="container mt-4">
+              <div class="card">
+                <div class="card-header">
+                  <div class="row mb-4">
+                    <div class="col-3">Time</div>
+                    <div class="col-4">Message</div>
+                    <div class="col-2">status</div>
+                    <div class="col-3">action</div>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div id="alarmcontainer">no entries</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div>
-
-        <div id ="editalarmmodal" class="modal hide fade" role="dialog" >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="doublechecktitle">Edit Alarm Status</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group row">
-                            <div class="col-3">Set to:</div>
-                            <div class="col-7" id="editalarmselectordiv">  </div>
-
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="set_alarm_status()">Apply</button>
-                    </div>
-                </div>
+      <div id="editalarmmodal" class="modal hide fade" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="doublechecktitle">
+                Edit Alarm Status
+              </h4>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <div class="col-3">Set to:</div>
+                <div class="col-7" id="editalarmselectordiv"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-default"
+                data-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-dismiss="modal"
+                onclick="set_alarm_status()"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
         </div>
-
-
-
-
+      </div>
     </div>
 
     <div id="contextmenu">
-        <!-- will be filled dynamically -->
+      <!-- will be filled dynamically -->
     </div>
 
     <div id="contextmenujumpdate">
-        <div id ="contextjumpdate" class="modal fade" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="nav-jump-top">
-                            <div class="nav-jump-top-title">
-                                <h4 class="modal-title" id="doublechecktitle">Jump to date/time</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-body">
-                        <ul class="nav nav-tabs bg-secondary" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="tab-cockpit-motif-select" data-toggle="tab" href="#nav-jump-center" role="tab">
-                                    Center
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="tab-cockpit-motif-parameters" data-toggle="tab" href="#nav-jump-start" role="tab">
-                                    Start/End
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content nav nav-jump-top-tabs">
-                            <div id="nav-jump-center" class="tab-pane fade active show ">
-                                <div class="form-group row">
-                                    <div class="col-3">Jump to:</div>
-                                    <div class="col-7"><input class="form-control" type="text" id="jump-to-date"  style="text-align:left;" onchange="jump_to_date_confirm()"> </div>
-                                    <div class="col-2"><button type="button" id="jump-to-now" class="btn btn-default" onclick="jump_to_date_now()">now</button></div>
-                                </div>
-                            </div>
-
-                            <div id="nav-jump-start" class="tab-pane fade">
-                                <div class="form-group row">
-                                    <div class="col-3">Start from:</div>
-                                    <div class="col-7"><input class="form-control" type="text" id="jump-to-date-start"  style="text-align:left;" onchange="jump_to_date_change()"> </div>
-                                    <div class="col-2"><button type="button" id="jump-to-now-start" class="btn btn-default" onclick="jump_to_date_start_now()">now</button></div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-3">End to:</div>
-                                    <div class="col-7"><input class="form-control" type="text" id="jump-to-date-end"  style="text-align:left;" onchange="jump_to_date_change()"> </div>
-                                    <div class="col-2"><button type="button" id="jump-to-now-end" class="btn btn-default" onclick="jump_to_date_end_now()">now</button></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="jump_to_date_confirm()">Jump</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-     <div id="contextmenuview">
-        <div id ="contextviews" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="doublechecktitle">Save/Restore Widget Views</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                         <div id="viewscontainer"> no entries </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <div id ="doublecheck" class="modal fade" role="dialog">
+      <div id="contextjumpdate" class="modal fade" role="dialog">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="doublechecktitle">Are you sure?</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="nav-jump-top">
+                <div class="nav-jump-top-title">
+                  <h4 class="modal-title" id="doublechecktitle">
+                    Jump to date/time
+                  </h4>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <div class="col-12" id="doublechecktext1">deleting something</div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-12" id="doublechecktext2">deleting something</div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Abort</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id ="doublecheckButtonSave">Ok</button>
-                </div>
+              </div>
             </div>
+            <div class="modal-body">
+              <ul class="nav nav-tabs bg-secondary" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    id="tab-cockpit-motif-select"
+                    data-toggle="tab"
+                    href="#nav-jump-center"
+                    role="tab"
+                  >
+                    Center
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    id="tab-cockpit-motif-parameters"
+                    data-toggle="tab"
+                    href="#nav-jump-start"
+                    role="tab"
+                  >
+                    Start/End
+                  </a>
+                </li>
+              </ul>
+              <div class="tab-content nav nav-jump-top-tabs">
+                <div id="nav-jump-center" class="tab-pane fade active show">
+                  <div class="form-group row">
+                    <div class="col-3">Jump to:</div>
+                    <div class="col-7">
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="jump-to-date"
+                        style="text-align: left"
+                        onchange="jump_to_date_confirm()"
+                      />
+                    </div>
+                    <div class="col-2">
+                      <button
+                        type="button"
+                        id="jump-to-now"
+                        class="btn btn-default"
+                        onclick="jump_to_date_now()"
+                      >
+                        now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="nav-jump-start" class="tab-pane fade">
+                  <div class="form-group row">
+                    <div class="col-3">Start from:</div>
+                    <div class="col-7">
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="jump-to-date-start"
+                        style="text-align: left"
+                        onchange="jump_to_date_change()"
+                      />
+                    </div>
+                    <div class="col-2">
+                      <button
+                        type="button"
+                        id="jump-to-now-start"
+                        class="btn btn-default"
+                        onclick="jump_to_date_start_now()"
+                      >
+                        now
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-3">End to:</div>
+                    <div class="col-7">
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="jump-to-date-end"
+                        style="text-align: left"
+                        onchange="jump_to_date_change()"
+                      />
+                    </div>
+                    <div class="col-2">
+                      <button
+                        type="button"
+                        id="jump-to-now-end"
+                        class="btn btn-default"
+                        onclick="jump_to_date_end_now()"
+                      >
+                        now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-default"
+                data-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-dismiss="modal"
+                onclick="jump_to_date_confirm()"
+              >
+                Jump
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-
-    <div class="modal fade" id="confirm-delete" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:1000000">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title" id="confirm-modal-title">Confirm Delete</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
-                </div>
-
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12" id ="confirm-modal-div" style="word-break:break-all">
-                      </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-danger btn-ok" id="confirm-modal-ok" data-dismiss="modal" >Delete</a>
-                </div>
+    <div id="contextmenuview">
+      <div id="contextviews" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="doublechecktitle">
+                Save/Restore Widget Views
+              </h4>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+              <div id="viewscontainer">no entries</div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-
-    <div class="modal fade" id="enter-value-dialog" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:1000000">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title" id="enter-value-modal-title">Set Value</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
-                </div>
-
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-4" id ="enter-value-modal-div" style="word-break:break-all"></div>
-                        <div class="col-8" id ="enter-value-model-div2">
-                            <input class="form-control" type="text" id="enter-value-modal-input"  style="text-align:left;" >
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" id="enter-value-modal-ok" data-dismiss="modal" >Accept</a>
-                </div>
+    <div id="doublecheck" class="modal fade" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="doublechecktitle">Are you sure?</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row">
+              <div class="col-12" id="doublechecktext1">deleting something</div>
             </div>
+            <div class="form-group row">
+              <div class="col-12" id="doublechecktext2">deleting something</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Abort
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-dismiss="modal"
+              id="doublecheckButtonSave"
+            >
+              Ok
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
+    <div
+      class="modal fade"
+      id="confirm-delete"
+      tabindex="-2"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      style="z-index: 1000000"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="confirm-modal-title">Confirm Delete</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+          </div>
 
+          <div class="modal-body">
+            <div class="row">
+              <div
+                class="col-12"
+                id="confirm-modal-div"
+                style="word-break: break-all"
+              ></div>
+            </div>
+          </div>
 
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Cancel
+            </button>
+            <a
+              class="btn btn-danger btn-ok"
+              id="confirm-modal-ok"
+              data-dismiss="modal"
+              >Delete</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div
+      class="modal fade"
+      id="enter-value-dialog"
+      tabindex="-2"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      style="z-index: 1000000"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="enter-value-modal-title">Set Value</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="row">
+              <div
+                class="col-4"
+                id="enter-value-modal-div"
+                style="word-break: break-all"
+              ></div>
+              <div class="col-8" id="enter-value-model-div2">
+                <input
+                  class="form-control"
+                  type="text"
+                  id="enter-value-modal-input"
+                  style="text-align: left"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Cancel
+            </button>
+            <a
+              class="btn btn-primary"
+              id="enter-value-modal-ok"
+              data-dismiss="modal"
+              >Accept</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="cockpitplaceholder">
-    <!-- insert cockpit test code here -->
+      <!-- insert cockpit test code here -->
 
-
-    <!-- end of cockpit test code -->
+      <!-- end of cockpit test code -->
     </div>
-</body>
+  </body>
 
-<script>
+  <script>
     // Adjust the navigation item classes when tab starts to load
-    $('.nav-link').on('show.bs.tab', function (e) {
-        $('.nav-link.show').removeClass('show');
-        $('.nav-link.active').removeClass('active');
+    $(".nav-link").on("show.bs.tab", function (e) {
+      $(".nav-link.show").removeClass("show");
+      $(".nav-link.active").removeClass("active");
     });
-</script>
-
+  </script>
 </html>
