@@ -386,6 +386,7 @@ function on_first_load () {
     initialize_progress_bar();
     initialize_context_menu();
     initialize_alarms();
+    initSettingJsonValidation();
     initialize_settings();
 
 } //on_first_load;
