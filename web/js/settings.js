@@ -51,7 +51,8 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
             var jsonValidation = referenceLeaves[0].jsonValidation;
             // change input field according to the jsonValidation schema
             if (jsonValidation.enum != undefined) {
-                var input = document.createElement("SELECT")
+                var input = document.createElement("SELECT");
+
                 var inner = "";
                 var possibleValues = jsonValidation.enum;
                 for (var i in possibleValues) {
@@ -63,47 +64,45 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
                 input = document.createElement("input");
+
                 input.value = referenceLeaves[0].value;
                 input.setAttribute("data-type", "string");
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation.type == "integer") {
                 input = document.createElement("input");
+
                 input.value = referenceLeaves[0].value;
                 input.setAttribute("type", "range");
+
                 input.setAttribute("min", jsonValidation.minimum);
                 input.setAttribute("max", jsonValidation.maximum);
                 input.setAttribute("data-type", jsonValidation.type);
                 input.setAttribute("path", entry.name);
-                // Add tooltip to show value
-                // row.setAttribute("data-toggle", "tooltip");
-                // row.setAttribute("data-placement", "bottom");
-                // input.setAttribute("title", "Min Value : " + referenceLeaves[0].min + " Max Value : " + referenceLeaves[0].max);
             } else if (jsonValidation.type == "boolean") {
                 input = document.createElement("input");
+
                 input.setAttribute("type", "checkbox");
                 if (referenceLeaves[0].value == 'true' || referenceLeaves[0].value == true)
                     input.setAttribute("checked", true);
                 input.setAttribute("data-type", jsonValidation.type);
                 input.setAttribute("path", entry.name);
-            } else if ((typeof jsonValidation.enum) == object) {
-                console.log(typeof jsonValidation.entries);
-                var input = document.createElement("SELECT")
-                var inner = "";
-                var possibleValues = jsonValidation.items[1].enum;
-                for (var i in possibleValues) {
-                    inner = inner + "<option>" + possibleValues[i] + "</option>";
-                }
-                input.innerHTML = inner;
-                input.value = referenceLeaves[0].value;
-                input.setAttribute("data-type", jsonValidation.type);
-                input.setAttribute("path", entry.name);
             } else {
                 input = document.createElement("input");
+
                 input.value = referenceLeaves[0].value;
                 input.setAttribute("data-type", "string");
                 input.setAttribute("path", entry.name);
             }
-            input.className = "form-control col-7";
+
+            if (jsonValidation.type == "integer") {
+                input.className = "form-control col-6 slider";
+            } else if (jsonValidation.type == "boolean") {
+                input.className = "col-7 form-check-input";
+                input.style.position = "relative";
+                input.style.marginLeft = "0px";
+            } else {
+                input.className = "form-control col-7";
+            }
 
             // add browse Path 
             var browsePath = document.createElement("input");
@@ -122,12 +121,34 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
             btn.innerHTML = 'Apply';
             btn.onclick = saveSettingValue;
 
-            // row.setAttribute("title", jsonValidation.description);
-            row.append(label, input, browsePath, btn);
+            if (jsonValidation.description == undefined)
+                row.setAttribute("title", "Please add description in the json validaiton schema");
+            else
+                row.setAttribute("title", jsonValidation.description);
+            if (jsonValidation.type == "integer") {
+                var sliderValue = document.createElement("div");
+                sliderValue.className = "col-1";
+                sliderValue.style.textAlign = "center";
+                sliderValue.style.paddingTop = "6px";
+                sliderValue.innerHTML = referenceLeaves[0].value;
+                row.append(label, input, sliderValue, browsePath, btn);
+            } else {
+                row.append(label, input, browsePath, btn);
+            }
             table.append(row);
         }
     }
 }
+
+$(document).on("click touchend", ".slider", function () {
+    //do stuff
+    var parent = $(this).parent();
+    var children = parent.children();
+    var value = children[1].value;
+    children[2].innerHTML = value;
+
+    console.log("Handler for .change() called.");
+});
 
 function saveSettingValue(event) {
     var parent = $(event.target).parent();

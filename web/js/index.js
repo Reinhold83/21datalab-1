@@ -387,7 +387,7 @@ function on_first_load () {
     initialize_context_menu();
     initialize_alarms();
     initSettingJsonValidation();
-    initialize_settings();
+    // initialize_settings();
 
 } //on_first_load;
 
