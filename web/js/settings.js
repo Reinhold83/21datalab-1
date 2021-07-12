@@ -10,7 +10,7 @@ var defaultJsonValidation = {
     Json Schema Types
     {"type": "integer","minimum": 0,"maximum": 150}
     {"type": "boolean"}
-    {"type": "array","items": [{ "type": "string" },{ "enum": ["Street", "Avenue", "Boulevard"] }]}
+    {"enum": ["Street", "Avenue", "Boulevard"] }
 */
 
 function getReferenceLeaves(settingPath, name) {
@@ -50,7 +50,18 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
             var input;
             var jsonValidation = referenceLeaves[0].jsonValidation;
             // change input field according to the jsonValidation schema
-            if (jsonValidation == undefined || jsonValidation.type == undefined) {
+            if (jsonValidation.enum != undefined) {
+                var input = document.createElement("SELECT")
+                var inner = "";
+                var possibleValues = jsonValidation.enum;
+                for (var i in possibleValues) {
+                    inner = inner + "<option>" + possibleValues[i] + "</option>";
+                }
+                input.innerHTML = inner;
+                input.value = referenceLeaves[0].value;
+                input.setAttribute("data-type", jsonValidation.type);
+                input.setAttribute("path", entry.name);
+            } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
                 input = document.createElement("input");
                 input.value = referenceLeaves[0].value;
                 input.setAttribute("data-type", "string");
@@ -74,7 +85,8 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
                     input.setAttribute("checked", true);
                 input.setAttribute("data-type", jsonValidation.type);
                 input.setAttribute("path", entry.name);
-            } else if (jsonValidation.type == "array") {
+            } else if ((typeof jsonValidation.enum) == object) {
+                console.log(typeof jsonValidation.entries);
                 var input = document.createElement("SELECT")
                 var inner = "";
                 var possibleValues = jsonValidation.items[1].enum;
@@ -129,7 +141,7 @@ function saveSettingValue(event) {
     // get the children of reference, then save the new value to each of them.
     http_post('_getleaves', path, null, null, function (obj, status, data, params) {
         var msgs = JSON.parse(data);
-        
+
         for (var i = 0; i < msgs.length; i++) {
             var query = [
                 {
