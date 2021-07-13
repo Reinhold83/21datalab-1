@@ -119,7 +119,6 @@ async function createSettingWidgets(table, settingPath, entries, branchData) {
             btn.className = "btn btn-primary btn-sm col-1 ml-2";
             btn.id = "apply-" + entry.id;
             btn.innerHTML = 'Apply';
-            btn.onclick = saveSettingValue;
 
             if (jsonValidation.description == undefined)
                 row.setAttribute("title", "Please add description in the json validaiton schema");
@@ -158,7 +157,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
 
         // label div
         var label = document.createElement("label");
-        label.className = "col-2";
+        label.className = "col-2 mr-3 mt-2";
         label.innerHTML = entry.name;
 
         if (referenceLeaves != undefined && referenceLeaves != null && referenceLeaves != "none") {
@@ -210,10 +209,14 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.setAttribute("path", entry.name);
             }
 
-            if (jsonValidation.type == "integer") {
-                input.className = "form-control col-6 slider";
+            if (jsonValidation.enum != undefined)
+                // input.className = "form-control col-8 slider";
+                input.className = "form-control col-7 slider";
+            else if (jsonValidation.type == "integer") {
+                input.className = "form-control col-7 slider";
             } else if (jsonValidation.type == "boolean") {
                 input.className = "col-7 form-check-input";
+                // input.className = "col-8 form-check-input";
                 input.style.position = "relative";
                 input.style.marginLeft = "0px";
             } else {
@@ -230,18 +233,14 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             browsePath.value = browsePathValue;
             browsePath.setAttribute("type", "hidden");
 
-            // apply button
-            var btn = document.createElement("BUTTON");   // Create a <button> element
-            btn.className = "btn btn-primary btn-sm col-1 ml-2";
-            btn.id = "apply-" + entry.id;
-            btn.innerHTML = 'Apply';
-            btn.onclick = saveSettingValue;
-
             if (jsonValidation.description == undefined)
                 row.setAttribute("title", "Please add description in the json validaiton schema");
             else
                 row.setAttribute("title", jsonValidation.description);
-            if (jsonValidation.type == "integer") {
+
+            if (jsonValidation.enum != undefined) {
+                row.append(label, input, browsePath);
+            } else if (jsonValidation.type == "integer") {
                 var sliderValue = document.createElement("div");
                 sliderValue.className = "col-1";
                 sliderValue.style.textAlign = "center";
@@ -249,32 +248,61 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.style.paddingLeft = "0px";
                 input.style.paddingRight = "0px";
                 sliderValue.innerHTML = referenceLeaves.value;
-                row.append(label, input, sliderValue, browsePath, btn);
+                row.append(label, input, sliderValue, browsePath);
+            } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
+                // apply button
+                var btn = document.createElement("BUTTON");   // Create a <button> element
+                btn.className = "btn btn-primary btn-sm w-100 h-100";
+                btn.id = "apply-" + entry.id;
+                btn.innerHTML = 'Apply';
+                
+                var buttonWrapper = document.createElement("div");
+                buttonWrapper.className = "col-1 pl-2 pr-0 button-wrapper";
+                buttonWrapper.append(label, input, browsePath, btn);
+                row.append(label, input, browsePath, buttonWrapper);
             } else {
-                row.append(label, input, browsePath, btn);
+                row.append(label, input, browsePath);
             }
             table.append(row);
         }
     }
 }
 
-$(document).on("click touchend", ".slider", function () {
+$(document).on("click input", ".slider", function () {
     //do stuff
     var parent = $(this).parent();
     var children = parent.children();
     var value = children[1].value;
     children[2].innerHTML = value;
 
-    console.log("Handler for .change() called.");
+    //save slider value when changes
+    saveSettingValue(this);
 });
 
-function saveSettingValue(event) {
-    var parent = $(event.target).parent();
+$(document).on("change input", "SELECT", function () {
+    //save enum value when changes
+    saveSettingValue(this);
+});
+
+$(document).on("input change", "input:checkbox", function () {
+    //save enum value when changes
+    saveSettingValue(this);
+});
+
+$(document).on("click", ".button-wrapper", function () {
+    //save enum value when changes
+    saveSettingValue(this);
+});
+
+function saveSettingValue(target) {
+    var parent = $(target).parent();
     var children = parent.children();
     var value = children[1].value;
     var dataType = children[1].getAttribute("data-type");
     if (dataType == "boolean")
         value = $(children[1])[0].checked;
+    if (dataType == "integer")
+        value = parseInt(value);
     var path = settingPath + "." + children[1].getAttribute("path");
 
     // get the children of reference, then save the new value to each of them.
