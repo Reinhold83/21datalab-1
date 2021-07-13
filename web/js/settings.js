@@ -9,6 +9,7 @@ var defaultJsonValidation = {
 /*
     Json Schema Types
     {"type": "integer","minimum": 0,"maximum": 150}
+    {"type": "float","minimum": 0,"maximum": 150}
     {"type": "boolean"}
     {"enum": ["Street", "Avenue", "Boulevard"] }
 */
@@ -166,6 +167,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             var jsonValidation = referenceLeaves.jsonValidation;
             // change input field according to the jsonValidation schema
             if (jsonValidation.enum != undefined) {
+                // when enum has value, it is a select widget
                 var input = document.createElement("SELECT");
 
                 var inner = "";
@@ -178,6 +180,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.setAttribute("data-type", jsonValidation.type);
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
+                // input widget
                 input = document.createElement("input");
 
                 input.value = referenceLeaves.value;
@@ -185,14 +188,33 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation.type == "integer") {
                 input = document.createElement("input");
-
-                input.value = referenceLeaves.value;
-                input.setAttribute("type", "range");
-
-                input.setAttribute("min", jsonValidation.minimum);
-                input.setAttribute("max", jsonValidation.maximum);
-                input.setAttribute("data-type", jsonValidation.type);
                 input.setAttribute("path", entry.name);
+                if (jsonValidation.minimum == undefined || jsonValidation.maximum == undefined) {
+                    input.setAttribute("data-type", "number integer");
+                    input.setAttribute("type", "number");
+                    input.setAttribute("step", "1");
+                } else {
+                    input.setAttribute("type", "range");
+                    input.setAttribute("min", jsonValidation.minimum);
+                    input.setAttribute("max", jsonValidation.maximum);
+                    input.setAttribute("data-type", jsonValidation.type);
+                }
+                input.value = referenceLeaves.value;
+            } else if (jsonValidation.type == "float") {
+                input = document.createElement("input");
+                input.setAttribute("path", entry.name);
+                if (jsonValidation.minimum == undefined || jsonValidation.maximum == undefined) {
+                    input.setAttribute("data-type", "number");
+                    input.setAttribute("type", "number float");
+                } else {
+                    input.setAttribute("type", "range");
+                    input.setAttribute("step", "0.01");
+                    input.setAttribute("slider-precision", "0.01");
+                    input.setAttribute("min", jsonValidation.minimum);
+                    input.setAttribute("max", jsonValidation.maximum);
+                    input.setAttribute("data-type", jsonValidation.type);
+                }
+                input.value = referenceLeaves.value;
             } else if (jsonValidation.type == "boolean") {
                 input = document.createElement("input");
 
@@ -212,7 +234,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             if (jsonValidation.enum != undefined)
                 // input.className = "form-control col-8 slider";
                 input.className = "form-control col-7 slider";
-            else if (jsonValidation.type == "integer") {
+            else if (jsonValidation.type == "integer" || jsonValidation.type == "float") {
                 input.className = "form-control col-7 slider";
             } else if (jsonValidation.type == "boolean") {
                 input.className = "col-7 form-check-input";
@@ -240,7 +262,18 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
 
             if (jsonValidation.enum != undefined) {
                 row.append(label, input, browsePath);
-            } else if (jsonValidation.type == "integer") {
+            } else if (input.getAttribute("data-type") == "string" || input.getAttribute("data-type") == "number float" || input.getAttribute("data-type") == "number integer") {
+                // apply button
+                var btn = document.createElement("BUTTON");   // Create a <button> element
+                btn.className = "btn btn-primary btn-sm w-100 h-100";
+                btn.id = "apply-" + entry.id;
+                btn.innerHTML = 'Apply';
+
+                var buttonWrapper = document.createElement("div");
+                buttonWrapper.className = "col-1 pl-2 pr-0 button-wrapper";
+                buttonWrapper.append(label, input, browsePath, btn);
+                row.append(label, input, browsePath, buttonWrapper);
+            } else if (jsonValidation.type == "integer" || jsonValidation.type == "float") {
                 var sliderValue = document.createElement("div");
                 sliderValue.className = "col-1";
                 sliderValue.style.textAlign = "center";
@@ -249,17 +282,6 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.style.paddingRight = "0px";
                 sliderValue.innerHTML = referenceLeaves.value;
                 row.append(label, input, sliderValue, browsePath);
-            } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
-                // apply button
-                var btn = document.createElement("BUTTON");   // Create a <button> element
-                btn.className = "btn btn-primary btn-sm w-100 h-100";
-                btn.id = "apply-" + entry.id;
-                btn.innerHTML = 'Apply';
-                
-                var buttonWrapper = document.createElement("div");
-                buttonWrapper.className = "col-1 pl-2 pr-0 button-wrapper";
-                buttonWrapper.append(label, input, browsePath, btn);
-                row.append(label, input, browsePath, buttonWrapper);
             } else {
                 row.append(label, input, browsePath);
             }
@@ -274,7 +296,9 @@ $(document).on("click input", ".slider", function () {
     var children = parent.children();
     var value = children[1].value;
     children[2].innerHTML = value;
+});
 
+$(document).on("change", ".slider", function () {
     //save slider value when changes
     saveSettingValue(this);
 });
@@ -301,7 +325,9 @@ function saveSettingValue(target) {
     var dataType = children[1].getAttribute("data-type");
     if (dataType == "boolean")
         value = $(children[1])[0].checked;
-    if (dataType == "integer")
+    if (dataType == "integer" || dataType == "number integer")
+        value = parseInt(value);
+    else if (dataType == "float" || dataType == "number float")
         value = parseInt(value);
     var path = settingPath + "." + children[1].getAttribute("path");
 
