@@ -173,11 +173,12 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 var inner = "";
                 var possibleValues = jsonValidation.enum;
                 for (var i in possibleValues) {
-                    inner = inner + "<option>" + possibleValues[i] + "</option>";
+                    var optionValue = typeof possibleValues[i] + ":" + possibleValues[i];
+                    inner = inner + "<option value='" + optionValue + "'>" + possibleValues[i] + "</option>";
                 }
                 input.innerHTML = inner;
-                input.value = referenceLeaves.value;
-                input.setAttribute("data-type", jsonValidation.type);
+                input.value = typeof referenceLeaves.value + ":" + referenceLeaves.value;
+                input.setAttribute("data-type", "enum");
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation == undefined || jsonValidation.type == undefined) {
                 // input widget
@@ -204,8 +205,8 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input = document.createElement("input");
                 input.setAttribute("path", entry.name);
                 if (jsonValidation.minimum == undefined || jsonValidation.maximum == undefined) {
-                    input.setAttribute("data-type", "number");
-                    input.setAttribute("type", "number float");
+                    input.setAttribute("data-type", "number float");
+                    input.setAttribute("type", "number");
                 } else {
                     input.setAttribute("type", "range");
                     input.setAttribute("step", "0.01");
@@ -323,12 +324,21 @@ function saveSettingValue(target) {
     var children = parent.children();
     var value = children[1].value;
     var dataType = children[1].getAttribute("data-type");
-    if (dataType == "boolean")
+
+    if (dataType == "enum") {
+        var type = value.split(":")[0];
+        if (type == "number"){
+            console.log("type is number");
+            value = parseFloat(value.split(":")[1]);
+        } else {
+            value = value.split(":")[1];
+        }
+    } else if (dataType == "boolean")
         value = $(children[1])[0].checked;
-    if (dataType == "integer" || dataType == "number integer")
+    else if (dataType == "integer" || dataType == "number integer")
         value = parseInt(value);
     else if (dataType == "float" || dataType == "number float")
-        value = parseInt(value);
+        value = parseFloat(value);
     var path = settingPath + "." + children[1].getAttribute("path");
 
     // get the children of reference, then save the new value to each of them.
