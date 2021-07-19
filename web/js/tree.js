@@ -365,8 +365,6 @@ class TreeWidget
                 }
             });
 
-            console.log(params);
-
             http_post("/setProperties",JSON.stringify([params]),null,null);
         });
 
