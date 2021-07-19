@@ -54,6 +54,7 @@ globalAnnotationsAlpha = 0.90
 globalThresholdsAlpha = 0.5
 globalBackgroundsAlpha = 0.2
 globalBackgroundsHighlightAlpha = 0.6
+globalY2width = 2
 
 globalRESTTimeout = 90
 globalInfinity = 1000*1000
@@ -232,15 +233,25 @@ class TimeSeriesWidgetDataServer():
 
         selectedVars = []
         if fetch:
-            request = self.path + ".selectedVariables"
-            nodes = self.__web_call("post", "_getleaves", request)
-        else:
+            selectedVars1 = self.__web_call("post", "_getbranchpretty", {"node":self.path+".selectedVariables","depth": 100})
+            self.mirror["selectedVariables"]= selectedVars1
+            if "hasY2Axis" in self.mirror and self.mirror["hasY2Axis"][".properties"]["value"] == True:
+                selectedVars2 = self.__web_call("post", "_getbranchpretty", {"node":self.path+".selectedVariablesY2","depth": 100})
+                self.mirror["selectedVariablesY2"] = selectedVars2
+
+        if 1:
             #from mirror
             leavesproperties = self.mirror["selectedVariables"][".properties"]["leavesProperties"]
             if leavesproperties:
                 nodes = [v for k,v in leavesproperties.items()]
             else:
                 nodes=[]
+
+            if "hasY2Axis" in self.mirror and self.mirror["hasY2Axis"][".properties"]["value"]:
+                leavesproperties2 = self.mirror["selectedVariablesY2"][".properties"]["leavesProperties"]
+                if leavesproperties2:
+                    nodes.extend([v for k, v in leavesproperties2.items()])
+
 
         #build the info as id:info plus browsepath:info, so we have a faster lookup; both browsepath and id are unique
         selectedVars = [node["browsePath"] for node in nodes]
@@ -253,6 +264,35 @@ class TimeSeriesWidgetDataServer():
         self.selectedVariables=copy.deepcopy(selectedVars)
         self.logger.debug(f"get_selected_variables_sync => {self.selectedVariables}")
         return selectedVars
+
+    def is_y2_variable(self,browsePath):
+        try:
+            if not self.has_y2():
+                return False
+            if not browsePath:
+                return False
+
+            if "selectedVariablesY2" in self.mirror:
+                leavesproperties2 = self.mirror["selectedVariablesY2"][".properties"]["leavesProperties"]
+                if leavesproperties2:
+                    for k,node in leavesproperties2.items():
+                        if node["browsePath"] == browsePath:
+                            return True
+                        if node["id"] == browsePath:
+                            return True
+
+            #now check the score vars
+            if any([text in browsePath.lower() for text in ["score","limit","expected"]]):
+                varName = browsePath.split(".")[-1].split('_')[0]#take the variable NAME
+                leavesproperties2 = self.mirror["selectedVariablesY2"][".properties"]["leavesProperties"]
+                if leavesproperties2:
+                    for k, node in leavesproperties2.items():
+                        if varName in node["browsePath"]:
+                            return True
+        except Exception as ex:
+            self.logger.error("is y2 error {ex}")
+
+        return False
 
     def get_path(self):
         return self.path
@@ -629,6 +669,11 @@ class TimeSeriesWidgetDataServer():
         """ return list of selected variables from the cache"""
         return copy.deepcopy(self.selectedVariables)
 
+    def has_y2(self):
+        if "hasY2Axis" in self.mirror and self.mirror["hasY2Axis"][".properties"]["value"]:
+            return True
+        return False
+
     def get_annotations(self):
         #return self.annotations
         return copy.deepcopy(self.annotations) #this must be a deepcopy, as we make compares of old/new
@@ -764,20 +809,66 @@ class TimeSeriesWidgetDataServer():
             if we set updateLocalNow to False, we do not update the local list, that means we will
             only detect the changes in the next sse event
         """
-        query={"deleteExisting":True,"parent":self.path+".selectedVariables","add":varList}
-        self.__web_call("POST","_references",query)
-        if updateLocalNow:
-            self.selectedVariables=varList.copy()
+        if self.has_y2():
+            #this function is mainly used for deleting lines on legend click
+            # so we try to find out if a line is a y2 axis line and handle them accordingly
+            oldLines = self.get_variables_selected()
+            oldLines2 = [line for line in oldLines if self.is_y2_variable(line)]
+            oldLines1 = list(set(oldLines)-set(oldLines2))
+
+            newLines2 = [line for line in varList if self.is_y2_variable(line)]
+            if set(newLines2)!= set(oldLines2):
+                #must write the second y axis
+                query = {"deleteExisting": True, "parent": self.path + ".selectedVariablesY2", "add": list(newLines2), "allowDuplicates":False}
+                self.__web_call("POST", "_references", query)
+            if set(newLines2):
+                newLines1 = list(set(varList)-set(newLines2))
+            else:
+                newLines1 = varList
+            query = {"deleteExisting": True, "parent": self.path + ".selectedVariables", "add": list(newLines1), "allowDuplicates":False}
+            self.__web_call("POST", "_references", query)
+            if updateLocalNow:
+                self.selectedVariables=varList.copy()
+
+
+
+        else:
+            query={"deleteExisting":True,"parent":self.path+".selectedVariables","add":varList}
+            self.__web_call("POST","_references",query)
+            if updateLocalNow:
+                self.selectedVariables=varList.copy()
         return
 
-    def add_variables_selected(self,addList,updateLocalNow=True):
+
+    def add_variables_selected(self,addList,addListY2=[],updateLocalNow=True):
+
 
         selectedList = copy.deepcopy(self.get_variables_selected())
         selectedList.extend(addList)
-        query={"deleteExisting":True,"parent":self.path+".selectedVariables","add":selectedList}
+        #selectedList.extend(addListY2)
+
+        if addList:
+            query={"deleteExisting":True,"parent":self.path+".selectedVariables","add":selectedList,"allowDuplicates":False}
+            self.__web_call("POST","_references",query)
+
+        if self.has_y2() and addListY2:
+            #with y2 we need to distiguish the scores for y2 or not
+            query = {"deleteExisting": False, "parent": self.path + ".selectedVariablesY2", "add": addListY2,"allowDuplicates":False}
+            self.__web_call("POST", "_references", query)
+
+        if updateLocalNow:
+            selectedList.extend(addListY2)
+            self.selectedVariables=selectedList
+
+        return
+
+    def add_variables_selected_y2(self,addList,updateLocalNow=True):
+        #selectedList = copy.deepcopy(self.get_variables_selected())
+        #selectedList.extend(addList)
+        query={"deleteExisting":False,"parent":self.path+".selectedVariablesY2","add":addList}
         self.__web_call("POST","_references",query)
         if updateLocalNow:
-            self.selectedVariables=selectedList
+            self.selectedVariables.extend(addList)
         return
 
 
@@ -897,6 +988,7 @@ class TimeSeriesWidget():
         self.eventsVisible = False  #set true if events are currently turned on
         self.scrollLabel = None
         self.annotationsInfo = {}       #holding annotations
+        self.hasY2 = False
 
         self.__init_figure() #create the graphical output
 
@@ -2005,14 +2097,21 @@ class TimeSeriesWidget():
             self.toolBarBox.toolbar.tools = store
 
     def build_second_y_axis(self):
-        self.plot.extra_y_ranges = {"y2": Range1d(start=0, end=1)}
-        self.y2Axis = LinearAxis(y_range_name="y2")
-        self.y2Axis.visible = False
-        self.plot.add_layout(self.y2Axis, 'right')
-        self.y2Axis.visible=False
-        #self.plot.circle(list(range(len(new_df['zip']))), new_df['station count'], y_range_name='NumStations', color='blue')
+        mi = self.server.get_mirror()
+        if "hasY2Axis" in mi and mi["hasY2Axis"][".properties"]["value"]:
+            self.hasY2 = True
+            self.plot.extra_y_ranges = {"y2": Range1d(start=0, end=1)}
+            self.y2Axis = LinearAxis(y_range_name="y2",
+                                     axis_line_width=globalY2width,
+                                     major_tick_line_width=globalY2width,
+                                     minor_tick_line_width=globalY2width,
+                                     major_label_text_color = themes.darkTickColor,
+                                     major_label_text_font_style = "bold",
+                                     major_label_text_font_size = "100%")
+            self.y2Axis.visible = True
+            self.plot.add_layout(self.y2Axis, 'right')
 
-
+            self.plot.yaxis.major_label_text_color = themes.darkTickColor
     def debug_button_2_cb(self):
         data = copy.deepcopy(self.mysource.data)
         #data["l"][0]=data["l"][0]-self.debugWidth
@@ -2528,8 +2627,8 @@ class TimeSeriesWidget():
             self.dispatchList.append({"function":function,"arg":arg})
 
 
-    def is_second_axis(self,name):
-        return ".score" in name
+    #def is_second_axis(self,name):
+    #    return ".score" in name
 
     def adjust_y_axis_limits(self,force=False):
         """
@@ -2547,7 +2646,7 @@ class TimeSeriesWidget():
         lineData = []
         selected = self.server.get_variables_selected()
         for item in self.columnData:
-            if item in selected and not self.is_second_axis(item):
+            if item in selected and not "score" in item and not self.server.is_y2_variable(item):
                 yData = self.columnData[item].data["y"]
                 if len(yData) >= 2:
                     # the outer left and right are ignored in the scaling to avoid influence of
@@ -2580,6 +2679,45 @@ class TimeSeriesWidget():
             self.logger.warning("not y axix to arrange")
 
 
+        #y2 axis
+        if self.server.has_y2():
+            lineData = []
+            selected = self.server.get_variables_selected()
+            for item in self.columnData:
+                if item in selected and self.server.is_y2_variable(item):
+                    yData = self.columnData[item].data["y"]
+                    if len(yData) >= 2:
+                        # the outer left and right are ignored in the scaling to avoid influence of
+                        # points that are included in the data query and which are far away due to a missin data area
+                        # if you have small variation of values and then a gap and than a totally different value
+                        # and that value is part of the query but only one point, the small variations can't be seen
+                        # now it's possible, this problem was introduced via the "include borders" style of the data
+                        # query to get the connecting lines to the next point OUT of the visible area
+                        yData = yData[1:-1]
+                    lineData.extend(yData)
+
+            if len(lineData) > 0:
+                all_data = numpy.asarray(lineData, dtype=numpy.float)
+                dataMin = numpy.nanmin(lineData)
+                dataMax = numpy.nanmax(lineData)
+                if dataMin == dataMax:
+                    dataMin -= 1
+                    dataMax += 1
+                # Adjust the Y min and max with 2% border
+                yMin = dataMin - (dataMax - dataMin) * 0.02
+                yMax = dataMax + (dataMax - dataMin) * 0.02
+                self.logger.debug("current y axis limits" + str(yMin) + " " + str(yMax))
+
+                self.plot.extra_y_ranges["y2"].start = yMin
+                self.plot.extra_y_ranges["y2"].end = yMax
+
+                self.box_modifier_rescale()
+
+            else:
+                self.logger.warning("not y2 axis to arrange")
+
+
+
     def box_modifier_init(self):
         self.logger.debug("box_modifier_init")
         self.boxModifierWidth = 8
@@ -2592,8 +2730,6 @@ class TimeSeriesWidget():
         self.boxModifierRectHorizontal = self.plot.rect('x', 'y', 'width', 'height', source=self.boxModifierData, width_units="screen",line_width=1,line_dash="dotted",line_color="white",fill_color="white" )  # , height_units="screen")#, height_units="screen")
         self.boxModifierRectVertical = self.plot.rect('x', 'y', 'width', 'height', source=self.boxModifierData, height_units="screen",line_width=1,line_dash="dotted",line_color="white",fill_color="white")  # , height_units="screen")#, height_units="screen")
 
-        self.boxModifierRectHorizontal.data_source.on_change("selected", self.box_cb)
-        self.boxModifierRectVertical.data_source.on_change("selected", self.box_cb)
 
         self.box_modifier_hide()# remove the renderers
 
@@ -2610,8 +2746,13 @@ class TimeSeriesWidget():
                     #we are inside this annotation:
                     candidate=True
             elif anno["type"] == "threshold":
-                if anno["min"] < y and anno["max"] > y:
-                    candidate = True
+                if "variable" in anno and self.server.is_y2_variable(anno["variable"]):
+                    y2=self.convert_y1_to_y2(y)
+                    if anno["min"] < y2 and anno["max"] > y2:
+                        candidate = True
+                else:
+                    if anno["min"] < y and anno["max"] > y:
+                        candidate = True
             if candidate:
                 if self.find_renderer(anno["id"]):
                     #we are inside this anno and it is visible,
@@ -2701,8 +2842,8 @@ class TimeSeriesWidget():
                 self.boxModifierRectVertical.visible = False  # hide the renderer
                 self.boxModifierRectHorizontal.visible = False  # hide the renderer
 
+
         self.boxModifierAnnotationName = annoName
-        #self.server.select_annotation(annoName)
         boxYCenter = float(self.plot.y_range.start + self.plot.y_range.end) / 2
         boxXCenter = float(self.plot.x_range.start + self.plot.x_range.end) / 2
         boxYHeight = (self.plot.y_range.end - self.plot.y_range.start) * 4
@@ -2719,7 +2860,12 @@ class TimeSeriesWidget():
             self.boxModifierTool.renderers = [self.boxModifierRectHorizontal]  # ,self.boxModifierRectVertical]
 
         if anno["type"] == "threshold":
-            self.boxModifierData.data = {'x': [boxXCenter, boxXCenter], 'y': [anno['min'], anno['max']], 'width': [boxXWidth,boxXWidth], 'height': [self.boxModifierWidth, self.boxModifierWidth]}
+            if "variable" in anno and self.server.is_y2_variable(anno["variable"]):
+                ys= [self.convert_y2_to_y1(anno['min']),self.convert_y2_to_y1(anno['max'])]
+            else:
+                ys = [anno['min'], anno['max']]
+            self.boxModifierData.data = {'x': [boxXCenter, boxXCenter], 'y': ys, 'width': [boxXWidth,boxXWidth], 'height': [self.boxModifierWidth, self.boxModifierWidth]}
+
             self.boxModifierRectVertical.visible=True
             self.boxModifierOldData = dict(copy.deepcopy(self.boxModifierData.data))
             self.boxModifierVisible = True
@@ -2841,9 +2987,18 @@ class TimeSeriesWidget():
             self.boxModifierData.data['x'] = [boxXCenter, boxXCenter]
 
             #maybe just a zoom
-            if anno["min"] != self.boxModifierData.data['y'][0] or anno["max"] != self.boxModifierData.data['y'][1]:
-                anno["min"] = self.boxModifierData.data['y'][0]
-                anno["max"] = self.boxModifierData.data['y'][1]
+            if self.server.is_y2_variable(anno["variable"]):
+                modifierMin = self.convert_y1_to_y2(self.boxModifierData.data['y'][0])
+                modifierMax = self.convert_y1_to_y2(self.boxModifierData.data['y'][1])
+            else:
+                modifierMin = self.boxModifierData.data['y'][0]
+                modifierMax = self.boxModifierData.data['y'][1]
+
+
+
+            if anno["min"] != modifierMin or anno["max"] != modifierMax:
+                anno["min"] = modifierMin
+                anno["max"] = modifierMax
                 self.server.adjust_annotation(anno)#s(self.boxModifierAnnotationName, anno)
                 self.remove_renderers(deleteMatch=anno["id"],deleteFromLocal=True)
                 self.draw_threshold(anno)#self.boxModifierAnnotationName,anno['variable'])
@@ -3058,17 +3213,35 @@ class TimeSeriesWidget():
             if self.server.is_score_variable(variableName):
                 scoreMarker = self.server.get_score_marker(variableName)
                 #this is a red circle score varialbe
-                if scoreMarker == "x":
-                    self.lines[variableName] = self.plot.asterisk(x="x", y="y", line_color="red", fill_color=None,
-                                                            source=self.columnData[variableName], name=variableName,size=10)  # x:"time", y:variableName #the legend must havee different name than the source bug
-                elif scoreMarker=="+":
-                    self.lines[variableName] = self.plot.cross(x="x", y="y", line_color="red", fill_color=None,
-                                                            source=self.columnData[variableName], name=variableName,size=10)
+                if not self.server.is_y2_variable(variableName):
+                    if scoreMarker == "x":
+                        self.lines[variableName] = self.plot.asterisk(x="x", y="y", line_color="red", fill_color=None,
+                                                                source=self.columnData[variableName], name=variableName,size=10)  # x:"time", y:variableName #the legend must havee different name than the source bug
+                    elif scoreMarker=="+":
+                        self.lines[variableName] = self.plot.cross(x="x", y="y", line_color="red", fill_color=None,
+                                                                source=self.columnData[variableName], name=variableName,size=10)
+                    else:
+                        #default is circle
+                        self.lines[variableName] = self.plot.circle(x="x", y="y", line_color="red", fill_color=None,
+                                                                source=self.columnData[variableName], name=variableName,
+                                                                size=7)  # x:"time", y:variableName #the legend must havee different name than the source bug
                 else:
-                    #default is circle
-                    self.lines[variableName] = self.plot.circle(x="x", y="y", line_color="red", fill_color=None,
-                                                            source=self.columnData[variableName], name=variableName,
-                                                            size=7)  # x:"time", y:variableName #the legend must havee different name than the source bug
+                    #is a y2 score
+                    if scoreMarker == "x":
+                        self.lines[variableName] = self.plot.asterisk(x="x", y="y", line_color="red", fill_color=None,
+                                                                      source=self.columnData[variableName],
+                                                                      name=variableName,
+                                                                      size=10, y_range_name="y2")  # x:"time", y:variableName #the legend must havee different name than the source bug
+                    elif scoreMarker == "+":
+                        self.lines[variableName] = self.plot.cross(x="x", y="y", line_color="red", fill_color=None,
+                                                                   source=self.columnData[variableName],
+                                                                   name=variableName, size=10, y_range_name="y2")
+                    else:
+                        # default is circle
+                        self.lines[variableName] = self.plot.circle(x="x", y="y", line_color="red", fill_color=None,
+                                                                    source=self.columnData[variableName],
+                                                                    name=variableName,
+                                                                    size=7, y_range_name="y2")  # x:"time", y:variableName #the legend must havee different name than the source bug
 
 
             elif variableName.endswith("_limitMax"):
@@ -3082,8 +3255,14 @@ class TimeSeriesWidget():
                             break
                     if not thisLineColor:
                         thisLineColor = "gray"
-                    band = Band(base='x', lower='lower', upper='upper', level=globalBandsLevel,fill_color = thisLineColor,
-                                fill_alpha=0.4, line_width=0,source = self.columnData[variableName],name=variableName)
+                    if self.server.is_y2_variable(variableName):
+                        band = Band(base='x', lower='lower', upper='upper', level=globalBandsLevel,fill_color = thisLineColor,
+                                    fill_alpha=0.4, line_width=0,source = self.columnData[variableName],name=variableName,y_range_name="y2")
+                    else:
+                        band = Band(base='x', lower='lower', upper='upper', level=globalBandsLevel,
+                                    fill_color=thisLineColor,
+                                    fill_alpha=0.4, line_width=0, source=self.columnData[variableName],
+                                    name=variableName)
                     self.lines[variableName] = band
                     self.plot.add_layout(band)
                 continue
@@ -3113,20 +3292,40 @@ class TimeSeriesWidget():
                                 break
                         if not thisLineColor:
                             thisLineColor = color
-                        self.lines[variableName] = self.plot.line(x="x", y="y", color=thisLineColor,
+                        if self.server.is_y2_variable(variableName):
+                            self.lines[variableName] = self.plot.line(x="x", y="y", color=thisLineColor,
                                                                   source=self.columnData[variableName], name=variableName,
-                                                                  line_width=4, line_dash="dashed")
+                                                                  line_width=4, line_dash="dashed",y_range_name="y2")
+                        else:
+                            self.lines[variableName] = self.plot.line(x="x", y="y", color=thisLineColor,
+                                                                      source=self.columnData[variableName],
+                                                                      name=variableName,
+                                                                      line_width=4, line_dash="dashed")
                     else:
 
                         #this is a real line
                         #self.debugStore =copy.deepcopy(getData)
                         #self.lines[variableName] = self.plot.line(x=variableName+"__time", y=variableName, color=color,
                         #                              source=self.data, name=variableName,line_width=2)  # x:"time", y:variableName #the legend must havee different name than the source bug
-                        self.lines[variableName] = self.plot.line(x="x", y="y", color=color,source=self.columnData[variableName], name=variableName,line_width=2)
+                        if self.server.is_y2_variable(variableName):
+                            self.lines[variableName] = self.plot.line(x="x", y="y", color=color,
+                                                                      source=self.columnData[variableName],
+                                                                      name=variableName, line_width=4,
+                                                                      y_range_name="y2")
+                        else:
+                            self.lines[variableName] = self.plot.line(x="x", y="y", color=color,
+                                                                      source=self.columnData[variableName],
+                                                                      name=variableName,line_width=2)
 
                         if showMarker:
                             markerName = variableName+"_marker"
-                            marker = self.plot.circle(x="x",y="y", line_color=color, fill_color=color,
+                            if self.server.is_y2_variable(variableName):
+                                marker = self.plot.circle(x="x", y="y", line_color=color, fill_color=color,
+                                                          source=self.columnData[variableName], name=markerName,
+                                                          size=3,y_range_name="y2")  # x:"time", y:variableName #the legend must havee different name than the source bug
+
+                            else:
+                                marker = self.plot.circle(x="x",y="y", line_color=color, fill_color=color,
                                                       source=self.columnData[variableName], name=markerName,size=3)  # x:"time", y:variableName #the legend must havee different name than the source bug
                 #legend only for lines
                 self.legendItems[variableName] = LegendItem(label='.'.join(variableName.split('.')[-2:]),
@@ -3330,6 +3529,7 @@ class TimeSeriesWidget():
         #automatically add scores if needed: if the user adds a variable to the tree, we might need to add also the score
         if self.showScores:
             additionalLines=[]
+            additionalLinesY2=[]
             currentLineEndings = [name.split('.')[-1] for name in currentLines]
             for key in newLines:
                 scoreName = key.split('.')[-1]+"_score"
@@ -3337,11 +3537,19 @@ class TimeSeriesWidget():
                     if scoreName in scoreVar:
                         #we add this one only if it is not there already
                         if scoreName not in currentLineEndings:
-                            additionalLines.append(scoreVar)
-            if additionalLines:
+                            if self.server.has_y2():
+                                #if according line is a y2 line
+                                if self.server.is_y2_variable(key):
+                                    additionalLinesY2.append(scoreVar)
+                                else:
+                                    additionalLines.append(scoreVar)
+                            else:
+                                additionalLines.append(scoreVar)
+            if additionalLines or additionalLinesY2:
                 additionalLines=list(set(additionalLines))# remove duplicates
+                additionalLinesY2 = list(set(additionalLinesY2))
                 self.logger.debug(f"MUST add scores: {additionalLines}.. in the next event")
-                self.server.add_variables_selected(additionalLines)
+                self.server.add_variables_selected(additionalLines,addListY2=additionalLinesY2)
                 #return # wait for next event
 
 
@@ -4409,11 +4617,19 @@ class TimeSeriesWidget():
 
             # print("draw new anno",color,start,end,modelPath)
 
-            newAnno = BoxAnnotation(top=max, bottom=min,
-                                    fill_color=color,
-                                    fill_alpha=globalThresholdsAlpha,
-                                    level = globalThresholdsLevel,
-                                    name=annoDict["id"])  # +"_annotaion
+            if self.server.is_y2_variable(annoDict["variable"]):
+                newAnno = BoxAnnotation(top=max, bottom=min,
+                                        fill_color=color,
+                                        fill_alpha=globalThresholdsAlpha,
+                                        level=globalThresholdsLevel,
+                                        name=annoDict["id"],y_range_name="y2")  # +"_annotaion
+            else:
+
+                newAnno = BoxAnnotation(top=max, bottom=min,
+                                        fill_color=color,
+                                        fill_alpha=globalThresholdsAlpha,
+                                        level = globalThresholdsLevel,
+                                        name=annoDict["id"])  # +"_annotaion
 
             self.add_renderers([newAnno])
 
@@ -4584,6 +4800,7 @@ class TimeSeriesWidget():
         self.showScores=True
 
         additionalScores = [] # the list of score variables that should be displayed
+        additionalScoresY2 = []
         currentVariables = self.server.get_variables_selected()
         currentVarNames = [path.split('.')[-1] for path in currentVariables]
         #now check if we need to add some scores
@@ -4593,7 +4810,10 @@ class TimeSeriesWidget():
             ending = splitted[-1].upper()
             scoreName = '_'.join(splitted[:-1])
             if scoreName in currentVarNames and "SCORE" in ending:
-                additionalScores.append(scoreVarName)
+                if self.server.has_y2() and self.server.is_y2_variable(scoreVarName):
+                    additionalScoresY2.append(scoreVarName)
+                else:
+                    additionalScores.append(scoreVarName)
 
         #now we have in additionalScores the missing variables to add
         #write it to the backend and wait for the event to plot them
@@ -4601,6 +4821,8 @@ class TimeSeriesWidget():
             currentVariables.extend(additionalScores)
             currentVariables = list(set(currentVariables)) # del duplicates
             self.server.set_variables_selected(currentVariables,updateLocalNow=False)
+        if additionalScoresY2:
+            self.server.add_variables_selected(addList=[],addListY2=additionalScoresY2)
 
     def hide_scores(self):
         #remove the "score vars" from the selected in the backend
@@ -4616,6 +4838,17 @@ class TimeSeriesWidget():
             self.server.set_variables_selected(newVars)
 
 
+    def convert_y1_to_y2(self,y):
+        factor = (y-self.plot.y_range.start)/(self.plot.y_range.end-self.plot.y_range.start)
+        y2 = self.plot.extra_y_ranges["y2"].start + factor *(self.plot.extra_y_ranges["y2"].end -self.plot.extra_y_ranges["y2"].start)
+        return y2
+
+    def convert_y2_to_y1(self,y):
+        factor = (y - self.plot.extra_y_ranges["y2"].start) / (self.plot.extra_y_ranges["y2"].end - self.plot.extra_y_ranges["y2"].start)
+        y1 = self.plot.y_range.start + factor * (
+                    self.plot.y_range.end - self.plot.y_range.start)
+        return y1
+
 
 
 
@@ -4629,6 +4862,7 @@ class TimeSeriesWidget():
                 tag (string): the currently selected tag by the UI, for erase there is the "-erase-" tag
         """
         self.logger.debug("edit anno %s %s %s",str(start),str(end),str(tag))
+        """
         if tag == '-erase-':
             #remove all annotations which are inside the time
             deleteList = []
@@ -4666,8 +4900,12 @@ class TimeSeriesWidget():
             self.logger.debug(f"deletelist {deleteList}")
             self.remove_renderers(deleteList=deleteList)
             self.server.delete_annotations(deleteList)
+        """
 
-        elif tag =="motif":
+
+
+
+        if tag =="motif":
             variable = self.currentAnnotationVariable
             newAnno = self.server.add_annotation(start,end,tag,type="motif",var=variable)
             self.draw_motif(newAnno)
@@ -4694,6 +4932,10 @@ class TimeSeriesWidget():
                 variable = vars[0]
             else:
                 variable = self.currentAnnotationVariable
+
+            if self.server.is_y2_variable(variable):
+                min = self.convert_y1_to_y2(min)
+                max = self.convert_y1_to_y2(max)
 
 
             newAnnotation  = self.server.add_annotation(start,end,tag,type ="threshold",min=min,max=max,var = variable )

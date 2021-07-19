@@ -1676,7 +1676,8 @@ function prepare_context_menu(dataString,modelPath)
             entry.submenu = eventsSubmenu;
         }
 
-        showSubmenu.push(entry);
+        if (element == "variables") showSubmenu.unshift(entry);
+        else showSubmenu.push(entry);
     }
 
     //adding the second y axis if needed
@@ -1721,7 +1722,7 @@ function prepare_context_menu(dataString,modelPath)
                         }
             };
             entry.submenu=variables2Submenu;
-            showSubmenu.push(entry);
+            showSubmenu.splice(1,0,entry);
 
 
 
@@ -1931,6 +1932,46 @@ function prepare_context_menu(dataString,modelPath)
     }
 
 
+    if (("hasY2Axis" in data) && (data.hasY2Axis[".properties"].value))
+    {
+        var selectedVariables2 = data.selectedVariablesY2[".properties"].leaves;
+        for (variable of selectedVariables2)
+        {
+            if (scoreVariables.includes(variable))
+            {
+                //skip score variables
+                continue;
+            }
+            if (variable in currentColors)
+            {
+                var mycolor = currentColors[variable].lineColor;
+            }
+            else
+            {
+                var mycolor = "black";
+            }
+            let mycolorString = `<span style='background-color:${mycolor};text-color:red;font-family:monospace'> <font color='white'> &nbsp - &nbsp </font> </span> &nbsp ${variable}`;
+
+            var entry = {
+                label:mycolorString,
+                setValue:{type:"threshold",variable:variable},
+                modelPath:modelPath,
+                action: function(option, contextMenuIndex, optionIndex){
+                        var opt = option;
+                        var idx = contextMenuIndex; var
+                        optIdx = optionIndex;
+                        context_menu_new_annotation_click(opt,idx,optIdx);
+                    }
+            }
+
+            newThresholdsSubmenu.push(entry);
+    }
+
+
+    }
+
+
+
     let newMotifSubmenu = [];
     //selected variables?
     //let selectedVariables = data.selectedVariables[".properties"].leaves;
@@ -1969,7 +2010,42 @@ function prepare_context_menu(dataString,modelPath)
         newMotifSubmenu.push(entry);
     }
 
+    if (("hasY2Axis" in data) && (data.hasY2Axis[".properties"].value))
+    {
+        var selectedVariables2 = data.selectedVariablesY2[".properties"].leaves;
+        for (variable of selectedVariables2)
+    {
+        if (scoreVariables.includes(variable))
+        {
+            //skip score variables
+            continue;
+        }
+        if (variable in currentColors)
+        {
+            var mycolor = currentColors[variable].lineColor;
+        }
+        else
+        {
+            var mycolor = "black";
+        }
+        let mycolorString = `<span style='background-color:${mycolor};text-color:red;font-family:monospace'> <font color='white'> &nbsp - &nbsp </font> </span> &nbsp ${variable}`;
 
+        var entry = {
+            label:mycolorString,
+            setValue:{type:"motif",variable:variable},
+            modelPath:modelPath,
+            action: function(option, contextMenuIndex, optionIndex){
+                    var opt = option;
+                    var idx = contextMenuIndex; var
+                    optIdx = optionIndex;
+                    context_menu_new_annotation_click(opt,idx,optIdx);
+                }
+        }
+
+        newMotifSubmenu.push(entry);
+    }
+
+    }
 
 
 

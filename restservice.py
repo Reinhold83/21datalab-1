@@ -231,6 +231,7 @@ referencequery.json
     "add": [<nodedescriptors>] # always a list!!
     "deleteExisting" : one of True/False # if set, all existings references are deleted
     "remove" :[<nodedescriptors>] # always a list!!, we also delete duplicate references if they exist
+    "allowDuplicates" : True/False
 }
 
 movequery.json
@@ -800,10 +801,14 @@ def all(path):
             result = []
             m.lock_model()
             m.disable_observers() #avoid intermediate events
+            if "allowDuplicates" in data:
+                allowDuplicates = data["deleteExisting"]
+            else:
+                allowDuplicates = True
             if "deleteExisting" in data and data["deleteExisting"] == True:
                 m.remove_forward_refs(data["parent"])
             if "add" in data:
-                result = m.add_forward_refs(data["parent"],data["add"])
+                result = m.add_forward_refs(data["parent"],data["add"],allowDuplicates=allowDuplicates)
             if "remove" in data:
                 result = m.remove_forward_refs(data["parent"], data["remove"],deleteDuplicates=True)
             m.enable_observers()
