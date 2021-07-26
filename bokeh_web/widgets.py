@@ -1251,7 +1251,13 @@ class TimeSeriesWidget():
 
             markerName = variableName + "_marker"
             color = self.lines[variableName].glyph.line_color
-            marker = self.plot.circle(x="x",y="y", line_color=color, fill_color=color,
+            if self.server.is_y2_variable(variableName):
+                marker = self.plot.circle(x="x", y="y", line_color=color, fill_color=color,
+                                          source=self.columnData[variableName], name=markerName,y_range_name="y2",
+                                          size=7)  # x:"time", y:variableName #the legend must havee different name than the source bug
+
+            else:
+                marker = self.plot.circle(x="x",y="y", line_color=color, fill_color=color,
                                       source=self.columnData[variableName], name=markerName,
                                       size=3)  # x:"time", y:variableName #the legend must havee different name than the source bug
 
@@ -3322,7 +3328,7 @@ class TimeSeriesWidget():
                             if self.server.is_y2_variable(variableName):
                                 marker = self.plot.circle(x="x", y="y", line_color=color, fill_color=color,
                                                           source=self.columnData[variableName], name=markerName,
-                                                          size=3,y_range_name="y2")  # x:"time", y:variableName #the legend must havee different name than the source bug
+                                                          size=7,y_range_name="y2")  # x:"time", y:variableName #the legend must havee different name than the source bug
 
                             else:
                                 marker = self.plot.circle(x="x",y="y", line_color=color, fill_color=color,
