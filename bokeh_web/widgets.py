@@ -1250,7 +1250,11 @@ class TimeSeriesWidget():
         for variableName in self.lines:
 
             markerName = variableName + "_marker"
-            color = self.lines[variableName].glyph.line_color
+            try:
+                color = self.lines[variableName].glyph.line_color
+            except:
+                self.logger.warning(f"show_marker() {variableName} has no glyph")
+                continue
             if self.server.is_y2_variable(variableName):
                 marker = self.plot.circle(x="x", y="y", line_color=color, fill_color=color,
                                           source=self.columnData[variableName], name=markerName,y_range_name="y2",
@@ -1952,6 +1956,7 @@ class TimeSeriesWidget():
         self.plot.on_event(events.Reset, self.event_cb)
         self.plot.on_event(events.SelectionGeometry, self.event_cb)
         self.plot.on_event(events.Tap,self.event_cb)
+        #self.plot.on_event(events.MouseWheel, self.mouse_cb)
 
 
         #make the controls
@@ -2111,6 +2116,9 @@ class TimeSeriesWidget():
                                      axis_line_width=globalY2width,
                                      major_tick_line_width=globalY2width,
                                      minor_tick_line_width=globalY2width,
+                                     major_tick_line_color = themes.darkTickColor,
+                                     minor_tick_line_color = themes.darkTickColor,
+                                     axis_line_color = themes.darkTickColor,
                                      major_label_text_color = themes.darkTickColor,
                                      major_label_text_font_style = "bold",
                                      major_label_text_font_size = "100%")
@@ -3602,6 +3610,27 @@ class TimeSeriesWidget():
         #write the changes to the backend
         self.server.set_variables_selected(currentSelection)
         self.refresh_plot()
+
+
+    def mouse_cb(self,event):
+        """
+            example implementation for separate y axis zoom
+        """
+        print(f"mouse, {event.sx}")
+        if event.delta < 0:
+            factor = -1
+        else:
+            factor = 1
+        if event.sx<500:
+            #left axix
+
+            size = self.plot.y_range.end - self.plot.y_range.start
+            self.plot.y_range.start = self.plot.y_range.start + factor*size/5
+            self.plot.y_range.end = self.plot.y_range.end - factor*size / 5
+        else:
+            size = self.plot.extra_y_ranges["y2"].end - self.plot.extra_y_ranges["y2"].start
+            self.plot.extra_y_ranges["y2"].end = self.plot.extra_y_ranges["y2"].end -factor*size/5
+            self.plot.extra_y_ranges["y2"].start = self.plot.extra_y_ranges["y2"].start + factor*size / 5
 
 
     def event_cb(self,event):
