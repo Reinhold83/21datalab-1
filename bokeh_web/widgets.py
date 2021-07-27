@@ -2113,17 +2113,21 @@ class TimeSeriesWidget():
             self.hasY2 = True
             self.plot.extra_y_ranges = {"y2": Range1d(start=0, end=1)}
             self.y2Axis = LinearAxis(y_range_name="y2",
-                                     axis_line_width=globalY2width,
-                                     major_tick_line_width=globalY2width,
-                                     minor_tick_line_width=globalY2width,
+                                     axis_line_width=globalY2width*2,
+                                     major_tick_line_width=globalY2width*2,
+                                     minor_tick_line_width=globalY2width*2,
                                      major_tick_line_color = themes.darkTickColor,
                                      minor_tick_line_color = themes.darkTickColor,
                                      axis_line_color = themes.darkTickColor,
+                                     #major_label_standoff = 10,
+                                     major_label_text_align = "left",
                                      major_label_text_color = themes.darkTickColor,
                                      major_label_text_font_style = "bold",
-                                     major_label_text_font_size = "100%")
+                                     #major_label_text_font_size = "100%"
+                                      )
             self.y2Axis.visible = True
             self.plot.add_layout(self.y2Axis, 'right')
+            self.plot.min_border_right=50
 
             self.plot.yaxis.major_label_text_color = themes.darkTickColor
     def debug_button_2_cb(self):
@@ -3057,6 +3061,32 @@ class TimeSeriesWidget():
                 self.logger.error(f"check_boxes {ex}")
 
 
+    def check_y2_spacing(self):
+        """
+            this was a trial to dynamically adjust the right border spacing, as bokeh messes them up sometimes
+        :return:
+        """
+        if self.server.has_y2():
+            diff = (self.plot.extra_y_ranges["y2"].end - self.plot.extra_y_ranges["y2"].start)
+            print("diff",diff)
+            MSD = len(str(int(self.plot.extra_y_ranges["y2"].start)))
+            if diff<1:
+                LSD = round(-numpy.log10(diff))
+            else:
+                LSD = 0
+            ticklen = MSD+LSD
+            newValue = 50+   20 * ticklen
+            print(f"{MSD} {LSD} {ticklen} => {newValue}")
+
+            #ticklen = max(len(str(self.plot.extra_y_ranges["y2"].start)),len(str(self.plot.extra_y_ranges["y2"].end)))
+            #newValue = 50+10*ticklen
+            if newValue != self.plot.min_border_right:
+                print("set")
+                if newValue>200:
+                    newValue = 500
+                self.plot.min_border_right = newValue#newValue # settings this during runtime has no effect :(
+
+
     def periodic_cb(self):
         """
             called periodiaclly by the bokeh system
@@ -3077,6 +3107,7 @@ class TimeSeriesWidget():
         try:
             start = time.time()
             self.check_boxes()
+            #self.check_y2_spacing()
             legendChange =  self.__legend_check() # check if a user has deselected a variable
             #try: # we need this, otherwise the inPeriodicCb will not be reset
 
