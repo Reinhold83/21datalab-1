@@ -1,0 +1,722 @@
+<div id="cockpit" class="modal fade" role="dialog" path="" style="width:600;height:700">
+
+    <div class="modal-dialog modal-lg" role="dialog" id="cockpitmodal">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="doublechecktitl2e"><i class="fas fa-gamepad"></i> &nbsp &nbsp Stumpy Mining Cockpit</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs bg-secondary" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-cockpit-motif-select" data-toggle="tab" href="#cockpit-motif-select" role="tab">
+                            Select Motif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-cockpit-motif-parameters" data-toggle="tab" href="#cockpit-motif-parameters" role="tab" >
+                            Parameters
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                          <a class="nav-link" id="tab-cockpit-motif-run" data-toggle="tab" href="#cockpit-motif-run" role="tab">
+                            Run
+                          </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+
+                    <div class="tab-pane fade show active" id="cockpit-motif-select" role="tabpanel">
+                        <br>
+                        <div class="form-group row">
+                            <div class="col-3">Selected Motif Path</div>
+                            <div class="col-9"> <input class="form-control" type="text" id="cockpit-select-motif-path"  readonly style="text-align:right;direction:rtl;"  > </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-3">Selected Motif Variable</div>
+                            <div class="col-9"> <input class="form-control" type="text" id="cockpit-select-motif-variable" readonly> </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-3">Selected Motif Start Time</div>
+                            <div class="col-9"> <input class="form-control" type="text" id="cockpit-select-motif-start" readonly> </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-3">Selected Motif End Time</div>
+                            <div class="col-9"> <input class="form-control" type="text" id="cockpit-select-motif-end" readonly> </div>
+                        </div>
+
+                        <p align="right">
+                            <button type="button" class="btn btn-primary disabled"   onclick="cockpit_select_motif()" id="take-selected-motif">    take selected motif </button>
+                            <button type="button" class="btn btn-primary"   onclick="cockpit_find_motif()" id="jump-to-motif"> <i class="fas fa-search-location"></i> &nbsp;  jump to motif</button>
+                        </p>
+                    </div>
+
+                    <div class="tab-pane fade" id="cockpit-motif-parameters" role="tabpanel">
+                        <br>
+
+                        <div class="form-group row" id="create-envelope-button" style="display:none;">
+                            <div class="col-12">
+                                <p align="right">
+                                    <button type="button" class="btn btn-primary"  onclick="create_envelope()">create envelope from motif</button>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="envelope-parameters">
+
+                            <div class="form-group row">
+                                <div class="col-6">Number of matches</div>
+                                <div class="col-6">
+                                     <input class="form-control" type="text" id="number-of-matches" onchange="on_number_of_matches_change()">
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane fade" id="cockpit-motif-run" role="tabpanel">
+                        <br>
+                        <div class="form-group row">
+                            <div class="col-8"> Stumpy Mining </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-primary"   onclick="cockpit_motif_run()">  run </button>
+                                <button type="button" class="btn btn-primary"   onclick="cockpit_motif_stop()"> stop </button>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <div class="col-3">  Select Result</div>
+                            <div class="col-5"> <select class="form-control" id="select-mining-result" onchange="select_result()"></select></div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-primary"   onclick="cockpit_motif_jump(-1)" id="arrowup"> &nbsp;<i class="fas fa-arrow-up"></i>&nbsp;</button>&nbsp;
+                                <button type="button" class="btn btn-primary"   onclick="cockpit_motif_jump(1)" id="arrowdown">&nbsp;<i class="fas fa-arrow-down"></i>&nbsp;</button>
+                            </div>
+                        </div>
+
+
+                        <div class="progress">
+                            <div id="cockpit-motif-progress" class="progress-bar" role="progressbar" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-primary"  data-dismiss="modal" id ="doublecheckButtonSave2">Close</button>
+            </div>
+        </div>
+    <script>
+
+var cockpiteventSource = 0;
+var cockpitPath = "";
+var cockpitWidgetPath = "";
+var envelopeMotif = null;
+
+function cockpit_init(path)
+{
+    //activate first tab
+    $('#tab-cockpit-motif-parameters').removeClass("active");
+    $('#tab-cockpit-motif-run').removeClass("active");
+    $('#tab-cockpit-motif-select').addClass("active");
+
+    $('#cockpit-motif-select').addClass("active show");
+    $('#cockpit-motif-parameters').removeClass("active show");
+    $('#cockpit-motif-run').removeClass("active show");
+
+    cockpitPath = path;
+    $("#cockpit").attr("path",path);
+
+    refresh_mining_results(0); //clear previous mining results
+
+    //set the widget
+    cockpitWidgetPath = $("#cockpit").attr("widget");
+    var query = {"deleteExisting":true,"parent":cockpitPath+".StumpyMASS.widget","add":[cockpitWidgetPath]};
+    http_post("/_references",JSON.stringify(query),null,null, function(obj,status,data,params)
+    {
+        if (status==201)
+        {
+            cockpit_load_settings();
+            console.log("in cockpit init");
+            cockpit_motif_init_events();
+            http_post("/_execute",JSON.stringify(cockpitPath+".init"),null,null,null); //start the observers
+
+        }
+        else
+        {
+            console.log("problem init stumpy miner");
+        }
+    });
+
+}
+
+function exit_envelope_cockpit()
+{
+    //hide potentially shown parts
+    let path = cockpitPath+".hide";
+    http_post("/_execute",JSON.stringify(path),null,null,null);
+}
+
+
+function cockpit_apply_settings()
+{
+    let algorithm = JSON.parse($("#cockpit-parameters-algorithm").val());
+    let noise = JSON.parse($("#cockpit-parameters-noise").val());
+    let polynom =  JSON.parse($("#cockpit-parameters-polynom").val());
+    let subsampling = JSON.parse($("#cockpit-parameters-subsampling").val());
+    let threshold =  JSON.parse($("#cockpit-parameters-threshold").val());
+
+    let path =$("#cockpit").attr("path");
+
+    var query = [
+        {"browsePath":path+".MotifMiner.algorithm","value":algorithm},
+        {"browsePath":path+".MotifMiner.addNoise","value":noise},
+        {"browsePath":path+".MotifMiner.subtractPolynomOrder","value":polynom},
+        {"browsePath":path+".MotifMiner.subSamplingFactor","value":subsampling},
+        {"browsePath":path+".peakSearch.threshold","value":threshold}
+    ];
+    http_post("/setProperties",JSON.stringify(query))
+
+}
+
+
+
+
+
+
+
+function cockpit_motif_init_events()
+{
+    cockpiteventSource = new EventSource('/event/stream');
+
+    cockpiteventSource.addEventListener('system.function.complete', (e) => {
+        let data = e.data.replace(/\'/g, "\"");
+        var msg = JSON.parse(data);
+        if (msg.browsePath == cockpitPath+".create") on_create_complete();
+        if (msg.browsePath == cockpitPath+".recreate") on_create_complete();
+        if (msg.browsePath == cockpitPath+".delete") on_create_complete();
+        if (msg.browsePath == cockpitPath+".select") on_select_complete();
+        if (msg.browsePath == cockpitPath+".update") on_update_complete();
+        if (msg.browsePath == cockpitPath+".StumpyMASS") on_mining_complete();
+    });
+
+    cockpiteventSource.addEventListener('StumpyMiner.selectMotif', (e) => {
+        let data = e.data.replace(/\'/g, "\"");
+        var msg = JSON.parse(data);
+        console.log(msg);
+        //do we have a selected motif?
+        if (msg.forwardRefs.length == 0)
+        {
+             $('#take-selected-motif').addClass("disabled");
+        }
+        else
+        {
+            $('#take-selected-motif').removeClass("disabled");
+        }
+
+    });
+
+
+    //progress bar is automatically updated by the main script, initialize_progress_bar, it controls all progressbars
+}
+
+
+function on_create_complete()
+{
+    var motifPath = $("#cockpit-select-motif-path").val();
+
+    http_post("_getbranchpretty",motifPath, null,null, function(obj,status,data,params)
+    {
+        if (status == 200)
+        {
+            var data = JSON.parse(data);
+            envelopeMotif = data;
+            envelope_parameters_click(); //update the parameters page
+        }
+    });
+
+}
+
+function on_update_complete()
+{
+    var motifPath = $("#cockpit-select-motif-path").val();
+    http_post("_getbranchpretty",motifPath, null,null, function(obj,status,data,params)
+    {
+
+        if (status == 200)
+        {
+            var data = JSON.parse(data);
+            envelopeMotif = data; //take the latest data
+            //update potential changes
+            //envelope_update_step(envelopeMotif);
+            update_parameter_values(envelopeMotif);
+        }
+
+    });
+}
+
+function on_mining_complete()
+{
+    refresh_mining_results(1);
+}
+
+
+function cockpit_close()
+{
+    //hide potentially shown parts
+    let path = cockpitPath+".hide";
+    http_post("/_execute",JSON.stringify(path),null,null,null);
+    console.log("motif cockpit close");
+    cockpiteventSource.close();
+}
+
+
+function cockpit_motif_run()
+{
+    //start the mining process
+    let path =$("#cockpit").attr("path")+".StumpyMASS";
+    http_post("/_execute",JSON.stringify(path),null,null,null);
+}
+
+function cockpit_motif_stop()
+{
+    let path =$("#cockpit").attr("path")+".StumpyMASS.control.signal";
+    var query = [{"browsePath":path,"value":"stop"}];
+    http_post("/setProperties",JSON.stringify(query))
+}
+
+
+//Jump directly to the motif
+function cockpit_find_motif()
+{
+   console.log("cockpit_find_motif");
+
+    var query = [{browsePath:cockpitPath+".jump.match",value:-1}];
+    http_post('/setProperties',JSON.stringify(query), null, null,  (self,status,data,params) => {
+        if (status<400)
+        {
+           http_post("/_execute",JSON.stringify(cockpitPath+".jump"),null,null,null);
+        }
+    });
+}
+
+function cockpit_motif_jump(inc)
+{
+   //jump to the selected one
+   //https://learn.jquery.com/using-jquery-core/faq/how-do-i-get-the-text-value-of-a-selected-option/
+    var selected = parseInt($("#select-mining-result").val());
+    var last = parseInt($('#select-mining-result option:last-child').val());
+    selected = selected + inc;
+    if (selected <0) selected = 0;
+    if (selected > last) selected = last;
+    $("#select-mining-result").val(selected);
+
+    if (selected == 0)
+    {
+         $("#arrowup").addClass("disabled");
+    }
+    else
+    {
+        $("#arrowup").removeClass("disabled");
+    }
+
+    if (selected == last)
+    {
+        $("#arrowdown").addClass("disabled");
+    }
+    else
+    {
+        $("#arrowdown").removeClass("disabled");
+    }
+
+
+    console.log("show motif "+selected);
+
+    var query = [{browsePath:cockpitPath+".jump.match",value:selected}];
+    http_post('/setProperties',JSON.stringify(query), null, null,  (self,status,data,params) => {
+        if (status<400)
+        {
+           http_post("/_execute",JSON.stringify(cockpitPath+".jump"),null,null,null);
+        }
+    });
+}
+
+
+function cockpit_select_motif()
+{
+    http_post("/_execute",JSON.stringify(cockpitPath+".select"),null,null,null);
+}
+
+function on_select_complete()
+{
+   cockpit_load_settings();
+}
+
+function cockpit_load_settings()
+{
+    //first load the info for tab 1
+    http_post("_getbranchpretty",cockpitPath, null,null, function(obj,status,data,params)
+    {
+        if (status==200)
+        {
+            var pipeLineData = JSON.parse(data);
+            var minerData = pipeLineData.StumpyMASS;
+            cockpitWidgetPath = minerData.widget[".properties"].leaves[0];
+
+            $("#number-of-matches").val(minerData.maxNumberOfMatches[".properties"].value);
+            //first the motif selection data
+            var motifPath = minerData.motif[".properties"].leaves[0];
+
+
+            if (motifPath)
+            {
+                $("#cockpit-select-motif-path").val(motifPath);
+                $('#jump-to-motif').removeClass("disabled");
+                http_post("_getbranchpretty",motifPath, null,null, function(obj,status,data,params)
+                {
+                    if (status == 200)
+                    {
+
+                        var data = JSON.parse(data);
+                        envelopeMotif = data;
+                        let variable = data.variable[".properties"].leaves[0];
+                        let start = data.startTime[".properties"].value;
+                        let end = data.endTime[".properties"].value;
+                        $("#cockpit-select-motif-variable").val(variable);
+                        $("#cockpit-select-motif-start").val(start.substring(0,10)+" T "+start.substring(11,23)+"  ("+start.substring(start.length-6)+")");
+                        $("#cockpit-select-motif-end").val(end.substring(0,10)+" T "+end.substring(11,23)+"  ("+end.substring(end.length-6)+")");
+
+
+                   }
+                });
+
+            }
+            else
+            {
+                $('#jump-to-motif').addClass("disabled");
+            }
+        }
+    });
+}
+
+
+function envelope_update_step(envelopeMotif)
+{
+    $("#envelope-step").val(envelopeMotif.envelope.step[".properties"].value);
+    $("#envelope-step").attr("min",envelopeMotif.envelope.step[".properties"].validation.limits[0]);
+    $("#envelope-step").attr("max",envelopeMotif.envelope.step[".properties"].validation.limits[1]);
+    $("#envelope-step").attr("step",1);//always one as step in the range slider! this is not the "step" value
+    $("#envelope-step-value").text(envelopeMotif.envelope.step[".properties"].value.toString()); // the numerical value
+}
+
+function envelope_parameters_click()
+{
+
+    //load the settings of the motif or display the create button
+    if (envelopeMotif == null)
+    {
+        //hide all controls
+        $("#create-envelope-button").css("display","none");
+        $("#envelope-parameters").css("display","none");
+    }
+
+    else
+    {
+        if ("envelope" in  envelopeMotif) // is an envelope already?
+        {
+            //this is an existing envelope motif
+            let steps = 100;
+            $("#create-envelope-button").css("display","none");
+
+            //adjust all parameters to the correct values
+
+            update_parameter_values(envelopeMotif);
+            /*
+            $("#envelope-sampling-period").attr("min",envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[0]);
+            $("#envelope-sampling-period").attr("max",envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[1]);
+            $("#envelope-sampling-period").attr("step",(envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[1]-envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[0])/steps);
+            $("#envelope-sampling-period").val(envelopeMotif.envelope.samplingPeriod[".properties"].value); // must repeat this
+
+            $("#envelope-width").attr("min",envelopeMotif.envelope.freedom[".properties"].validation.limits[0]);
+            $("#envelope-width").attr("max",envelopeMotif.envelope.freedom[".properties"].validation.limits[1]);
+            $("#envelope-width").attr("step",(envelopeMotif.envelope.freedom[".properties"].validation.limits[1]-envelopeMotif.envelope.freedom[".properties"].validation.limits[0])/steps);
+            $("#envelope-width").val(envelopeMotif.envelope.freedom[".properties"].value);
+
+            $("#envelope-step").attr("min",envelopeMotif.envelope.step[".properties"].validation.limits[0]);
+            $("#envelope-step").attr("max",envelopeMotif.envelope.step[".properties"].validation.limits[1]);
+            $("#envelope-step").attr("step",(envelopeMotif.envelope.step[".properties"].validation.limits[1]-envelopeMotif.envelope.step[".properties"].validation.limits[0])/steps);
+            $("#envelope-step").val(envelopeMotif.envelope.step[".properties"].value);
+            */
+
+
+
+            //envelope_update_step(envelopeMotif);
+            write_range_slider_numerical_values();
+
+
+            $("#envelope-parameters").css("display","block");
+
+
+
+
+            //also connect the motif to show it
+            let path = cockpitPath+".show";
+            http_post("/_execute",JSON.stringify(path),null,null,null);
+
+            console.log("this is en envelope");
+        }
+        else
+        {
+            //not yet an envelope
+            $("#create-envelope-button").css("display","block");
+            $("#envelope-parameters").css("display","none");
+        }
+    }
+
+}
+
+
+function update_parameter_values(envelopeMotif)
+{
+    let steps = 1000;
+
+    $("#envelope-sampling-period").attr("min",envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[0]);
+    $("#envelope-sampling-period").attr("max",envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[1]);
+    $("#envelope-sampling-period").attr("step",(envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[1]-envelopeMotif.envelope.samplingPeriod[".properties"].validation.limits[0])/steps);
+    $("#envelope-sampling-period").val(envelopeMotif.envelope.samplingPeriod[".properties"].value); // must repeat this
+
+    $("#envelope-width").attr("min",envelopeMotif.envelope.freedom[".properties"].validation.limits[0]);
+    $("#envelope-width").attr("max",envelopeMotif.envelope.freedom[".properties"].validation.limits[1]);
+    $("#envelope-width").attr("step",(envelopeMotif.envelope.freedom[".properties"].validation.limits[1]-envelopeMotif.envelope.freedom[".properties"].validation.limits[0])/steps);
+    $("#envelope-width").val(envelopeMotif.envelope.freedom[".properties"].value);
+
+
+    $("#envelope-step").attr("min",envelopeMotif.envelope.step[".properties"].validation.limits[0]);
+    $("#envelope-step").attr("max",envelopeMotif.envelope.step[".properties"].validation.limits[1]);
+    $("#envelope-step").attr("step",(envelopeMotif.envelope.step[".properties"].validation.limits[1]-envelopeMotif.envelope.step[".properties"].validation.limits[0])/steps);
+    $("#envelope-step").val(envelopeMotif.envelope.step[".properties"].value);
+
+
+    write_range_slider_numerical_values(); // the numbers next to the sliders
+
+    console.log("step value", envelopeMotif.envelope.step[".properties"].value);
+
+
+}
+
+
+// create an envelope from a "simple" motif by adding some children
+function create_envelope()
+{
+    //create children with default values
+    let path = cockpitPath+".create";
+    http_post("/_execute",JSON.stringify(path),null,null,null);
+}
+
+function on_envelope_input_change()
+{
+    write_range_slider_numerical_values();
+}
+
+function write_range_slider_numerical_values()
+{
+    var sampling = parseFloat($("#envelope-sampling-period").val());
+    var freedom = parseFloat($("#envelope-width").val());
+    var step = parseFloat($("#envelope-step").val());
+    //this is called when we move the range slider
+    //write the current values to the numerical displays
+    $("#envelope-sampling-period-value").text(sampling.toFixed(2)+" s");
+    $("#envelope-width-value").text((freedom*100).toFixed(2)+"%");
+    $("#envelope-step-value").text((step*100).toFixed(2)+"%");
+}
+
+function on_number_of_matches_change()
+{
+    //this is called when we release the range slider
+
+    var matches = parseFloat($("#number-of-matches").val());
+    console.log("on change",matches);
+
+    //write the values to the backend
+    var query = [
+        {"browsePath":cockpitPath + ".StumpyMASS.maxNumberOfMatches", "value":matches}]
+
+    http_post("setProperties",JSON.stringify(query),null,null,null);
+}
+
+
+function on_envelope_params_change_resampling()
+{
+    //this is called when we release the range slider
+
+    var sampling = parseFloat($("#envelope-sampling-period").val());
+    console.log("on_envelope_params_change_resampling",sampling);
+    envelopeMotif.envelope.samplingPeriod[".properties"].value = sampling; //also store the change locally
+
+    //write the values to the numbers
+    write_range_slider_numerical_values();
+
+    //write the values to the backend
+    var query = [
+        {"id":envelopeMotif.envelope.samplingPeriod[".properties"].id,"value":sampling}];
+
+    http_post("setPropertiesQuiet",JSON.stringify(query),null,null,function(obj,status,data,params)
+    {
+        if (status<400)
+        {
+            //now also update the time series limit values by calling the update function
+            //http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+        }
+    });
+    http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+}
+
+function on_envelope_params_change_width()
+{
+    //this is called when we release the range slider
+
+
+    var freedom = parseFloat($("#envelope-width").val());
+    envelopeMotif.envelope.freedom[".properties"].value = freedom;
+
+
+    console.log("on on_envelope_params_change_width" ,freedom);
+
+    //write the values to the numbers
+    write_range_slider_numerical_values();
+
+    //write the values to the backend
+    var query = [{"id":envelopeMotif.envelope.freedom[".properties"].id,"value":freedom} ]
+
+    http_post("setPropertiesQuiet",JSON.stringify(query),null,null,function(obj,status,data,params)
+    {
+        if (status<400)
+        {
+            //now also update the time series limit values by calling the update function
+            //http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+        }
+    });
+    http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+
+
+}
+
+
+function on_envelope_params_change_step()
+{
+    //this is called when we release the range slider
+
+
+    var step = parseFloat($("#envelope-step").val());
+    envelopeMotif.envelope.step[".properties"].value = step; //also store the change locally
+
+    console.log("on on_envelope_params_change_step",step );
+
+    //write the values to the numbers
+    write_range_slider_numerical_values();
+
+    //write the values to the backend
+    var query = [{"id":envelopeMotif.envelope.step[".properties"].id,"value":step}]
+
+
+    http_post("setPropertiesQuiet",JSON.stringify(query),null,null,function(obj,status,data,params)
+    {
+        if (status<400)
+        {
+            //now also update the time series limit values by calling the update function
+            //http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+        }
+    });
+    http_post("/_execute",JSON.stringify(cockpitPath+".update"),null,null,null);
+
+
+}
+
+
+
+
+
+
+function cockpit_delete_envelope()
+{
+
+    confirm_dialog("Delete Envelope","Delete the envelope and all settings for this envelope","Delete",on_delete_confirm,"my");
+}
+
+
+function on_delete_confirm(x)
+{
+    console.log("delete confirm",x);
+    http_post("/_execute",JSON.stringify(cockpitPath+".delete"),null,null,null);
+}
+
+function cockpit_recreate_envelope()
+{
+    http_post("/_execute",JSON.stringify(cockpitPath+".recreate"),null,null,null);
+}
+
+
+function refresh_mining_results(progress)
+{
+    if (progress == 1)
+    {
+        http_post("_getbranchpretty",cockpitPath+".StumpyMASS", null,null, function(obj,status,data,params)
+        {
+            if (status == 200)
+            {
+                var data = JSON.parse(data);
+                $('#select-mining-result').empty();
+                var results = data.results['.properties'].value
+                for (var index in results)
+                {
+                    var optionEntry = "<option value="+index+" >"+results[index].format+"</option>"
+                    $('#select-mining-result').append(optionEntry);
+                }
+
+                /* if (data.maxNumberOfMatches['.properties'].value == results.length)
+                {
+                    console.log("LIMITS");
+                    confirm_dialog("Too many results","The number of results was limited to <br> EnvelopeMiner.MaxNumberOfMatches = "+String(results.length),"ok",null,null);
+                }
+                */
+
+
+            }
+        });
+    }
+    else if (progress == 0)
+    {
+        $('#select-mining-result').empty();
+    }
+
+}
+
+function select_result()
+{
+
+    var selected = parseInt($("#select-mining-result").val());
+    console.log("select",selected);
+    cockpit_motif_jump(0);
+}
+
+    </script>
+    </div>
+</div>
+
+
