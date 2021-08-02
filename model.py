@@ -1278,7 +1278,11 @@ class Model:
             self.model[parentId]["children"].append(newId)
             self.model[newId] = newNode
             if newNode["type"] == "timeseries":
-                self.time_series_create(newId)
+                if "tsAllocSize" in newNode:
+                    allocSize = newNode["tsAllocSize"]
+                else:
+                    allocSize = None
+                self.time_series_create(newId,allocSize = allocSize)
             if newNode["type"] == "eventseries":
                 self.event_series_create(newId)
             if newNode["type"] == "object":
@@ -3835,9 +3839,9 @@ class Model:
     # ########################################
     # time series api
 
-    def time_series_create(self,desc):
+    def time_series_create(self,desc,allocSize = None):
         id = self.get_id(desc)
-        return self.ts.create(id)
+        return self.ts.create(id,allocSize = allocSize)
 
     def time_series_delete(self,desc):
         id = self.get_id(desc)

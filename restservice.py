@@ -373,7 +373,7 @@ def all(path):
             path = path[:-1]
 
         # server all the frontend stuff: js, css etc
-        if any(extension in str(path) for extension in ['.js','.css','.htm','.img','.ico','.png','.gif','.map','.svg','.wof','.ttf','.pdf','.eot']):
+        if any(extension in str(path) for extension in ['.js','.css','.htm','.img','.ico','.png','.gif','.map','.svg','.wof','.ttf','.pdf']):
 
             logger.debug(" serve html "+ str(path))
             if "styles.css" in path:

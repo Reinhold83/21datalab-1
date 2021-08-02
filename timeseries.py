@@ -401,8 +401,10 @@ class TimeSeriesTable:
         """
         return list(self.store.keys()) # this makes a copy
 
-    def create(self,name):
-        self.store[name]=TimeSeries(allocSize=self.allocSize)
+    def create(self,name,allocSize=None):
+        if type(allocSize) is type(None):
+            allocSize = self.allocSize
+        self.store[name]=TimeSeries(allocSize=allocSize)
         return True
 
     def delete(self,name):
