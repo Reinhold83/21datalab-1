@@ -297,7 +297,7 @@ def envelope_miner(functionNode):
         diff = numpy.sum(numpy.power(x-expected["values"],2))
 
         if numpy.all(below>0) and numpy.all(above>0):
-            logger.debug(f"match @ {w[1][0]}")
+            logger.debug(f"match @ {w[1][0]}, iteration: {float(i)/float(numberOfWindows)}")
             matches.append({"startTime":dates.epochToIsoString(w[0][0],'Europe/Berlin'),
                             "endTime":dates.epochToIsoString(w[0][0]+windowTime,'Europe/Berlin'),
                             "match":diff,

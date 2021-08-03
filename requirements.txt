@@ -63,7 +63,7 @@ urllib3==1.25.8           # via requests
 wcwidth==0.1.8            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
 wheel==0.33.6             # via -r requirements.in (line 12)
- 
+stumpy==1.9.2             # for the stumpy pattern miner
  
 zeep==4.0.0                #
 

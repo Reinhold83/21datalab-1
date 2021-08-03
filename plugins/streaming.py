@@ -292,6 +292,9 @@ class Windowing:
         samplingTimes = self.__sample_times(self.currentStartTime,self.times[-1],self.samplePeriod)
         samplingIndices = np.searchsorted(self.times,samplingTimes)
         #print(f"no sampingIndices {samplingIndices}, sample times {samplingTimes}")
+        if samplingIndices[-1]>=len(self.times):
+            print("must reduce resampling times")
+            samplingIndices=samplingIndices[0:-1]
 
         #now downsample
         values = self.values[samplingIndices]

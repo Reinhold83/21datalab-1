@@ -73,7 +73,11 @@ def reader(functionNode):
             times = []
             for dateString in data[cols[0]]:
                 mydate = dateutil.parser.parse(dateString,dayfirst=True)
-                mydateAware = localtz.localize(mydate)
+                try:
+                    mydateAware = localtz.localize(mydate)
+                except:
+                    mydateAware = mydate # is already localized
+
                 epoch = model.date2secs(mydateAware)
                 times.append(epoch)
 
@@ -175,7 +179,10 @@ def raw_reader_2(functionNode):
             skipFile = False
             for dateString,timeString in zip(data[data.columns[0]].values,data[data.columns[1]].values):
                 mydate = dateutil.parser.parse(dateString+"T"+timeString,dayfirst=True) # dayfirst true for european notation
-                mydateAware = localtz.localize(mydate)
+                try:
+                    mydateAware = localtz.localize(mydate)
+                except:
+                    pass
                 epoch = model.date2secs(mydateAware)
                 times.append(epoch)
 
