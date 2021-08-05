@@ -283,9 +283,9 @@ class TimeSeriesWidgetDataServer():
 
             #now check the score vars
             if any([text in browsePath.lower() for text in ["score","limit","expected"]]):
-                varName = browsePath.split(".")[-1].split('_')[0]#take the variable NAME
+                varName = self.original_name(browsePath)
                 leavesproperties2 = self.mirror["selectedVariablesY2"][".properties"]["leavesProperties"]
-                if leavesproperties2:
+                if leavesproperties2 and varName:
                     for k, node in leavesproperties2.items():
                         if varName in node["browsePath"]:
                             return True
@@ -297,7 +297,8 @@ class TimeSeriesWidgetDataServer():
     def get_path(self):
         return self.path
 
-
+    def original_name(self, extName):
+        return '_'.join(extName.split('.')[-1].split('_')[:-1])
 
 
     def update_background_info_from_mirror(self):
@@ -3489,6 +3490,11 @@ class TimeSeriesWidget():
         backendLines = self.server.get_variables_selected()
         deleteLines = list(set(currentLines)-set(backendLines))
         newLines = list(set(backendLines)-set(currentLines))
+        #special case:
+        # the _limitMin lines are not listed in the self.lines, as we keep only the limitMax to store the band, so the limitmin
+        # is a variable in the backend but not in the lines, keep them out of the discussio here
+        newLines = [line for line in newLines if not line.endswith("_limitMin")]
+
         scoreVars = self.server.get_score_variables()  # we assume ending in _score
 
         self.logger.debug("diffanalysis new"+str(newLines)+"  del "+str(deleteLines))
@@ -3609,6 +3615,9 @@ class TimeSeriesWidget():
 
         if self.server.get_settings()["hasHover"] not in [False,None]:
             self.__make_tooltips() #must be the last in the drawings
+
+        if deleteLines or newLines:
+            self.server.get_selected_variables_sync()#make sure we update the changes completely
 
     def refresh_backgrounds_old(self):
         """ check if backgrounds must be drawn if not, we just hide them"""
