@@ -646,7 +646,7 @@ class Model:
     nodeTemplate = {"id": None, "name": None, "type": "folder", "parent": None, "children": [], "backRefs": [],"forwardRefs":[],"value":None}
 
 
-    def __init__(self):
+    def __init__(self,loadPlugins=True):
         """
             initialize an empty Model object, it will contain the root Node as folder with Id "0"
             during the initialization, also the plug-ins (all files in the ./plugin) are loaded:
@@ -675,7 +675,8 @@ class Model:
         self.executeFunctionRunning = False # set to true, makes sure only one functions runs at a time
 
         self.objectClasses = {}  # a dictionaryholding all object clases from the /plugins
-        self.import_default_plugins()
+        if loadPlugins:
+            self.import_default_plugins()
         self.differentialHandles ={} # containing model_copy entries to support differential queries
         self.diffHandleCounter = 0  # used only for debugging
         self.differentialHandlesMaxPerUser = 10
