@@ -141,20 +141,29 @@ class TimeSeries:
             Args:
                 withAllocSpace: if set true, we also make space for additional values
         """
+
+        #make sure the incoming is in time order and correct type
+        times = numpy.asarray(times,dtype=numpy.float64)
+        values = numpy.asarray(values,dtype=numpy.float64)
+        orderedIndices = numpy.argsort(times)
+        times = times[orderedIndices]
+        values = values[orderedIndices]
+
+
         with self.lock:
             if type(values) != type(None):
                 if withAllocSpace:
                     alloc = numpy.full(self.allocSize, numpy.nan, dtype=numpy.float64)
-                    self.values = numpy.append(numpy.asarray(values), alloc)
+                    self.values = numpy.append(values, alloc)
                 else:
-                    self.values = numpy.copy(numpy.asarray(values))
+                    self.values = numpy.copy(values)
                 self.lastValidIndex = len(values) -1
             if type(times) != type(None):
                 if withAllocSpace:
                     alloc = numpy.full(self.allocSize, numpy.nan, dtype=numpy.float64)
-                    self.times =numpy.append(numpy.asarray(times), alloc)
+                    self.times =numpy.append(times, alloc)
                 else:
-                    self.times = numpy.copy(numpy.asarray(times))
+                    self.times = numpy.copy(times)
                 self.lastValidIndex = len(times) - 1
             return True
 

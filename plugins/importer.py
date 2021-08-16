@@ -135,7 +135,7 @@ def import_run(iN):
     data = {}
     for field in fields:
         fieldno = int(field["no"]) - 1
-        fieldname = field["val"]
+        fieldname = str(field["val"]).replace('.','_')
         fieldvar = vars.create_child(fieldname, type="timeseries")
         if timefield != fieldno:
             data[fieldname] = df.iloc[ :, fieldno].to_list()
