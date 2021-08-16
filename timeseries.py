@@ -142,12 +142,22 @@ class TimeSeries:
                 withAllocSpace: if set true, we also make space for additional values
         """
 
+        # if both are set at the same time, we assure the right order
         #make sure the incoming is in time order and correct type
-        times = numpy.asarray(times,dtype=numpy.float64)
-        values = numpy.asarray(values,dtype=numpy.float64)
-        orderedIndices = numpy.argsort(times)
-        times = times[orderedIndices]
-        values = values[orderedIndices]
+        # there are cases where values and times are written in two steps (e.g. the timeseries.load from npz)
+        # for those cases we bypass theses extra checks
+
+        #type conversion
+        if type(times) != type(None):
+            times = numpy.asarray(times,dtype=numpy.float64)
+        if type(values) != type(None):
+            values = numpy.asarray(values,dtype=numpy.float64)
+
+        #check order if both come in at the same time
+        if type(times)!= type(None) and type(values)!= type(None) and len(times)>0 and len(values)>0:
+            orderedIndices = numpy.argsort(times)
+            times = times[orderedIndices]
+            values = values[orderedIndices]
 
 
         with self.lock:

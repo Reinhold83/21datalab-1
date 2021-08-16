@@ -36,6 +36,8 @@ PipeLineHead={
         {"name": "enabled", "type":"const","value":True},
         {"name": "processors","type":"referencer"},
         {"name": "variables","type":"referencer"},       #ref to the variables and eventseries (only one) for the renaming of incoming descriptors
+        {"name":"autoCreate","type":"const","value":False},
+        {"name":"autoCreateFolder","type":"referencer"},
         __functioncontrolfolder
     ]
 }
@@ -74,6 +76,7 @@ class PipelineHead():
         self.functionNode = functionNode
         self.model = functionNode.get_model()
         self.enabledNode = functionNode.get_child("enabled")
+
         #self.reset() #this is executed at startup
 
 
@@ -124,7 +127,19 @@ class PipelineHead():
                         v=[v]
                     newBlob[id]=numpy.asarray(v)
                 else:
-                    self.logger.error(f"__convert_to_ids__: cant find {k}")
+
+                    if self.autoCreate:
+                        self.logger.warning(f"__convert_to_ids__: cant find {k}.. autocreate it")
+                        startPath = self.functionNode.get_child("autoCreateFolder").get_target().get_browse_path()
+                        path = startPath+"."+k
+                        id = self.model.create_node_from_path(path,properties={"type":"timeseries"})
+                        newNode = self.model.get_node(id)
+                        self.varNameLookup.update({id:newNode,newNode.get_browse_path():newNode})
+                        newBlob[id]=numpy.asarray(v)
+                    else:
+                        self.logger.warning(f"__convert_to_ids__: cant find {k}, ignore!")
+
+
         return newBlob
 
     def reset(self,data=None):
@@ -148,6 +163,12 @@ class PipelineHead():
         #build the pipeline
         self.pipeline = Pipeline(self.functionNode.get_child("processors").get_targets())
         self.pipeline.reset() # reset all processors
+
+        if self.functionNode.get_child("autoCreate"):
+            self.autoCreate = self.functionNode.get_child("autoCreate").get_value()
+        else:
+            self.autoCreate = False
+
 
 
         return True

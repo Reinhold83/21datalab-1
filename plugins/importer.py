@@ -101,7 +101,7 @@ def import_run(iN):
     importsNode = importerNode.get_child("imports")
 
     # TODO importsNode.get_child(tablename).delete()
-    importsNode.create_child(tablename, type="table")
+    importsNode.create_child(tablename, type="folder")
     table = importsNode.get_child(tablename)
     table.create_child('variables', type="folder")
     table.create_child('columns', type="referencer")

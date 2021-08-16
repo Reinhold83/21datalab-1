@@ -3264,6 +3264,7 @@ class Model:
                 result = True
             except Exception as e:
                 self.logger.error("problem loading"+str(e))
+                self.log_error()
                 self.publish_status_msg(f"loading model {fileName} error.")
                 self.enable_observers()
                 result = False
