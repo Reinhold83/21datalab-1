@@ -3729,6 +3729,11 @@ class Model:
         absFileNames = [folder+"\\"+fileName for fileName in foundFileNames]
         return foundFileNames,absFileNames
 
+    def get_upload_folder_path(self):
+        full_path = os.path.realpath(__file__)  # returns a string representing the canonical path,  argument file is a file system path
+        path, filename = os.path.split(full_path)
+        folder = path + r'\upload'
+        return folder
 
 
 

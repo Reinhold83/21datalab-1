@@ -1,6 +1,6 @@
 from system import __functioncontrolfolder
 from typing import List
-from model import date2secs, Node
+from model import date2secs, Node, getRandomId
 #  from tqdm import tqdm
 import logging
 import pandas as pd 
@@ -55,6 +55,33 @@ pipeline = {
         importRunTemplate,
     ]
 }
+
+
+annotation_import = {
+   "name":"annotation_import_function",
+    "type":"function",
+    "functionPointer":"importer.annotation_import_function",   # filename.functionname
+    "autoReload":True,                             # set this to true to reload the module on each execution
+    "children":[
+        {"name":"targetFolder","type":"referencer"},
+        {"name":"fileName","type":"variable"},
+        {"name":"importReferences","type":"const","value":False},
+        __functioncontrolfolder
+    ]
+}
+
+annotation_export = {
+   "name":"annotation_export_function",
+    "type":"function",
+    "functionPointer":"importer.annotation_export_function",   # filename.functionname
+    "autoReload":True,                             # set this to true to reload the module on each execution
+    "children":[
+        {"name":"annotations","type":"referencer"},
+        {"name":"fileName","type":"variable","value":None},
+        __functioncontrolfolder
+    ]
+}
+
 
 def preview_file(iN):
 
@@ -154,3 +181,104 @@ def import_run(iN):
     logger.debug(f"import complete (seconds: {(dt.datetime.now()-timeStartImport).seconds})")
     return True
 
+
+
+def annotation_export_function(functionNode):
+    logger = functionNode.get_logger()
+    progressNode = functionNode.get_child("control").get_child("progress")
+    signalNode = functionNode.get_child("control").get_child("signal")
+    model = functionNode.get_model()
+    fileName = functionNode.get_child("fileName").get_value()
+    if type(fileName) is type(None):
+        modelPath = functionNode.get_model().get_info()["name"]
+        modelName = modelPath.split(os.sep)[-1]
+        absPath = model.get_upload_folder_path()+"/"+modelName+"_annos_"+getRandomId()+".json"
+    else:
+        if os.path.isabs(fileName):
+            absPath = fileName
+        else:
+            absPath = model.get_upload_folder_path()+"/"+fileName+".json"
+    logger.debug(f"export annotations to {absPath}")
+    f = open(absPath,"w")
+    first = True
+
+    #f.write("startTime,EndTime,type,tags,variables\n")
+    annos = functionNode.get_child("annotations").get_leaves()
+    progressOld = 0
+    for idx,anno in enumerate(annos):
+        progress = float(int(50*idx/len(annos)))/50
+        if progress!=progressOld:
+            progressNode.set_value(progress)
+            progressOld=progress
+            if signalNode.get_value()=="stop":
+                break
+
+
+
+        if anno.get_type()=="annotation":
+            keys = {"startTime":None,"endTime":None,"type":None,"tags":None,"variable":None,"min":None,"max":None}
+            template = {}
+            try:
+                for key in keys:
+                    ch = anno.get_child(key)
+                    if ch:
+                        if key!="variable":
+                            template[key]= ch.get_value()
+                        else:
+                            #logger.debug("var")
+                            template[key] = ch.get_target_ids()
+                if first:
+                    f.write("[\n")
+                    first=False
+                else:
+                    f.write(",\n")
+                f.write(json.dumps(template))
+            except Exception as ex:
+                logger.warning(f"problem with anno {anno.get_browse_path()}, {ex}")
+
+    f.write("]")
+    f.close()
+    return True
+
+
+def annotation_import_function(functionNode):
+    logger = functionNode.get_logger()
+    model = functionNode.get_model()
+    progressNode = functionNode.get_child("control").get_child("progress")
+    signalNode = functionNode.get_child("control").get_child("signal")
+    fileName = functionNode.get_child("fileName").get_value()
+    if os.path.isabs(fileName):
+        absPath = fileName
+    else:
+        if not fileName.endswith(".json"):
+            fileName = fileName+".json"
+        absPath = model.get_upload_folder_path()+"/"+ fileName
+
+    f=open(absPath,"r")
+    data = json.loads(f.read())
+    f.close()
+
+    targetFolder = functionNode.get_child("targetFolder").get_target()
+    progressOld = 0
+    for idx,anno in enumerate(data):
+        progress = float(int(50 * idx / len(data))) / 50
+        if progress != progressOld:
+            progressNode.set_value(progress)
+            progressOld = progress
+            if signalNode.get_value() == "stop":
+                break
+        treeAnno = targetFolder.create_child(name=getRandomId(),type="annotation")
+        model.disable_observers()
+        for k,v in anno.items():
+            if k !="variable":
+                treeAnno.create_child(name=k,type="const",value=v)
+            else:
+                variable = treeAnno.create_child(name=k,type="referencer")
+                if functionNode.get_child("importReferences").get_value():
+                    try:
+                        targetNodes = [ model.get_node(id) for id in v if model.get_node(id)]
+                        variable.add_references(targetNodes)
+                    except Exception as ex:
+                        logger.error(f"problem during import anno {ex}")
+        model.enable_observers()
+    return True
