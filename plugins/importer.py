@@ -201,11 +201,16 @@ def annotation_export_function(functionNode):
         else:
             absPath = model.get_upload_folder_path()+"/"+fileName+".json"
     logger.debug(f"export annotations to {absPath}")
+
+
+    annos = functionNode.get_child("annotations").get_leaves()
+    if not annos:
+        logger.info("no annos to export")
+        return True
+
     f = open(absPath,"w")
     first = True
 
-    #f.write("startTime,EndTime,type,tags,variables\n")
-    annos = functionNode.get_child("annotations").get_leaves()
     progressOld = 0
     for idx,anno in enumerate(annos):
         progress = float(int(50*idx/len(annos)))/50
