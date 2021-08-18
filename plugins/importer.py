@@ -60,12 +60,14 @@ pipeline = {
 annotation_import = {
    "name":"annotation_import_function",
     "type":"function",
-    "functionPointer":"importer.annotation_import_function",   # filename.functionname
-    "autoReload":True,                             # set this to true to reload the module on each execution
+    "functionPointer":"importer.annotation_import_function",            # filename.functionname
+    "autoReload":True,                                                  # set this to true to reload the module on each execution
     "children":[
         {"name":"targetFolder","type":"referencer"},
         {"name":"fileName","type":"variable"},
-        {"name":"importReferences","type":"const","value":False},
+        {"name":"importReferences","type":"const","value":False},       #if import references is set, we try to reconnect the annotations to variables using the id
+                                                                        # => this might fail when the ids in the new project are different, be careful here
+        {"name":"widgets","type":"referencer"},                         #if widgets are set, we integrate the annotations in the widgets and give them colors etc.
         __functioncontrolfolder
     ]
 }
@@ -260,6 +262,7 @@ def annotation_import_function(functionNode):
 
     targetFolder = functionNode.get_child("targetFolder").get_target()
     progressOld = 0
+    model.disable_observers()
     for idx,anno in enumerate(data):
         progress = float(int(50 * idx / len(data))) / 50
         if progress != progressOld:
@@ -268,7 +271,7 @@ def annotation_import_function(functionNode):
             if signalNode.get_value() == "stop":
                 break
         treeAnno = targetFolder.create_child(name=getRandomId(),type="annotation")
-        model.disable_observers()
+
         for k,v in anno.items():
             if k !="variable":
                 treeAnno.create_child(name=k,type="const",value=v)
@@ -280,5 +283,37 @@ def annotation_import_function(functionNode):
                         variable.add_references(targetNodes)
                     except Exception as ex:
                         logger.error(f"problem during import anno {ex}")
+    model.enable_observers()
+
+    #now integrate them into the widget
+    #first find all tags in the imported annos
+    newTags = set()
+    for anno in data:
+        if "tags" in anno:
+            for tag in anno["tags"]:
+                newTags.add(tag)
+
+    cols = ["#050F2C", "#003666", "#00AEFF", "#3369E7", "#8E43E7", "#B84592", "#FF4F81", "#FF6C5F", "#FFC168", "#2DDE98", "#1CC7D0"]
+    # from http://brandcolors.net/ algolia
+    for widget in functionNode.get_child("widgets").get_targets():
+        #get the current colors
+        colors = widget.get_child("hasAnnotation.colors").get_value()
+        visibleTags = widget.get_child("hasAnnotation.visibleTags").get_value()
+        tags = widget.get_child("hasAnnotation.tags").get_value()
+        print("before",colors, visibleTags)
+        for idx,tag in enumerate(newTags):
+            if tag in colors:
+                continue # we have this already
+            else:
+                #must add the tag
+                colors[tag]={"color":cols[idx%11], "pattern":None}
+                visibleTags[tag]=False
+                tags.append(tag)
+
+        print(colors,visibleTags)
+        model.disable_observers()
+        widget.get_child("hasAnnotation.visibleTags").set_value(visibleTags)
+        widget.get_child("hasAnnotation.tags").set_value(tags)
         model.enable_observers()
+        widget.get_child("hasAnnotation.colors").set_value(colors)
     return True
