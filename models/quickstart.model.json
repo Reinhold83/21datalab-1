@@ -135,7 +135,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "1970-01-01T00:59:59.999967+01:00",
+        "value": "2015-02-11T15:20:00+01:00",
         "browsePath": "root.visualization.workbench.startTime"
     },
     "131": {
@@ -148,7 +148,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "1970-01-01T01:00:00.001820+01:00",
+        "value": "2015-02-18T08:34:00+01:00",
         "browsePath": "root.visualization.workbench.endTime"
     },
     "132": {
@@ -217,7 +217,10 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": [],
+        "value": [
+            "one",
+            "two"
+        ],
         "browsePath": "root.visualization.workbench.hasAnnotation.tags"
     },
     "137": {
@@ -228,7 +231,16 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": {},
+        "value": {
+            "one": {
+                "color": "#050F2C",
+                "pattern": null
+            },
+            "two": {
+                "color": "#003666",
+                "pattern": null
+            }
+        },
         "browsePath": "root.visualization.workbench.hasAnnotation.colors"
     },
     "139": {
@@ -615,7 +627,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 216,
+        "value": 218,
         "browsePath": "root.visualization.workbench.observerVariables.triggerCounter"
     },
     "645": {
@@ -626,7 +638,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:46:34.478708",
+        "value": "2021-08-19T08:29:17.159358",
         "browsePath": "root.visualization.workbench.observerVariables.lastTriggerTime"
     },
     "646": {
@@ -839,7 +851,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 108,
+        "value": 110,
         "browsePath": "root.visualization.workbench.observerStream.triggerCounter"
     },
     "663": {
@@ -850,7 +862,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:46:05.966016",
+        "value": "2021-08-19T08:25:12.646422",
         "browsePath": "root.visualization.workbench.observerStream.lastTriggerTime"
     },
     "664": {
@@ -998,7 +1010,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 1126,
+        "value": 1130,
         "browsePath": "root.visualization.workbench.observerAnnotations.triggerCounter"
     },
     "13646722735659859395": {
@@ -1009,7 +1021,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:23:08.441187",
+        "value": "2021-08-19T08:25:33.061094",
         "browsePath": "root.visualization.workbench.observerAnnotations.lastTriggerTime"
     },
     "12416654533870087467": {
@@ -1021,7 +1033,8 @@
         "backRefs": [],
         "forwardRefs": [
             "135",
-            "134"
+            "134",
+            "14327891330844180191"
         ],
         "value": null,
         "browsePath": "root.visualization.workbench.observerAnnotations.targets"
@@ -1112,7 +1125,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 1636,
+        "value": 1639,
         "browsePath": "root.visualization.workbench.observerVisibleElements.triggerCounter"
     },
     "15683200324838571042": {
@@ -1123,7 +1136,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-18T13:53:37.188391",
+        "value": "2021-08-19T08:25:15.885453",
         "browsePath": "root.visualization.workbench.observerVisibleElements.lastTriggerTime"
     },
     "13071347114919871021": {
@@ -1313,7 +1326,10 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": {},
+        "value": {
+            "one": true,
+            "two": false
+        },
         "browsePath": "root.visualization.workbench.hasAnnotation.visibleTags"
     },
     "8010023856369252828": {
@@ -1453,11 +1469,8 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": {
-            "root.importer.imports.csv_in_21data_format_csv.variables.PartCounterOverall": {
+            "root.importer.imports.occupancydemo_csv.variables.Temperature": {
                 "lineColor": "#D9B100"
-            },
-            "root.importer.imports.csv_in_21data_format_csv.variables.Status_3": {
-                "lineColor": "#eba4fc"
             }
         },
         "browsePath": "root.visualization.workbench.currentColors"
@@ -1540,7 +1553,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 800,
+        "value": 804,
         "browsePath": "root.system.progress.triggerCounter"
     },
     "10857910486653991896": {
@@ -1551,7 +1564,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2020-11-02T11:13:41.534580",
+        "value": "2021-08-19T08:23:33.554857",
         "browsePath": "root.system.progress.lastTriggerTime"
     },
     "16724694746718170912": {
@@ -1966,7 +1979,7 @@
             "15729178998903584294"
         ],
         "forwardRefs": [],
-        "value": 184,
+        "value": 185,
         "browsePath": "root.importer.importer_preview.control.executionCounter"
     },
     "11415052170816904150": {
@@ -1977,7 +1990,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0.131905,
+        "value": 0.022621,
         "browsePath": "root.importer.importer_preview.control.lastExecutionDuration"
     },
     "9789011534106794761": {
@@ -1988,7 +2001,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:44:17.787544",
+        "value": "2021-08-19T08:25:02.718811",
         "browsePath": "root.importer.importer_preview.control.lastStartTime"
     },
     "17003395223414030424": {
@@ -2010,7 +2023,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "{\"schema\":{\"fields\":[{\"name\":\"index\",\"type\":\"integer\"},{\"name\":\"date\",\"type\":\"string\"},{\"name\":\"SerialNumber\",\"type\":\"integer\"},{\"name\":\"OperationTimeOverall\",\"type\":\"integer\"},{\"name\":\"FeedOverride\",\"type\":\"number\"},{\"name\":\"Status\",\"type\":\"integer\"},{\"name\":\"Status.1\",\"type\":\"number\"},{\"name\":\"Status.2\",\"type\":\"number\"},{\"name\":\"Status.3\",\"type\":\"number\"},{\"name\":\"MainSpindleOverride\",\"type\":\"number\"},{\"name\":\"PowerOnTimeOverall\",\"type\":\"integer\"},{\"name\":\"ControllerMode\",\"type\":\"integer\"},{\"name\":\"ChannelNumber\",\"type\":\"integer\"},{\"name\":\"ToolName\",\"type\":\"integer\"},{\"name\":\"NumberOfActiveAlarms\",\"type\":\"integer\"},{\"name\":\"NumberOfActiveTool\",\"type\":\"integer\"},{\"name\":\"PartsDesired\",\"type\":\"integer\"},{\"name\":\"RapidOverride\",\"type\":\"number\"},{\"name\":\"ExecutionState\",\"type\":\"integer\"},{\"name\":\"Color\",\"type\":\"integer\"},{\"name\":\"PartCounter\",\"type\":\"integer\"},{\"name\":\"Color.1\",\"type\":\"number\"},{\"name\":\"Color.2\",\"type\":\"number\"},{\"name\":\"PartCounterOverall\",\"type\":\"integer\"},{\"name\":\"Color.3\",\"type\":\"number\"}],\"primaryKey\":[\"index\"],\"pandas_version\":\"0.20.0\"},\"data\":[{\"index\":0,\"date\":\"2021-08-11 10:24:41.687000\",\"SerialNumber\":12400001993,\"OperationTimeOverall\":2175469,\"FeedOverride\":100.0,\"Status\":0,\"Status.1\":null,\"Status.2\":null,\"Status.3\":null,\"MainSpindleOverride\":100.0,\"PowerOnTimeOverall\":4938004,\"ControllerMode\":1,\"ChannelNumber\":1,\"ToolName\":410020,\"NumberOfActiveAlarms\":0,\"NumberOfActiveTool\":55,\"PartsDesired\":0,\"RapidOverride\":100.0,\"ExecutionState\":1,\"Color\":0,\"PartCounter\":0,\"Color.1\":null,\"Color.2\":null,\"PartCounterOverall\":615,\"Color.3\":null},{\"index\":1,\"date\":\"2021-08-11 10:25:11.717000\",\"SerialNumber\":12400001993,\"OperationTimeOverall\":2175499,\"FeedOverride\":100.0,\"Status\":0,\"Status.1\":null,\"Status.2\":null,\"Status.3\":null,\"MainSpindleOverride\":100.0,\"PowerOnTimeOverall\":4938034,\"ControllerMode\":1,\"ChannelNumber\":1,\"ToolName\":410020,\"NumberOfActiveAlarms\":0,\"NumberOfActiveTool\":55,\"PartsDesired\":0,\"RapidOverride\":100.0,\"ExecutionState\":1,\"Color\":0,\"PartCounter\":0,\"Color.1\":null,\"Color.2\":null,\"PartCounterOverall\":615,\"Color.3\":null},{\"index\":2,\"date\":\"2021-08-11 10:25:01.670000\",\"SerialNumber\":12400001993,\"OperationTimeOverall\":2175489,\"FeedOverride\":100.0,\"Status\":0,\"Status.1\":null,\"Status.2\":null,\"Status.3\":null,\"MainSpindleOverride\":100.0,\"PowerOnTimeOverall\":4938024,\"ControllerMode\":1,\"ChannelNumber\":1,\"ToolName\":410020,\"NumberOfActiveAlarms\":0,\"NumberOfActiveTool\":55,\"PartsDesired\":0,\"RapidOverride\":100.0,\"ExecutionState\":1,\"Color\":0,\"PartCounter\":0,\"Color.1\":null,\"Color.2\":null,\"PartCounterOverall\":615,\"Color.3\":null},{\"index\":3,\"date\":\"2021-08-11 10:24:47.173000\",\"SerialNumber\":12400001993,\"OperationTimeOverall\":2175479,\"FeedOverride\":100.0,\"Status\":0,\"Status.1\":null,\"Status.2\":null,\"Status.3\":null,\"MainSpindleOverride\":100.0,\"PowerOnTimeOverall\":4938014,\"ControllerMode\":1,\"ChannelNumber\":1,\"ToolName\":410020,\"NumberOfActiveAlarms\":0,\"NumberOfActiveTool\":55,\"PartsDesired\":0,\"RapidOverride\":100.0,\"ExecutionState\":1,\"Color\":0,\"PartCounter\":0,\"Color.1\":null,\"Color.2\":null,\"PartCounterOverall\":615,\"Color.3\":null},{\"index\":4,\"date\":\"2021-08-11 10:24:57.150000\",\"SerialNumber\":12400001993,\"OperationTimeOverall\":2175489,\"FeedOverride\":100.0,\"Status\":0,\"Status.1\":null,\"Status.2\":null,\"Status.3\":null,\"MainSpindleOverride\":100.0,\"PowerOnTimeOverall\":4938024,\"ControllerMode\":1,\"ChannelNumber\":1,\"ToolName\":410020,\"NumberOfActiveAlarms\":0,\"NumberOfActiveTool\":55,\"PartsDesired\":0,\"RapidOverride\":100.0,\"ExecutionState\":1,\"Color\":0,\"PartCounter\":0,\"Color.1\":null,\"Color.2\":null,\"PartCounterOverall\":615,\"Color.3\":null}]}",
+        "value": "{\"schema\":{\"fields\":[{\"name\":\"index\",\"type\":\"integer\"},{\"name\":\"__time\",\"type\":\"string\"},{\"name\":\"Temperature\",\"type\":\"number\"},{\"name\":\"Humidity\",\"type\":\"number\"},{\"name\":\"Light\",\"type\":\"number\"},{\"name\":\"CO2\",\"type\":\"number\"},{\"name\":\"HumidityRatio\",\"type\":\"number\"},{\"name\":\"Occupancy\",\"type\":\"number\"}],\"primaryKey\":[\"index\"],\"pandas_version\":\"0.20.0\"},\"data\":[{\"index\":0,\"__time\":\"2015-02-11T13:48:00+00:00\",\"Temperature\":21.76,\"Humidity\":31.1333333333,\"Light\":437.3333333333,\"CO2\":1029.6666666667,\"HumidityRatio\":0.0050210109,\"Occupancy\":1.0},{\"index\":1,\"__time\":\"2015-02-11T13:49:00+00:00\",\"Temperature\":21.79,\"Humidity\":31.0,\"Light\":437.3333333333,\"CO2\":1000.0,\"HumidityRatio\":0.0050085813,\"Occupancy\":1.0},{\"index\":2,\"__time\":\"2015-02-11T13:50:00+00:00\",\"Temperature\":21.7675,\"Humidity\":31.1225,\"Light\":434.0,\"CO2\":1003.75,\"HumidityRatio\":0.0050215691,\"Occupancy\":1.0},{\"index\":3,\"__time\":\"2015-02-11T13:51:00+00:00\",\"Temperature\":21.7675,\"Humidity\":31.1225,\"Light\":439.0,\"CO2\":1009.5,\"HumidityRatio\":0.0050215691,\"Occupancy\":1.0},{\"index\":4,\"__time\":\"2015-02-11T13:52:00+00:00\",\"Temperature\":21.79,\"Humidity\":31.1333333333,\"Light\":437.3333333333,\"CO2\":1005.6666666667,\"HumidityRatio\":0.0050302978,\"Occupancy\":1.0}]}",
         "browsePath": "root.importer.importer_preview.data_preview"
     },
     "6899507005701698492": {
@@ -2054,7 +2067,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 178,
+        "value": 179,
         "browsePath": "root.importer.observer.triggerCounter"
     },
     "5054980845379168330": {
@@ -2161,7 +2174,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "csv_in_21data_format.csv",
+        "value": "occupancydemo.csv",
         "browsePath": "root.importer.importer_preview.fileName"
     },
     "6636804428678562831": {
@@ -2253,7 +2266,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 30,
+        "value": 31,
         "browsePath": "root.importer.importer_import.control.executionCounter"
     },
     "15095161392115402281": {
@@ -2264,7 +2277,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 4.143095,
+        "value": 1.773979,
         "browsePath": "root.importer.importer_import.control.lastExecutionDuration"
     },
     "11831237733371818659": {
@@ -2275,7 +2288,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:46:02.007815",
+        "value": "2021-08-19T08:25:10.889464",
         "browsePath": "root.importer.importer_import.control.lastStartTime"
     },
     "4658324870008208400": {
@@ -2297,7 +2310,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "csv_in_21data_format_csv",
+        "value": "occupancydemo_csv",
         "browsePath": "root.importer.importer_import.tablename"
     },
     "6692896403717056572": {
@@ -2308,7 +2321,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "{\"fields\":[{\"id\":\"importer-field-name-3 \",\"no\":\"3 \",\"val\":\"OperationTimeOverall\",\"use\":true},{\"id\":\"importer-field-name-4 \",\"no\":\"4 \",\"val\":\"FeedOverride\",\"use\":true},{\"id\":\"importer-field-name-5 \",\"no\":\"5 \",\"val\":\"Status\",\"use\":true},{\"id\":\"importer-field-name-6 \",\"no\":\"6 \",\"val\":\"Status.1\",\"use\":true},{\"id\":\"importer-field-name-7 \",\"no\":\"7 \",\"val\":\"Status.2\",\"use\":true},{\"id\":\"importer-field-name-8 \",\"no\":\"8 \",\"val\":\"Status.3\",\"use\":true},{\"id\":\"importer-field-name-22 \",\"no\":\"22 \",\"val\":\"Color.2\",\"use\":true},{\"id\":\"importer-field-name-23 \",\"no\":\"23 \",\"val\":\"PartCounterOverall\",\"use\":true}],\"filename\":\"csv_in_21data_format.csv\",\"timefield\":\"1 \",\"headerexists\":true}",
+        "value": "{\"fields\":[{\"id\":\"importer-field-name-2 \",\"no\":\"2 \",\"val\":\"Temperature\",\"use\":true}],\"filename\":\"occupancydemo.csv\",\"timefield\":\"1 \",\"headerexists\":true}",
         "browsePath": "root.importer.importer_import.metadata"
     },
     "14578804319044543202": {
@@ -2334,7 +2347,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:44:17.929462",
+        "value": "2021-08-19T08:25:02.743454",
         "browsePath": "root.importer.observer.lastTriggerTime"
     },
     "4307244501275852324": {
@@ -2550,7 +2563,8 @@
         "parent": "6557013022537618053",
         "children": [],
         "backRefs": [
-            "25998318472993105"
+            "25998318472993105",
+            "3893737263005185798"
         ],
         "forwardRefs": [],
         "value": null,
@@ -3199,7 +3213,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 79,
+        "value": 83,
         "browsePath": "root.visualization.expert.observerAnnotations.triggerCounter"
     },
     "7141718113078038395": {
@@ -3210,7 +3224,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:23:08.447205",
+        "value": "2021-08-19T08:25:33.062093",
         "browsePath": "root.visualization.expert.observerAnnotations.lastTriggerTime"
     },
     "3893737263005185798": {
@@ -3221,7 +3235,9 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [
-            "6129772571357712590"
+            "6129772571357712590",
+            "5156640814601994346",
+            "14327891330844180191"
         ],
         "value": null,
         "browsePath": "root.visualization.expert.observerAnnotations.targets"
@@ -6513,7 +6529,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "t12_reduced_annos_756b03f4",
+        "value": "quickstart_annos_9898e863",
         "browsePath": "root.annotations im export.new_annotation_import_34b0.fileName"
     },
     "4405987138752460010": {
@@ -6568,7 +6584,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "idle",
+        "value": "finished",
         "browsePath": "root.annotations im export.new_annotation_import_34b0.control.status"
     },
     "17108540719032300263": {
@@ -6612,7 +6628,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0,
+        "value": 1,
         "browsePath": "root.annotations im export.new_annotation_import_34b0.control.executionCounter"
     },
     "17719284733056860027": {
@@ -6623,7 +6639,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0,
+        "value": 0.019622,
         "browsePath": "root.annotations im export.new_annotation_import_34b0.control.lastExecutionDuration"
     },
     "1988017547621448935": {
@@ -6634,7 +6650,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "not yet",
+        "value": "2021-08-19T08:23:33.532232",
         "browsePath": "root.annotations im export.new_annotation_import_34b0.control.lastStartTime"
     },
     "17807952508112875660": {
@@ -6656,7 +6672,9 @@
         "children": [],
         "backRefs": [
             "8994390813337705378",
-            "25998318472993105"
+            "25998318472993105",
+            "12416654533870087467",
+            "3893737263005185798"
         ],
         "forwardRefs": [],
         "value": null,
