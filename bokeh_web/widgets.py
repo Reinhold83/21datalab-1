@@ -3249,6 +3249,12 @@ class TimeSeriesWidget():
                     newList.insert(0,elem)
             newVars = newList
 
+        if newVars and not self.lines:
+            #this is the first lines after a blank canvas
+            resetXAxis=True
+        else:
+            resetXAxis=False
+
         for variableName in newVars:
             if variableName.endswith('__time'):
                 continue
@@ -3417,6 +3423,8 @@ class TimeSeriesWidget():
         else:
             self.plot.legend.items = legendItems #replace them
 
+        if resetXAxis:
+            self.reset_x_axis()
         self.set_x_axis()
         self.server.set_y_range(self.plot.y_range.start,self.plot.y_range.end)
         #self.adjust_y_axis_limits()
@@ -3464,6 +3472,14 @@ class TimeSeriesWidget():
                 maxi=max(check)
         return mini,maxi
 
+
+    def reset_x_axis(self):
+        mini = 1000*1000*1000*1000*1000
+        maxi = 0
+        for item in self.columnData:
+            mini=min(min(self.columnData[item].data["x"]),mini)
+            maxi = max(max(self.columnData[item].data["x"]),maxi)
+        self.set_x_axis(start=mini,end=maxi)
 
     def set_x_axis(self,start=None,end=None):
         if start:
@@ -4449,7 +4465,7 @@ class TimeSeriesWidget():
                 self.annoHovers.append(self.annotationsInfo[tag]["renderer"])
 
         except Exception as ex:
-            self.logger.error(f"error draw annotation {anno}" + str(ex))
+            self.logger.error(f"error create_annotations_glyphn {tag}" + str(ex))
             return None
 
     def hide_all_events(self):
