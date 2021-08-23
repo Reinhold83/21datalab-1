@@ -1095,7 +1095,7 @@ class TimeSeriesWidget():
             self.logger.debug(f"must reload events")
             self.__dispatch_function(self.update_events,data)
 
-        elif data["event"] == "global.evenSeries.value":
+        elif data["event"] == "global.eventSeries.value":
             self.logger.debug(f"must reload events")
             self.__dispatch_function(self.update_events, data)
 
@@ -3190,7 +3190,12 @@ class TimeSeriesWidget():
         if self.streamingMode and appendingDataArrived:
             getData = self.server.get_data(variablesRequest, -self.streamingInterval, None,self.server.get_settings()["bins"])
         else:
-            getData = self.server.get_data(variablesRequest,self.rangeStart,self.rangeEnd,settings["bins"]) # for debug
+            if not self.lines:
+                # if we don't have lines yet, we get the full time range of the "new" variable
+                start,end = None,None
+            else:
+                start,end = self.rangeStart,self.rangeEnd
+            getData = self.server.get_data(variablesRequest,start,end,settings["bins"]) # for debug
 
         #self.logger.debug("GETDATA:"+str(getData))
         if not getData:
@@ -4418,6 +4423,7 @@ class TimeSeriesWidget():
              anno: the annotation
              visible: true/false
         """
+        self.logger.debug(f"create_annotations_glyph {tag}")
         try:
             # self.logger.debug(f"draw_annotation  {anno['name']} visible {visible}")
             mirror = self.server.get_mirror()

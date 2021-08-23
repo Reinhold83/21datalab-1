@@ -1253,6 +1253,7 @@ class Model:
             Returns:
                 (string) nodeid,
                  None for problem durinf creation
+                 it also returns the id if it existed already
         """
         #check if parent exists
         with self.lock:
@@ -1263,7 +1264,7 @@ class Model:
             newpath = self.get_browse_path(parent)+"."+name
             if self.get_id(newpath):
                 #we found it, it exists alreay, so we can't create it
-                return None
+                return self.get_id(newpath)
             # we can create this node
             if self.idCreationHash == True:
                 newId = str((random.randrange(2**64))) # a 64 bit random value

@@ -20,6 +20,7 @@ logisticRegressionTemplate= {
         {"name":"output","type":"referencer"},
         {"name":"annotations","type":"referencer"},             #the user annotations
         {"name":"categoryMap","type":"const"},                  #logistic regression work on categories, this is the number mapper, INPUT
+        {"name":"autoCreateCategoryMap","type":"const","value":True},    #set this to true to generate the category map from here (otherwise it must be manually created)
         {"name":"resamplePeriod","type":"const","value":None},   #reampling, if null, we take times from the first variable
         __functioncontrolfolder
     ]
@@ -33,7 +34,7 @@ def logistic_regression(functionNode):
     logger.info("==>>>> in logisticregression_ " + functionNode.get_browse_path())
 
     # now get the input and outputs
-    inputNodes = functionNode.get_child("input").get_leaves()
+    inputNodes = [node for node in functionNode.get_child("input").get_leaves() if node.get_type()=="timeseries"]
     for node in inputNodes:
         logger.debug("input node" + node.get_browse_path())
 
@@ -67,6 +68,17 @@ def logistic_regression(functionNode):
         times = numpy.arange(times[0],times[-1],period)
 
     # get the annotation map
+    autoCreateCategoryMapChild = functionNode.get_child("autoCreateCategoryMap")
+    if autoCreateCategoryMapChild:
+        if autoCreateCategoryMapChild.get_value()==True:
+            #must generate the tagsmap now
+            tags = set()
+            for anno in annotations:
+                if anno.get_child("tags"):
+                    tags.update(anno.get_child("tags").get_value())
+            tagsDict = {tag:str(idx) for idx,tag in enumerate(tags)}
+            functionNode.get_child("categoryMap").set_value(tagsDict)
+
     tagsMap = functionNode.get_child("categoryMap").get_value()  # pick the category mapping from the model
 
 

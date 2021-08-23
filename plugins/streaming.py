@@ -134,7 +134,7 @@ class PipelineHead():
                         path = startPath+"."+k
                         id = self.model.create_node_from_path(path,properties={"type":"timeseries"})
                         newNode = self.model.get_node(id)
-                        self.varNameLookup.update({id:newNode,newNode.get_browse_path():newNode})
+                        self.varNameLookup.update({id:newNode,newNode.get_browse_path():newNode,k:newNode})
                         newBlob[id]=numpy.asarray(v)
                     else:
                         self.logger.warning(f"__convert_to_ids__: cant find {k}, ignore!")

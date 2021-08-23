@@ -12,7 +12,8 @@
             "25998318472993105",
             "17162802681501881648",
             "17484300536057046772",
-            "967600582435318974"
+            "967600582435318974",
+            "2308509262368844394"
         ],
         "parent": "0",
         "id": "1",
@@ -88,7 +89,8 @@
             "526",
             "6949918641293764627",
             "9534121590586708044",
-            "14290236553442220804"
+            "14290236553442220804",
+            "17223766277109164005"
         ],
         "forwardRefs": [],
         "value": null,
@@ -119,7 +121,9 @@
         "backRefs": [
             "646",
             "10029816200158863035",
-            "664"
+            "664",
+            "2872053471913235827",
+            "13024056018586961420"
         ],
         "forwardRefs": [],
         "value": null,
@@ -217,10 +221,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": [
-            "one",
-            "two"
-        ],
+        "value": [],
         "browsePath": "root.visualization.workbench.hasAnnotation.tags"
     },
     "137": {
@@ -231,16 +232,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": {
-            "one": {
-                "color": "#050F2C",
-                "pattern": null
-            },
-            "two": {
-                "color": "#003666",
-                "pattern": null
-            }
-        },
+        "value": {},
         "browsePath": "root.visualization.workbench.hasAnnotation.colors"
     },
     "139": {
@@ -558,7 +550,9 @@
             "10029816200158863035",
             "664"
         ],
-        "forwardRefs": [],
+        "forwardRefs": [
+            "12798564166890107149"
+        ],
         "value": null,
         "browsePath": "root.visualization.workbench.scoreVariables"
     },
@@ -955,7 +949,8 @@
         "backRefs": [],
         "forwardRefs": [
             "10961192520235699890",
-            "2422443752542391788"
+            "2422443752542391788",
+            "2308509262368844394"
         ],
         "value": null,
         "browsePath": "root.visualization.workbench.contextMenuFunctions"
@@ -1125,7 +1120,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 1639,
+        "value": 1640,
         "browsePath": "root.visualization.workbench.observerVisibleElements.triggerCounter"
     },
     "15683200324838571042": {
@@ -1136,7 +1131,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-19T08:25:15.885453",
+        "value": "2021-08-19T16:24:14.810443",
         "browsePath": "root.visualization.workbench.observerVisibleElements.lastTriggerTime"
     },
     "13071347114919871021": {
@@ -1151,7 +1146,8 @@
             "1188292716290351284",
             "8639743599502979877",
             "130",
-            "131"
+            "131",
+            "14940877245906809241"
         ],
         "value": null,
         "browsePath": "root.visualization.workbench.observerVisibleElements.targets"
@@ -1326,10 +1322,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": {
-            "one": true,
-            "two": false
-        },
+        "value": {},
         "browsePath": "root.visualization.workbench.hasAnnotation.visibleTags"
     },
     "8010023856369252828": {
@@ -1497,7 +1490,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": true,
+        "value": false,
         "browsePath": "root.visualization.workbench.panOnlyX"
     },
     "15449664376381869170": {
@@ -1755,7 +1748,8 @@
         "parent": "127",
         "children": [],
         "backRefs": [
-            "1215376492513729480"
+            "1215376492513729480",
+            "13071347114919871021"
         ],
         "forwardRefs": [],
         "value": false,
@@ -1790,7 +1784,7 @@
     },
     "1215376492513729480": {
         "id": "1215376492513729480",
-        "name": "streaming Mode",
+        "name": "auto scroll",
         "type": "referencer",
         "parent": "17333622775446030886",
         "children": [],
@@ -1799,7 +1793,7 @@
             "14940877245906809241"
         ],
         "value": null,
-        "browsePath": "root.visualization.workbench.contextMenuSettings.streaming Mode"
+        "browsePath": "root.visualization.workbench.contextMenuSettings.auto scroll"
     },
     "7406513117600242278": {
         "id": "7406513117600242278",
@@ -2434,7 +2428,8 @@
         "backRefs": [
             "6744037968663413026",
             "9534121590586708044",
-            "3217694773770556436"
+            "3217694773770556436",
+            "17223766277109164005"
         ],
         "forwardRefs": [],
         "value": null,
@@ -2473,7 +2468,9 @@
         "parent": "6326365480006829771",
         "children": [],
         "backRefs": [
-            "12181820860239447104"
+            "12181820860239447104",
+            "2872053471913235827",
+            "13024056018586961420"
         ],
         "forwardRefs": [],
         "value": null,
@@ -2496,7 +2493,9 @@
         "type": "variable",
         "parent": "6326365480006829771",
         "children": [],
-        "backRefs": [],
+        "backRefs": [
+            "16039525705259183376"
+        ],
         "forwardRefs": [],
         "value": "2021-08-16T13:53:48.470594+02:00",
         "browsePath": "root.visualization.expert.startTime"
@@ -2507,7 +2506,9 @@
         "type": "variable",
         "parent": "6326365480006829771",
         "children": [],
-        "backRefs": [],
+        "backRefs": [
+            "16039525705259183376"
+        ],
         "forwardRefs": [],
         "value": "2021-08-16T13:55:23.429778+02:00",
         "browsePath": "root.visualization.expert.endTime"
@@ -2776,7 +2777,9 @@
         "parent": "6326365480006829771",
         "children": [],
         "backRefs": [],
-        "forwardRefs": [],
+        "forwardRefs": [
+            "12798564166890107149"
+        ],
         "value": null,
         "browsePath": "root.visualization.expert.scoreVariables"
     },
@@ -3169,7 +3172,9 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [
-            "2422443752542391788"
+            "2422443752542391788",
+            "10961192520235699890",
+            "2308509262368844394"
         ],
         "value": null,
         "browsePath": "root.visualization.expert.contextMenuFunctions"
@@ -3352,7 +3357,10 @@
         "forwardRefs": [
             "16919047018694217290",
             "10887882827667970242",
-            "18397022879237674729"
+            "18397022879237674729",
+            "7473901729145173988",
+            "15273618965013842370",
+            "16023099261705078089"
         ],
         "value": null,
         "browsePath": "root.visualization.expert.observerVisibleElements.targets"
@@ -3553,7 +3561,8 @@
         "parent": "6326365480006829771",
         "children": [],
         "backRefs": [
-            "16039525705259183376"
+            "16039525705259183376",
+            "9842064627617453154"
         ],
         "forwardRefs": [],
         "value": true,
@@ -3576,7 +3585,10 @@
         "type": "const",
         "parent": "6326365480006829771",
         "children": [],
-        "backRefs": [],
+        "backRefs": [
+            "7820472158414336687",
+            "16039525705259183376"
+        ],
         "forwardRefs": [],
         "value": false,
         "browsePath": "root.visualization.expert.streamingMode"
@@ -3597,7 +3609,10 @@
         "name": "contextMenuSettings",
         "type": "folder",
         "parent": "6326365480006829771",
-        "children": [],
+        "children": [
+            "9842064627617453154",
+            "7820472158414336687"
+        ],
         "backRefs": [],
         "forwardRefs": [],
         "value": null,
@@ -3896,7 +3911,7 @@
     },
     "10961192520235699890": {
         "id": "10961192520235699890",
-        "name": "logistic_regression",
+        "name": "classify (logregression)",
         "type": "function",
         "parent": "1",
         "children": [
@@ -3909,13 +3924,14 @@
             "16463869669775406288"
         ],
         "backRefs": [
-            "14814504338557830832"
+            "14814504338557830832",
+            "13272872670477514282"
         ],
         "forwardRefs": [],
         "value": null,
         "functionPointer": "logisticregression.logistic_regression",
         "autoReload": true,
-        "browsePath": "root.logistic_regression"
+        "browsePath": "root.classify (logregression)"
     },
     "917548285083636271": {
         "id": "917548285083636271",
@@ -3928,7 +3944,7 @@
             "128"
         ],
         "value": null,
-        "browsePath": "root.logistic_regression.input"
+        "browsePath": "root.classify (logregression).input"
     },
     "17231174271373347771": {
         "id": "17231174271373347771",
@@ -3941,7 +3957,7 @@
             "16463869669775406288"
         ],
         "value": null,
-        "browsePath": "root.logistic_regression.output"
+        "browsePath": "root.classify (logregression).output"
     },
     "10516717446093374407": {
         "id": "10516717446093374407",
@@ -3954,7 +3970,7 @@
             "25998318472993105"
         ],
         "value": null,
-        "browsePath": "root.logistic_regression.annotations"
+        "browsePath": "root.classify (logregression).annotations"
     },
     "13083771525385706551": {
         "id": "13083771525385706551",
@@ -3965,7 +3981,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": {},
-        "browsePath": "root.logistic_regression.categoryMap"
+        "browsePath": "root.classify (logregression).categoryMap"
     },
     "4106497504214774271": {
         "id": "4106497504214774271",
@@ -3976,7 +3992,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": null,
-        "browsePath": "root.logistic_regression.resamplePeriod"
+        "browsePath": "root.classify (logregression).resamplePeriod"
     },
     "4576196723540996607": {
         "id": "4576196723540996607",
@@ -3996,7 +4012,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": null,
-        "browsePath": "root.logistic_regression.control"
+        "browsePath": "root.classify (logregression).control"
     },
     "14024847004631069812": {
         "id": "14024847004631069812",
@@ -4007,7 +4023,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "interrupted",
-        "browsePath": "root.logistic_regression.control.status"
+        "browsePath": "root.classify (logregression).control.status"
     },
     "10033975645840194553": {
         "id": "10033975645840194553",
@@ -4018,7 +4034,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": 0,
-        "browsePath": "root.logistic_regression.control.progress"
+        "browsePath": "root.classify (logregression).control.progress"
     },
     "9210322860253097911": {
         "id": "9210322860253097911",
@@ -4029,7 +4045,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "error:list index out of range",
-        "browsePath": "root.logistic_regression.control.result"
+        "browsePath": "root.classify (logregression).control.result"
     },
     "9061055047331451113": {
         "id": "9061055047331451113",
@@ -4040,7 +4056,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "nosignal",
-        "browsePath": "root.logistic_regression.control.signal"
+        "browsePath": "root.classify (logregression).control.signal"
     },
     "9689477192625707386": {
         "id": "9689477192625707386",
@@ -4051,7 +4067,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": 10,
-        "browsePath": "root.logistic_regression.control.executionCounter"
+        "browsePath": "root.classify (logregression).control.executionCounter"
     },
     "7829829942864690992": {
         "id": "7829829942864690992",
@@ -4062,7 +4078,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": 0.272274,
-        "browsePath": "root.logistic_regression.control.lastExecutionDuration"
+        "browsePath": "root.classify (logregression).control.lastExecutionDuration"
     },
     "6597146686082944745": {
         "id": "6597146686082944745",
@@ -4073,7 +4089,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "2020-11-02T11:13:41.523587",
-        "browsePath": "root.logistic_regression.control.lastStartTime"
+        "browsePath": "root.classify (logregression).control.lastStartTime"
     },
     "8184328078851683225": {
         "id": "8184328078851683225",
@@ -4084,7 +4100,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "async",
-        "browsePath": "root.logistic_regression.control.executionType"
+        "browsePath": "root.classify (logregression).control.executionType"
     },
     "25998318472993105": {
         "id": "25998318472993105",
@@ -4097,7 +4113,8 @@
             "6129772571357712590",
             "6659225750584500816",
             "10516717446093374407",
-            "223921261584228591"
+            "223921261584228591",
+            "3314871993447975283"
         ],
         "forwardRefs": [
             "135",
@@ -4143,7 +4160,7 @@
         ],
         "forwardRefs": [],
         "value": "len 5",
-        "browsePath": "root.logistic_regression.classification_result"
+        "browsePath": "root.classify (logregression).classification_result"
     },
     "17162802681501881648": {
         "id": "17162802681501881648",
@@ -4152,7 +4169,8 @@
         "parent": "1",
         "children": [
             "5870661436659365054",
-            "13609489439061464539"
+            "13609489439061464539",
+            "11512130550669560163"
         ],
         "backRefs": [],
         "forwardRefs": [],
@@ -6831,5 +6849,416 @@
         "forwardRefs": [],
         "value": "async",
         "browsePath": "root.annotations im export.export annotations.control.executionType"
+    },
+    "11512130550669560163": {
+        "id": "11512130550669560163",
+        "name": "new_observer_2fbf",
+        "type": "observer",
+        "parent": "17162802681501881648",
+        "children": [
+            "2925367342670010410",
+            "1792396051646951742",
+            "3803955493096842191",
+            "2872053471913235827",
+            "3992228323240850743",
+            "6188749360398638458",
+            "6726793874822018740",
+            "8717944789584303119",
+            "6098736666861916247",
+            "13444555942550982077"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.Streaming.new_observer_2fbf"
+    },
+    "2925367342670010410": {
+        "id": "2925367342670010410",
+        "name": "enabled",
+        "type": "const",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": true,
+        "browsePath": "root.Streaming.new_observer_2fbf.enabled"
+    },
+    "1792396051646951742": {
+        "id": "1792396051646951742",
+        "name": "triggerCounter",
+        "type": "variable",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.Streaming.new_observer_2fbf.triggerCounter"
+    },
+    "3803955493096842191": {
+        "id": "3803955493096842191",
+        "name": "lastTriggerTime",
+        "type": "variable",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "",
+        "browsePath": "root.Streaming.new_observer_2fbf.lastTriggerTime"
+    },
+    "2872053471913235827": {
+        "id": "2872053471913235827",
+        "name": "targets",
+        "type": "referencer",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "129",
+            "13177846660728949455"
+        ],
+        "value": null,
+        "browsePath": "root.Streaming.new_observer_2fbf.targets"
+    },
+    "3992228323240850743": {
+        "id": "3992228323240850743",
+        "name": "properties",
+        "type": "const",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": [
+            "stream"
+        ],
+        "browsePath": "root.Streaming.new_observer_2fbf.properties"
+    },
+    "6188749360398638458": {
+        "id": "6188749360398638458",
+        "name": "onTriggerFunction",
+        "type": "referencer",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.Streaming.new_observer_2fbf.onTriggerFunction"
+    },
+    "6726793874822018740": {
+        "id": "6726793874822018740",
+        "name": "triggerSourceId",
+        "type": "variable",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.Streaming.new_observer_2fbf.triggerSourceId"
+    },
+    "8717944789584303119": {
+        "id": "8717944789584303119",
+        "name": "hasEvent",
+        "type": "const",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": true,
+        "browsePath": "root.Streaming.new_observer_2fbf.hasEvent"
+    },
+    "6098736666861916247": {
+        "id": "6098736666861916247",
+        "name": "eventString",
+        "type": "const",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "global.series.stream",
+        "browsePath": "root.Streaming.new_observer_2fbf.eventString"
+    },
+    "13444555942550982077": {
+        "id": "13444555942550982077",
+        "name": "eventData",
+        "type": "const",
+        "parent": "11512130550669560163",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": {
+            "text": "observer status update"
+        },
+        "browsePath": "root.Streaming.new_observer_2fbf.eventData"
+    },
+    "9842064627617453154": {
+        "id": "9842064627617453154",
+        "name": "auto scale y",
+        "type": "referencer",
+        "parent": "16837518717521054654",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "18397022879237674729"
+        ],
+        "value": null,
+        "browsePath": "root.visualization.expert.contextMenuSettings.auto scale y"
+    },
+    "7820472158414336687": {
+        "id": "7820472158414336687",
+        "name": "auto scroll",
+        "type": "referencer",
+        "parent": "16837518717521054654",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "7473901729145173988"
+        ],
+        "value": null,
+        "browsePath": "root.visualization.expert.contextMenuSettings.auto scroll"
+    },
+    "2308509262368844394": {
+        "id": "2308509262368844394",
+        "name": "evaluate thresholds",
+        "type": "function",
+        "parent": "1",
+        "children": [
+            "13024056018586961420",
+            "17177990480576615609",
+            "17922563283126702736",
+            "11338200019495402077",
+            "3314871993447975283",
+            "9587702715464139702",
+            "9511672340521227233",
+            "17223766277109164005",
+            "3244940070911864697"
+        ],
+        "backRefs": [
+            "14814504338557830832",
+            "13272872670477514282"
+        ],
+        "forwardRefs": [],
+        "value": null,
+        "functionPointer": "threshold.threshold_scorer_5",
+        "autoReload": true,
+        "browsePath": "root.evaluate thresholds"
+    },
+    "13024056018586961420": {
+        "id": "13024056018586961420",
+        "name": "input",
+        "type": "referencer",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "129",
+            "13177846660728949455"
+        ],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.input"
+    },
+    "17177990480576615609": {
+        "id": "17177990480576615609",
+        "name": "output",
+        "type": "folder",
+        "parent": "2308509262368844394",
+        "children": [
+            "12798564166890107149"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.output"
+    },
+    "12798564166890107149": {
+        "id": "12798564166890107149",
+        "name": "scores",
+        "type": "folder",
+        "parent": "17177990480576615609",
+        "children": [],
+        "backRefs": [
+            "576",
+            "7384741488200919809"
+        ],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.output.scores"
+    },
+    "17922563283126702736": {
+        "id": "17922563283126702736",
+        "name": "annotations",
+        "type": "referencer",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.annotations"
+    },
+    "11338200019495402077": {
+        "id": "11338200019495402077",
+        "name": "annotationsFilter",
+        "type": "const",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": [],
+        "browsePath": "root.evaluate thresholds.annotationsFilter"
+    },
+    "3314871993447975283": {
+        "id": "3314871993447975283",
+        "name": "thresholds",
+        "type": "referencer",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "25998318472993105"
+        ],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.thresholds"
+    },
+    "9587702715464139702": {
+        "id": "9587702715464139702",
+        "name": "incremental",
+        "type": "const",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": false,
+        "browsePath": "root.evaluate thresholds.incremental"
+    },
+    "9511672340521227233": {
+        "id": "9511672340521227233",
+        "name": "processedUntil",
+        "type": "variable",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.processedUntil"
+    },
+    "17223766277109164005": {
+        "id": "17223766277109164005",
+        "name": "widgets",
+        "type": "referencer",
+        "parent": "2308509262368844394",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "127",
+            "6326365480006829771"
+        ],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.widgets"
+    },
+    "3244940070911864697": {
+        "id": "3244940070911864697",
+        "name": "control",
+        "type": "folder",
+        "parent": "2308509262368844394",
+        "children": [
+            "6288611195865610692",
+            "14715890097812467856",
+            "18046958366962981979",
+            "17742262124894639699",
+            "2902522056742189531",
+            "669691978568855631",
+            "7029231182505729629",
+            "15737944558158133224"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.evaluate thresholds.control"
+    },
+    "6288611195865610692": {
+        "id": "6288611195865610692",
+        "name": "status",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "idle",
+        "browsePath": "root.evaluate thresholds.control.status"
+    },
+    "14715890097812467856": {
+        "id": "14715890097812467856",
+        "name": "progress",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.evaluate thresholds.control.progress"
+    },
+    "18046958366962981979": {
+        "id": "18046958366962981979",
+        "name": "result",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "ok",
+        "browsePath": "root.evaluate thresholds.control.result"
+    },
+    "17742262124894639699": {
+        "id": "17742262124894639699",
+        "name": "signal",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "nosignal",
+        "browsePath": "root.evaluate thresholds.control.signal"
+    },
+    "2902522056742189531": {
+        "id": "2902522056742189531",
+        "name": "executionCounter",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.evaluate thresholds.control.executionCounter"
+    },
+    "669691978568855631": {
+        "id": "669691978568855631",
+        "name": "lastExecutionDuration",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.evaluate thresholds.control.lastExecutionDuration"
+    },
+    "7029231182505729629": {
+        "id": "7029231182505729629",
+        "name": "lastStartTime",
+        "type": "variable",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "not yet",
+        "browsePath": "root.evaluate thresholds.control.lastStartTime"
+    },
+    "15737944558158133224": {
+        "id": "15737944558158133224",
+        "name": "executionType",
+        "type": "const",
+        "parent": "3244940070911864697",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "async",
+        "browsePath": "root.evaluate thresholds.control.executionType"
     }
 }
