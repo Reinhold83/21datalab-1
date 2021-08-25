@@ -79,13 +79,13 @@ function cockpit_importer_2_approve_file(filename) {
   // --- [TODO] remove
   _helper_log('cockpit_importer_2_approve_file')
   // --- set global filename
-  importerFileName = filename
+  importerFileName = importerFileNameList[0]
   _helper_modal_activate_step_no(2)
   const selector = '#importer-content-2'
   $(selector).html('Waiting for file preview to load!')
   // --- set filename
   let path = $("#cockpit").attr("path");
-  let query = [{ browsePath: path + ".importer_preview.fileName", value: filename }];
+  let query = [{ browsePath: path + ".importer_preview.fileName", value: importerFileName }];
   http_post("/setProperties", JSON.stringify(query), null, null, function (obj, status, data, params) {
 
     // --- delete current data_preview
