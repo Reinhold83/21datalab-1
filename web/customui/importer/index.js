@@ -1,28 +1,29 @@
 /* move this to cockpit widget later */
-_helper_log('cockpit importer load') 
+_helper_log('cockpit importer load')
 var cockpiteventSource = 0
 var cockpitPath = ""
 var cockpitWidgetPath = ""
 var importerFields
 var importerStepNo = 1
 var importerFileName
+var importerFileNameList = []
 var importerHeaderExists = undefined
 
 // --- FOR TESTING PURPOSES
 // --- [TODO] remove
 function cockpit_importer_test() {
-  _helper_log('cockpit_importer_test') 
+  _helper_log('cockpit_importer_test')
   // _helper_modal_activate_step_no(4)
-  http_post( "/_execute", cockpitPath + ".importer_import", null, null, (self, status, data, params) => {})
+  http_post("/_execute", cockpitPath + ".importer_import", null, null, (self, status, data, params) => { })
 }
 
 // --- initializes the cockpit
 function cockpit_init(path) {
   // --- [TODO] remove
-  _helper_log('cockpit_importer_init') 
+  _helper_log('cockpit_importer_init')
   cockpitPath = path
   console.log('cockpitPath', cockpitPath)
-  $("#cockpit").attr("path",path)
+  $("#cockpit").attr("path", path)
   cockpiteventSource = new EventSource('/event/stream');
   cockpiteventSource.addEventListener(`${cockpitPath.substr(5)}.importer_preview.data_imported`, (e) => {
     console.log('e', e)
@@ -34,7 +35,7 @@ function cockpit_init(path) {
 // --- Choose File (STEP 1)
 function cockpit_importer_1_choose_file() {
   // --- [TODO] remove
-  _helper_log('cockpit_importer_1_choose_file') 
+  _helper_log('cockpit_importer_1_choose_file')
   _helper_modal_activate_step_no(1)
   const files = JSON.parse(http_get('/_upload'));
   const filesLength = files.length;
@@ -42,40 +43,59 @@ function cockpit_importer_1_choose_file() {
   $(selector).html('Waiting for file list to load!')
   let filesHtml = '<b>No files available!</b>';
   if (filesLength > 0) {
-    filesHtml = `<thead><tr style="text-align: center;"><th>File</th><th>Action</th></tr></thead><tbody style="text-align: center;">`;
+    filesHtml = `<thead><tr style="text-align: center;"><th>Select</th><th>File</th></tr></thead><tbody style="text-align: center;">`;
     for (var fileNo = 0, length = filesLength; fileNo < length; fileNo++) {
       const file = files[fileNo];
-      filesHtml = `${filesHtml}<tr><td>${file.name}</td>
-        <td><button type="button" class="btn btn-info" onclick="cockpit_importer_2_approve_file('${file.name}')">Next (Import File) ></button></td>
-      </tr>`;
+      filesHtml = `${filesHtml}<tr>`;
+      filesHtml += `<td><input type="checkbox" class="form-check-input" id="importer-choose-file-select-${file.name}" filename="${file.name}" onchange="cockpit_importer_1_select_file(this)"></td>`;
+      filesHtml += `<td>${file.name}</td>`;
+      // filesHtml += `<td><button type="button" class="btn btn-info" onclick="cockpit_importer_2_approve_file('${file.name}')">Next (Import File) ></button></td>`;
+      filesHtml += `</tr>`;
     }
-    filesHtml = `<table class="table table-dark table-striped">${filesHtml}</tbody></table>`;
+    filesHtml = `<div style="max-height:400px; overflow:auto"><table class="table table-dark table-striped">${filesHtml}</tbody></table></div>`;
+    filesHtml += `<button type="button" class="btn btn-primary" style="margin-top:1rem" onclick="cockpit_importer_2_approve_file()">Next</button>`;
   }
   $(selector).html(filesHtml);
+}
+
+function cockpit_importer_1_select_file(filename) {
+  $("input[id^=importer-choose-file-select-]").each(function (index, el) {
+    $(el).removeAttr('checked')
+    $(el).prop('checked', false)
+    $(el).attr('checked', false)
+  })
+  $(filename).prop('checked', true)
+  $(filename).attr('checked', true)
+
+  importerFileNameList = [];
+  $("input[id^=importer-choose-file-select-]").each(function (index, el) {
+    if ($(el).prop('checked') == true)
+      importerFileNameList.push($(el).attr('filename'))
+  })
 }
 
 // --- Approve File (STEP 2)
 function cockpit_importer_2_approve_file(filename) {
   // --- [TODO] remove
-  _helper_log('cockpit_importer_2_approve_file') 
+  _helper_log('cockpit_importer_2_approve_file')
   // --- set global filename
   importerFileName = filename
   _helper_modal_activate_step_no(2)
   const selector = '#importer-content-2'
   $(selector).html('Waiting for file preview to load!')
   // --- set filename
-  let path =$("#cockpit").attr("path");
-  let query = [ { browsePath: path + ".importer_preview.fileName", value: filename} ];
-  http_post( "/setProperties", JSON.stringify(query), null, null, function ( obj, status, data, params ) {
+  let path = $("#cockpit").attr("path");
+  let query = [{ browsePath: path + ".importer_preview.fileName", value: filename }];
+  http_post("/setProperties", JSON.stringify(query), null, null, function (obj, status, data, params) {
 
     // --- delete current data_preview
-    query = [ { browsePath: path + ".importer_preview.data_preview", value: undefined } ];
-    http_post( "/setProperties", JSON.stringify(query), null, null, function ( obj, status, data, params ) {
+    query = [{ browsePath: path + ".importer_preview.data_preview", value: undefined }];
+    http_post("/setProperties", JSON.stringify(query), null, null, function (obj, status, data, params) {
 
       // --- run import function
-      http_post( "/_execute", cockpitPath + ".importer_preview", null, null, (self, status, data, params) => {
+      http_post("/_execute", cockpitPath + ".importer_preview", null, null, (self, status, data, params) => {
         let importerApproveHtml = ``
-        if ( status !== 200 ) {
+        if (status !== 200) {
           importerApproveHtml = `<p>Something went wrong while loading the file!</p>`
           $(selector).html(importerApproveHtml)
         } else {
@@ -92,7 +112,7 @@ function cockpit_importer_2_approve_file_finished() {
   _helper_log(`im.importer_preview.data_imported`)
   const selector = '#importer-content-2'
   // --- get data from node
-  http_post( "_getbranchpretty", cockpitPath + ".importer_preview.data_preview", null, null, function( obj, status, data, params ) {
+  http_post("_getbranchpretty", cockpitPath + ".importer_preview.data_preview", null, null, function (obj, status, data, params) {
     const node = JSON.parse(data)
     const value = JSON.parse(node[".properties"].value)
     importerFields = value.schema.fields
@@ -102,20 +122,20 @@ function cockpit_importer_2_approve_file_finished() {
     for (var fieldNo = 1, len = importerFields.length; fieldNo < len; fieldNo++) {
       const field = importerFields[fieldNo]
       fieldsHtml = `${fieldsHtml}<th>${field.name}</th>`
-    } 
+    }
     fieldsHtml = `<tr>${fieldsHtml}</tr></thead><tbody style="text-align: center;">`
     // --- loop through data
     let datHtml = ``
-    for (var datNo = 0, datLen = dat.length; datNo < datLen ; datNo++) {
+    for (var datNo = 0, datLen = dat.length; datNo < datLen; datNo++) {
       const row = dat[datNo]
       datHtml = `${datHtml}<tr>`
       // --- loop through fields
       for (var fieldNoDat = 1, fieldLen = importerFields.length; fieldNoDat < fieldLen; fieldNoDat++) {
         const field = importerFields[fieldNoDat]
         datHtml = `${datHtml}<td>${row[field.name]}</td>`
-      } 
+      }
       datHtml = `${datHtml}</tr>`
-    } 
+    }
     const actionBtnHtml = `
       <div class="text-center"> 
         <button type="button" class="btn btn-info" onclick="_helper_modal_activate_step_no(1)">< (1) Choose File</button>
@@ -123,12 +143,12 @@ function cockpit_importer_2_approve_file_finished() {
         <button type="button" class="btn btn-info" onclick="cockpit_importer_3b_define_header_file_misses_header()">(3) Define Header (File misses header) ></button>
       </div>
     `
+
     importerApproveHtml = `
-      ${actionBtnHtml}
-      <div class="table-responsive">
-        <table class="table table-dark table-striped">${fieldsHtml}${datHtml}</tbody></table>
+      <div class="table-responsive" style="max-height:400px">
+        <table class="table table-dark table-striped" style="margin-bottom:0px">${fieldsHtml}${datHtml}</tbody></table>
       </div>
-      ${actionBtnHtml}
+      <button type="button" class="btn btn-primary" onclick="cockpit_importer_3a_define_header_file_contains_header()" style="margin-top:1rem;">Next</button>
     `
     $(selector).html(importerApproveHtml)
   })
@@ -137,7 +157,7 @@ function cockpit_importer_2_approve_file_finished() {
 // --- Define Header: file contains header (STEP 3a)
 function cockpit_importer_3a_define_header_file_contains_header() {
   importerHeaderExists = true
-  _helper_log('cockpit_importer_3a_define_header_file_contains_header') 
+  _helper_log('cockpit_importer_3a_define_header_file_contains_header')
   _helper_modal_activate_step_no(3)
   const selector = '#importer-content-3'
   $(selector).html('Waiting for header fields to load!')
@@ -146,20 +166,10 @@ function cockpit_importer_3a_define_header_file_contains_header() {
     const field = importerFields[fieldNo]
     html = `${html}
       <tr style="text-align: center;">
-        <td style="padding-top: 20px">${field.name}</td>
-        <td>
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Enter tablename" id="importer-field-name-${fieldNo} "value="${field.name}">
-          </div>
-        </td>
+        <td>${field.name}</td>
         <td>
           <div class="form-check">
-            <input type="checkbox" style="width: 30px; height: 30px" class="form-check-input" id="importer-field-import-${fieldNo}">
-          </div>
-        </td>
-        <td>
-          <div class="form-check">
-            <input type="checkbox"  style="width: 30px; height: 30px" onclick="_helper_checkbox_time(${fieldNo})" class="form-check-input" id="importer-field-time-${fieldNo}">
+            <input type="checkbox" class="form-check-input" checked id="importer-field-import-${fieldNo}">
           </div>
         </td>
       </tr>
@@ -172,15 +182,15 @@ function cockpit_importer_3a_define_header_file_contains_header() {
     </div>
   `
   html = `
-    ${actionBtnHtml}
-    <div class="table-responsive">
+    <div class="table-responsive" style="max-height:400px">
       <table class="table table-dark table-striped">
         <thead>
           <tr style="text-align: center;">
-            <th>Original name</th>
-            <th>Adapted name</th>
-            <th>Import</th>
-            <th>Time value</th>
+            <th>Name</th>
+            <th>
+              <input type="checkbox" class="form-check-input" checked id="importer-field-importall" onchange="cockpit_importer_3_field_import_select_all()">
+              &nbsp;&nbsp;Import
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -188,16 +198,24 @@ function cockpit_importer_3a_define_header_file_contains_header() {
         </tbody>
       </table>
     </div>
-    ${actionBtnHtml}
+    <button type="button" class="btn btn-primary" onclick="cockpit_importer_5_finish_import()" style="margin-top:1rem;">Next</button>
   `
   $(selector).html(html)
   // $('#importer-content-3').html(defineHeaderHtml)
 }
 
+function cockpit_importer_3_field_import_select_all() {
+  _helper_log('cockpit_importer_3_field_import_select_all')
+  var check_all = $("input[id^=importer-field-importall]").is(":checked");
+  $("input[id^=importer-field-import-]").each(function (index, el) {
+    $(el).attr('checked', check_all);
+  })
+}
+
 // --- Define Header: file misses header (STEP 3b)
 function cockpit_importer_3b_define_header_file_misses_header() {
   importerHeaderExists = false
-  _helper_log('cockpit_importer_3b_define_header_file_misses_header') 
+  _helper_log('cockpit_importer_3b_define_header_file_misses_header')
   _helper_modal_activate_step_no(3)
   const selector = '#importer-content-3'
   $(selector).html('Waiting for header fields to load!')
@@ -255,7 +273,7 @@ function cockpit_importer_3b_define_header_file_misses_header() {
 
 // --- Define Table (STEP 4)
 function cockpit_importer_4_define_table() {
-  _helper_log('cockpit_importer_4_define_table') 
+  _helper_log('cockpit_importer_4_define_table')
   _helper_modal_activate_step_no(4)
   const filename = importerFileName
   const tablename = filename.replace('.', '_')
@@ -285,7 +303,7 @@ function cockpit_importer_4_define_table() {
 // --- Finish Import (STEP 5)
 function cockpit_importer_5_finish_import() {
   let msg
-  const btnHtml = `
+  let btnHtml = `
     <div class="text-center"> 
       <button type="button" class="btn btn-info" onclick="_helper_modal_activate_step_no(1)">< (1) Choose File</button>
       <button type="button" class="btn btn-info" onclick="_helper_modal_activate_step_no(2)">< (2) Approve File</button>
@@ -293,45 +311,46 @@ function cockpit_importer_5_finish_import() {
       <button type="button" class="btn btn-info" onclick="_helper_modal_activate_step_no(4)">< (4) Define Header</button>
     </div>
   `
+  btnHtml = ``
   // --- [TODO] remove
-  _helper_log('cockpit_importer_5_finish_import') 
+  _helper_log('cockpit_importer_5_finish_import')
   // --- activate modals tab-pane
-  _helper_modal_activate_step_no(5)
+  _helper_modal_activate_step_no(4)
   // --- set jquery selector
-  const selector = '#importer-content-5'
+  const selector = '#importer-content-4'
   // --- define importer object
   const fields = []
   let timefield = undefined
-  $("input[id^=importer-field-name-]").each(function(index, el) {
+  $("input[id^=importer-field-import-]").each(function (index, el) {
     const id = $(el).attr('id')
-    const no = id.substr( id.lastIndexOf('-') + 1 )
+    const no = id.substr(id.lastIndexOf('-') + 1)
     const val = $(el).val() === "" ? no : $(el).val()
-    const use = $( '#importer-field-import-' + no).is(":checked")
-    const isTime = $( '#importer-field-time-' + no).is(":checked")
-    if ( use === true ) {
+    const use = $('#importer-field-import-' + no).is(":checked")
+
+    if (use === true) {
       fields.push({ id, no, val, use })
     }
-    if ( isTime === true ) {
-      timefield = no
-    }
+    timefield = no
   })
   let tablename = $("#importer-tablename").val()
   let tablepath = $("#importer-tablepath").val()
-  const filename = importerFileName
-  if ( tablename === '' ) {
+  const filename = importerFileNameList.join("_")
+
+  if (tablename === '') {
     tablename = filename.replace('.', '_')
   }
-  if ( tablepath === '' ) {
+  tablepath = 'root.imports.' + tablename
+  /*if (tablepath === '') {
     tablepath = 'root.imports.' + tablename
   } else {
     tablepath = 'root.' + $("#importer-tablepath").val().replace('/', '.') + tablename
-  }
-  const importerObj = { fields, filename, timefield, headerexists: importerHeaderExists }
+  } */
+  const importerObj = { fields, filenames: importerFileNameList, timefield, headerexists: importerHeaderExists }
   // --- update html
   msg = 'Waiting for import to be finished!'
   $(selector).html(_helper_html_wrap(msg, btnHtml))
   // --- create response var
-  let res 
+  let res
 
   // // --- [api] create table node
   // res = http_post_sync('/_create', true, [ { browsePath: tablepath, type: 'table' } ])
@@ -339,77 +358,77 @@ function cockpit_importer_5_finish_import() {
   // if ( res.status > 201 ) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] set importer.tablename
-  res = http_post_sync('/_create', true, [ { browsePath: `${cockpitPath}.importer_import.tablename`, type: 'const' } ])
+  res = http_post_sync('/_create', true, [{ browsePath: `${cockpitPath}.importer_import.tablename`, type: 'const' }])
   msg = `Failed creating const 'root.importer.tablename'!`
-  if ( res.status > 201 ) $(selector).html(_helper_html_wrap(msg, btnHtml))
+  if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] set const root.importer.filename
   if (res.status <= 201)
-    res = http_post_sync('/setProperties', true, [ { browsePath: `${cockpitPath}.importer_import.tablename`, value: tablename } ])
+    res = http_post_sync('/setProperties', true, [{ browsePath: `${cockpitPath}.importer_import.tablename`, value: tablename }])
   msg = `Failed setting value for const 'root.importer.tablename'!`
-  if ( res.status > 201 ) $(selector).html(_helper_html_wrap(msg, btnHtml))
+  if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] create referencer columns
   if (res.status <= 201)
-    res = http_post_sync('/_create', true, [ { browsePath: `${cockpitPath}.importer_import.metadata`, type: 'const' } ])
+    res = http_post_sync('/_create', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, type: 'const' }])
   msg = `Failed creating const '${tablepath + ".metadata"}'!`
-  if ( res.status > 201 ) $(selector).html(_helper_html_wrap(msg, btnHtml))
+  if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] set fields
   if (res.status <= 201)
-    res = http_post_sync('/setProperties', true, [ { browsePath: `${cockpitPath}.importer_import.metadata`, value: JSON.stringify(importerObj) } ])
+    res = http_post_sync('/setProperties', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, value: JSON.stringify(importerObj) }])
   msg = `Failed setting value for const '${tablepath + ".metadata"}'!`
-  if ( res.status > 201 ) $(selector).html(_helper_html_wrap(msg, btnHtml))
+  if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] run importer function
   if (res.status <= 201) {
-      http_post( "/_execute", `${cockpitPath}.importer_import`, null, null, (self, status, data, params) => {
-        if ( status === 200 ) {
-          msg = 'Import finished successful!'
-          $(selector).html(_helper_html_wrap(msg, btnHtml))
-        } else {
-          msg = `Failed running importer.import!`, status, data, params
-          $(selector).html(_helper_html_wrap(msg, btnHtml))
-        }
-      })
+    http_post("/_execute", `${cockpitPath}.importer_import`, null, null, (self, status, data, params) => {
+      if (status === 200) {
+        msg = 'Import finished successful!'
+        $(selector).html(_helper_html_wrap(msg, btnHtml))
+      } else {
+        msg = `Failed running importer.import!`, status, data, params
+        $(selector).html(_helper_html_wrap(msg, btnHtml))
+      }
+    })
   }
 }
 
 // --- Approve File (STEP 2)
 function cockpit_importer_preview() {
-  _helper_log('cockpit_preview') 
-  http_post("/_execute", cockpitPath+".importer_preview", null, null, (self, status, data, params) => {
-    console.log("cockpit_preview",status);
+  _helper_log('cockpit_preview')
+  http_post("/_execute", cockpitPath + ".importer_preview", null, null, (self, status, data, params) => {
+    console.log("cockpit_preview", status);
   });
 }
 
 // --- closes the cockpit
-function cockpit_close() {  
-  _helper_log('cockpit_close') 
+function cockpit_close() {
+  _helper_log('cockpit_close')
   cockpiteventSource.close();
 }
 
-function _helper_log( logText ) {
+function _helper_log(logText) {
   const length = logText.length + 4
   let header = ''
-  for (var i = 0, len = length; i < len ; i++) {
-    header = `${header}=` 
-  } 
+  for (var i = 0, len = length; i < len; i++) {
+    header = `${header}=`
+  }
   console.log(header)
   console.log(`| ${logText} |`)
   console.log(header)
 }
 
 // --- _helper_modal_activate_step_no
-function _helper_modal_activate_step_no( stepNo ) {
+function _helper_modal_activate_step_no(stepNo) {
   const newActivePane = "tabpane" + stepNo
   const tabId = 'tab' + stepNo
   $('#' + tabId).click()
-  $("#myTabContent").children('div').each(function(index, el) {
-    const childStepNo = $(el).attr("id") 
+  $("#myTabContent").children('div').each(function (index, el) {
+    const childStepNo = $(el).attr("id")
     const tabPaneId = 'tabpane' + stepNo
     const tabId = 'tab' + stepNo
-    if ( newActivePane === childStepNo ) {
+    if (newActivePane === childStepNo) {
       // --- activate actual pane
       $('#' + tabId).removeClass('disabled')
       $('#' + tabId).click()
@@ -424,8 +443,8 @@ function _helper_modal_activate_step_no( stepNo ) {
 function _helper_slugify(inputStr) {
   return inputStr
     .toLowerCase()
-    .replace(/[^\w ]+/g,'')
-    .replace(/ +/g,'-')
+    .replace(/[^\w ]+/g, '')
+    .replace(/ +/g, '-')
 }
 
 // --- preformat html
@@ -440,9 +459,9 @@ function _helper_checkbox_time(fieldId) {
   const clickedElId = 'importer-field-time-' + fieldId
   // make sure that we do not import time fields
   $("#importer-field-import-" + fieldId).prop('checked', false)
-  $("input[id^=importer-field-time-]").each(function(index, el) {
+  $("input[id^=importer-field-time-]").each(function (index, el) {
     const elId = $(el).attr('id')
-    if ( elId !== clickedElId ) {
+    if (elId !== clickedElId) {
       $(el).removeAttr('checked')
       $(el).prop('checked', false)
       $(el).attr('checked', false)

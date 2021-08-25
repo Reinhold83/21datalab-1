@@ -388,7 +388,7 @@ function on_first_load () {
     initialize_alarms();
     initSettingJsonValidation();
     // initialize_settings();
-
+    context_menu_click_pipeline({data:"root.importer", widget:127});
 } //on_first_load;
 
 
