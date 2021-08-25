@@ -1967,12 +1967,14 @@ class Model:
             refs = ["selectedVariables"]
 
             for v in values:
-                result[v]={"value":widget.get_child(v).get_value()}
+                if widget.get_child(v):
+                    result[v]={"value":widget.get_child(v).get_value()}
 
             for r in refs:
-                referencerId = widget.get_child(r).get_id()
-                self.model[referencerId]["forwardRefs"]
-                result[r]={"references":self.model[referencerId]["forwardRefs"]}
+                if widget.get_child(r):
+                    referencerId = widget.get_child(r).get_id()
+                    self.model[referencerId]["forwardRefs"]
+                    result[r]={"references":self.model[referencerId]["forwardRefs"]}
 
             #special handling for showhide dynamic menu
             showHide = widget.get_child("showHide")
