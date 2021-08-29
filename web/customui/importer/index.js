@@ -53,9 +53,10 @@ function cockpit_importer_1_choose_file() {
       filesHtml += `</tr>`;
     }
     filesHtml = `<div style="max-height:400px; overflow:auto"><table class="table table-dark table-striped">${filesHtml}</tbody></table></div>`;
-    filesHtml += `<button type="button" class="btn btn-primary" style="margin-top:1rem" onclick="cockpit_importer_2_approve_file()">Next</button>`;
   }
   $(selector).html(filesHtml);
+
+  $('#importer-cockpit-next').html(`<button type="button" class="btn btn-primary" style="margin-top:1rem" onclick="cockpit_importer_2_approve_file()">Next</button>`);
 }
 
 function cockpit_importer_1_select_file(filename) {
@@ -79,6 +80,8 @@ function cockpit_importer_2_approve_file(filename) {
   // --- [TODO] remove
   _helper_log('cockpit_importer_2_approve_file')
   // --- set global filename
+  if (importerFileNameList.length == 0)
+    return;
   importerFileName = importerFileNameList[0]
   _helper_modal_activate_step_no(2)
   const selector = '#importer-content-2'
@@ -148,9 +151,9 @@ function cockpit_importer_2_approve_file_finished() {
       <div class="table-responsive" style="max-height:400px">
         <table class="table table-dark table-striped" style="margin-bottom:0px">${fieldsHtml}${datHtml}</tbody></table>
       </div>
-      <button type="button" class="btn btn-primary" onclick="cockpit_importer_3a_define_header_file_contains_header()" style="margin-top:1rem;">Next</button>
     `
-    $(selector).html(importerApproveHtml)
+    $(selector).html(importerApproveHtml);
+    $('#importer-cockpit-next').html(`<button type="button" class="btn btn-primary" onclick="cockpit_importer_3a_define_header_file_contains_header()" style="margin-top:1rem;">Next</button>`);
   })
 }
 
@@ -169,7 +172,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
         <td>${field.name}</td>
         <td>
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" checked id="importer-field-import-${fieldNo}">
+            <input type="checkbox" class="form-check-input" fieldvalue="${field.name}" checked id="importer-field-name-${fieldNo}">
           </div>
         </td>
       </tr>
@@ -188,7 +191,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
           <tr style="text-align: center;">
             <th>Name</th>
             <th>
-              <input type="checkbox" class="form-check-input" checked id="importer-field-importall" onchange="cockpit_importer_3_field_import_select_all()">
+              <input type="checkbox" class="form-check-input" checked id="importer-field-nameall" onchange="cockpit_importer_3_field_import_select_all()">
               &nbsp;&nbsp;Import
             </th>
           </tr>
@@ -198,17 +201,17 @@ function cockpit_importer_3a_define_header_file_contains_header() {
         </tbody>
       </table>
     </div>
-    <button type="button" class="btn btn-primary" onclick="cockpit_importer_5_finish_import()" style="margin-top:1rem;">Next</button>
   `
-  $(selector).html(html)
+  $(selector).html(html);
+  $('#importer-cockpit-next').html(`<button type="button" class="btn btn-primary" onclick="cockpit_importer_5_finish_import()" style="margin-top:1rem;">Next</button>`);
   // $('#importer-content-3').html(defineHeaderHtml)
 }
 
 function cockpit_importer_3_field_import_select_all() {
   _helper_log('cockpit_importer_3_field_import_select_all')
-  var check_all = $("input[id^=importer-field-importall]").is(":checked");
-  $("input[id^=importer-field-import-]").each(function (index, el) {
-    $(el).attr('checked', check_all);
+  var check_all = $("input[id^=importer-field-nameall]").prop('checked');
+  $("input[id^=importer-field-name-]").each(function (index, el) {
+    $(el).prop('checked', check_all);
   })
 }
 
@@ -232,7 +235,7 @@ function cockpit_importer_3b_define_header_file_misses_header() {
         </td>
         <td>
           <div class="form-check">
-            <input type="checkbox" style="width: 30px; height: 30px" class="form-check-input" id="importer-field-import-${fieldNo}">
+            <input type="checkbox" style="width: 30px; height: 30px" class="form-check-input" id="importer-field-name-${fieldNo}">
           </div>
         </td>
         <td>
@@ -321,17 +324,19 @@ function cockpit_importer_5_finish_import() {
   // --- define importer object
   const fields = []
   let timefield = undefined
-  $("input[id^=importer-field-import-]").each(function (index, el) {
+  $("input[id^=importer-field-name-]").each(function (index, el) {
     const id = $(el).attr('id')
     const no = id.substr(id.lastIndexOf('-') + 1)
-    const val = $(el).val() === "" ? no : $(el).val()
-    const use = $('#importer-field-import-' + no).is(":checked")
+    // const val = $(el).val() === "" ? no : $(el).val()
+    const val = $('#importer-field-name-' + no).attr('fieldvalue')
+    const use = $('#importer-field-name-' + no).is(":checked")
 
     if (use === true) {
       fields.push({ id, no, val, use })
     }
     timefield = no
   })
+
   let tablename = $("#importer-tablename").val()
   let tablepath = $("#importer-tablepath").val()
   const filename = importerFileNameList.join("_")
@@ -392,6 +397,8 @@ function cockpit_importer_5_finish_import() {
       }
     })
   }
+  
+  $('#importer-cockpit-next').html(`<button type="button" class="btn btn-primary" data-dismiss="modal" id="importer-cockpit-next">Close</button>`);
 }
 
 // --- Approve File (STEP 2)
@@ -458,7 +465,7 @@ function _helper_html_wrap(msg, wrap) {
 function _helper_checkbox_time(fieldId) {
   const clickedElId = 'importer-field-time-' + fieldId
   // make sure that we do not import time fields
-  $("#importer-field-import-" + fieldId).prop('checked', false)
+  $("#importer-field-name-" + fieldId).prop('checked', false)
   $("input[id^=importer-field-time-]").each(function (index, el) {
     const elId = $(el).attr('id')
     if (elId !== clickedElId) {
