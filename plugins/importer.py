@@ -143,20 +143,30 @@ def import_run(iN):
     metadata = json.loads(metadataRaw)
     table.get_child("metadata").set_value(metadata)
     fields = metadata["fields"] 
-    timefield = int(metadata["timefield"]) - 1
-    filename = metadata["filename"]
+    # timefield = int(metadata["timefield"]) - 1
+    timefield = 0
+    filenames = metadata["filenames"]
     headerexists = metadata["headerexists"]
-    filepath = 'upload/' + filename 
 
+    csv_data : any
     # --- load csv data
     # * https://www.shanelynn.ie/python-pandas-read_csv-load-data-from-csv-files/
     # * [ ] optimize speed? https://stackoverflow.com/questions/16476924/how-to-iterate-over-rows-in-a-dataframe-in-pandas
     # * [ ] vectorize a loop https://stackoverflow.com/questions/27575854/vectorizing-a-function-in-pandas
-    df = pd.read_csv(filepath)
+    
+    # for filename in filenames:
+    #     filepath = 'upload/' + filename 
+    #     df = pd.read_csv(filepath)
+    #     csv_data = [df]
 
+    # csv_data = pd.concat(csv_data, axis=1, join='inner').sort_index()
+
+    filepath = 'upload/' + filenames[0] 
+    csv_data = pd.read_csv(filepath)
+    
     # --- define time list
     # * select rows and columns from dataframe https://thispointer.com/select-rows-columns-by-name-or-index-in-dataframe-using-loc-iloc-python-pandas/
-    timeList = df.iloc[:,timefield].to_list()
+    timeList = csv_data.iloc[:,timefield].to_list()
     epochs = [date2secs(time) for time in timeList]
     print(epochs) 
 
@@ -167,7 +177,7 @@ def import_run(iN):
         fieldname = str(field["val"]).replace('.','_')
         fieldvar = vars.create_child(fieldname, type="timeseries")
         if timefield != fieldno:
-            data[fieldname] = df.iloc[ :, fieldno].to_list()
+            data[fieldname] = csv_data.iloc[ :, fieldno].to_list()
             fieldvar.set_time_series(values=data[fieldname],times=epochs)
         cols.add_references(fieldvar)
         logger.debug(f"import val: {fieldname}")
