@@ -8,6 +8,7 @@ var importerStepNo = 1
 var importerFileName
 var importerFileNameList = []
 var importerHeaderExists = undefined
+var activePanelIndex = -1
 
 // --- FOR TESTING PURPOSES
 // --- [TODO] remove
@@ -34,6 +35,7 @@ function cockpit_init(path) {
 
 // --- Choose File (STEP 1)
 function cockpit_importer_1_choose_file() {
+  importerFileNameList = [];
   // --- [TODO] remove
   _helper_log('cockpit_importer_1_choose_file')
   _helper_modal_activate_step_no(1)
@@ -47,7 +49,7 @@ function cockpit_importer_1_choose_file() {
     for (var fileNo = 0, length = filesLength; fileNo < length; fileNo++) {
       const file = files[fileNo];
       filesHtml = `${filesHtml}<tr>`;
-      filesHtml += `<td><input type="checkbox" class="form-check-input" id="importer-choose-file-select-${file.name}" filename="${file.name}" onchange="cockpit_importer_1_select_file(this)"></td>`;
+      filesHtml += `<td><input type="checkbox" class="" id="importer-choose-file-select-${file.name}" filename="${file.name}" onchange="cockpit_importer_1_select_file(this)"></td>`;
       filesHtml += `<td>${file.name}</td>`;
       // filesHtml += `<td><button type="button" class="btn btn-info" onclick="cockpit_importer_2_approve_file('${file.name}')">Next (Import File) ></button></td>`;
       filesHtml += `</tr>`;
@@ -172,7 +174,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
         <td>${field.name}</td>
         <td>
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" fieldvalue="${field.name}" checked id="importer-field-name-${fieldNo}">
+            <input type="checkbox" class="" fieldvalue="${field.name}" checked id="importer-field-name-${fieldNo}">
           </div>
         </td>
       </tr>
@@ -191,7 +193,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
           <tr style="text-align: center;">
             <th>Name</th>
             <th>
-              <input type="checkbox" class="form-check-input" checked id="importer-field-nameall" onchange="cockpit_importer_3_field_import_select_all()">
+              <input type="checkbox" class="" checked id="importer-field-nameall" onchange="cockpit_importer_3_field_import_select_all()">
               &nbsp;&nbsp;Import
             </th>
           </tr>
@@ -235,12 +237,12 @@ function cockpit_importer_3b_define_header_file_misses_header() {
         </td>
         <td>
           <div class="form-check">
-            <input type="checkbox" style="width: 30px; height: 30px" class="form-check-input" id="importer-field-name-${fieldNo}">
+            <input type="checkbox" style="width: 30px; height: 30px" class="" id="importer-field-name-${fieldNo}">
           </div>
         </td>
         <td>
           <div class="form-check">
-            <input type="checkbox" style="width: 30px; height: 30px" onclick="_helper_checkbox_time(${fieldNo})" class="form-check-input" id="importer-field-time-${fieldNo}">
+            <input type="checkbox" style="width: 30px; height: 30px" onclick="_helper_checkbox_time(${fieldNo})" class="" id="importer-field-time-${fieldNo}">
           </div>
         </td>
       </tr>
@@ -397,7 +399,7 @@ function cockpit_importer_5_finish_import() {
       }
     })
   }
-  
+
   $('#importer-cockpit-next').html(`<button type="button" class="btn btn-primary" data-dismiss="modal" id="importer-cockpit-next">Close</button>`);
 }
 
@@ -428,6 +430,7 @@ function _helper_log(logText) {
 
 // --- _helper_modal_activate_step_no
 function _helper_modal_activate_step_no(stepNo) {
+  activePanelIndex = stepNo
   const newActivePane = "tabpane" + stepNo
   const tabId = 'tab' + stepNo
   $('#' + tabId).click()
@@ -474,4 +477,29 @@ function _helper_checkbox_time(fieldId) {
       $(el).attr('checked', false)
     }
   })
+}
+
+function clickonTab(tabIndex) {
+  switch (activePanelIndex) {
+    case 1:
+      if (tabIndex == 2)
+        cockpit_importer_2_approve_file();
+      break;
+    case 2:
+      if (tabIndex == 1)
+        cockpit_importer_1_choose_file();
+      else if (tabIndex == 3)
+        cockpit_importer_3a_define_header_file_contains_header();
+      break;
+    case 3:
+      if (tabIndex == 1)
+        cockpit_importer_1_choose_file();
+      else if (tabIndex == 2)
+        cockpit_importer_2_approve_file();
+      else if (tabIndex == 4)
+        cockpit_importer_5_finish_import();
+      break;
+    case 4:
+      break;
+  }
 }
