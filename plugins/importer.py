@@ -8,6 +8,7 @@ import os
 import json
 import datetime as dt
 import time
+import numpy
 
 previewFileTemplate = {
     "name":"importer_preview",
@@ -168,20 +169,49 @@ def import_run(iN):
     # * select rows and columns from dataframe https://thispointer.com/select-rows-columns-by-name-or-index-in-dataframe-using-loc-iloc-python-pandas/
     timeList = csv_data.iloc[:,timefield].to_list()
     epochs = [date2secs(time) for time in timeList]
-    print(epochs) 
+    #print(epochs)
 
     # --- import data, set vars and columns
     data = {}
+    hasEvents = False
     for field in fields:
         fieldno = int(field["no"]) - 1
         fieldname = str(field["val"]).replace('.','_')
-        fieldvar = vars.create_child(fieldname, type="timeseries")
-        if timefield != fieldno:
-            data[fieldname] = csv_data.iloc[ :, fieldno].to_list()
-            fieldvar.set_time_series(values=data[fieldname],times=epochs)
-        cols.add_references(fieldvar)
-        logger.debug(f"import val: {fieldname}")
-        print(fieldvar) 
+        if timefield == fieldno:
+            continue # skip the time field
+        # now check if the column is data or event
+        try:
+            data = csv_data.iloc[:,fieldno].to_list()
+            values = numpy.asarray(data,dtype=numpy.float64)
+            fieldvar = vars.create_child(fieldname, type="timeseries")
+            fieldvar.set_time_series(values=values, times=epochs)
+            logger.debug(f"import val: {fieldname} as timeseries")
+        except Exception as ex:
+            #conversion was not possible, this is an event col
+            eventVar = table.create_child(fieldname,type="eventseries")
+            #now build up the series, leave out the nans (which were created by making rows like 15.2,,,start,,,4
+            vals = []
+            tims = []
+            for ev,tim in zip(data,epochs):
+                if type(ev) is str:
+                    evStr = str(ev)
+                else:
+                    #it still might be number, so try to convert
+                    try:
+                        number = numpy.float64(ev)
+                        if numpy.isfinite(number):
+                            evStr = str(number)
+                        else:
+                            logger.error(f"cant convert {ev}")
+                            continue
+                    except:
+                        logger.error(f"cant convert {ev}")
+                        continue
+                vals.append(evStr.strip(" "))#remove space at start and end
+                tims.append(tim)
+            eventVar.set_event_series(values=vals, times=tims)
+            hasEvents = True
+            logger.debug(f"import val: {fieldname} as eventseries")
 
     # look for nodes of type widget and ensure variables can be selected
     workbench_model = iN.get_model()
@@ -189,6 +219,32 @@ def import_run(iN):
     for widget_node in widget_nodes:
         selectable_variables_referencer: Node = widget_node.get_child("selectableVariables")
         selectable_variables_referencer.add_references([vars])
+
+        #now hook the events in
+        if hasEvents:
+            widget_node.get_child("hasEvents.events").add_references(eventVar,deleteAll=True)
+            #prepare the visibleEvents
+            visibleEvents = {ev:False for ev in set(vals)}
+            widget_node.get_child("hasEvents.visibleEvents").set_value(visibleEvents)
+            #prepare the colors
+            palette = ["#f41fb3","#b20083","#a867dd","#68b8e7","#04a75e","#41ff87","#618a04","#eaf4c7","#ffce18","#8f4504"] #from https://loading.io/color/random/
+            cols = {}
+            for idx,ev in enumerate(set(vals)):#
+                cols[ev]={"color":palette[idx%10]}
+            widget_node.get_child("hasEvents.colors").set_value(cols)
+            widget_node.get_child("hasEvents.events").add_references(eventVar,deleteAll=True)
+            #turn on events
+            widget_node.get_child("hasEvents").set_value(True)
+            #make the entry in the visible elements
+            visibleElements = widget_node.get_child("visibleElements").get_value()
+            if not "events" in visibleElements:
+                visibleElements["events"]=False
+                widget_node.get_child("visibleElements").set_value(visibleElements)
+            #watch the state
+            widget_node.get_child("observerVisibleElements.targets").add_references(widget_node.get_child("hasEvents.visibleEvents"),allowDuplicates=False)
+            #trigger the event
+            model = iN.get_model()
+            model.notify_observers(eventVar.get_id(), ["value"]) #to trigger the widget to reload the event data
 
     logger.debug(f"import complete (seconds: {(dt.datetime.now()-timeStartImport).seconds})")
     return True
