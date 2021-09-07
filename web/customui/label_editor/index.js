@@ -92,11 +92,11 @@ function updateLabelsView(labels) {
         if (label == null)
             continue;
         let labelNameInputId = "labelName" + labelId;
-        removeButtonHtml = '<button type="button" class="btn btn-primary" onclick="removeLabel(' + labelId + ')">Remove</button>';
-        tableRowHtml += '<tr><td><input type="text" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '">'
-            + '<button type="button" class="btn btn-primary" onclick="changeLabelName(' + labelId + ', document.querySelector(\'#' + labelNameInputId + '\').value)">Save</button></td>'
-            + '<td><input type="color" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'
-            + '<td>' + removeButtonHtml + '</td></tr>'
+        removeButtonHtml = '<button type="button" class="btn btn-danger" onclick="removeLabel(' + labelId + ')"><i class="fas fa-trash"></i></button>';
+        tableRowHtml += '<tr> <div class="form-group">'
+            + '<td><input type="text" class="form-control w-50" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '">'
+            + '<td><input type="color" class="form-control color-control" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'
+            + '<td>' + removeButtonHtml + '</td></div></tr>'
     }
     $(selector).html(tableRowHtml)
 }

@@ -56,6 +56,137 @@
     width:  100%;
 }
 */
+
+.file_upload_card .card-body {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+}
+.file_upload_card .card-body .filenameRow {
+    text-transform: capitalize;
+    padding-right: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+}
+.file_upload_card .card-header {
+    display: flex;
+    justify-content: space-between;
+}
+.file_upload_card .card-body .filenameRow div span {
+    display: block;
+}
+.file_upload_card .card-body .filenameRow div {
+    margin-right: 20px;
+}
+div#fileuploadCol {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: normal;
+    cursor: pointer;
+}
+#fileuploadRow {
+    width: 100%;
+}
+#uploadStatusRow p {
+    margin: 0;
+}
+
+#uploadStatusRow {
+    display: inline-block;
+    margin-right: 15px;
+    padding: 0 !important;
+}
+div#fileuploadCol input#fileupload {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 30px;
+    width: 30px;
+    z-index: 100;
+}
+.card.file_upload_card table input[type="checkbox"] {
+    border: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.card.file_upload_card table tr, .card.file_upload_card table td {
+    padding: 15px;
+    font-size: 16px;
+    text-transform: capitalize;
+}
+.card.file_upload_card table {
+    margin: 0;
+}
+.card.file_upload_card table thead {
+    background: #545454;
+    font-weight: 800;
+    color: #fff;
+}
+
+.modal_table .modal-body {
+    padding: 0;
+}
+.modal_table .modal-body table {
+    margin: 0;
+}
+.modal_table .modal-body table tr, .modal_table .modal-body table td {
+    padding: 15px;
+    font-size: 16px;
+    text-transform: capitalize;
+    text-align: left;
+    vertical-align: inherit;
+}
+.modal_table .modal-body table thead {
+    background: #545454;
+    font-weight: 800;
+    color: #fff;
+}
+.modal_table .modal-body table .form-control {
+    max-width: 230px;
+    width: 100% !important;
+    border-radius: 3px;
+    background: transparent;
+    border: 1px solid #747474;
+    color: #fff;
+    font-size: 16px;
+    display: inline-flex;
+    text-transform: none;
+}
+.modal_table .modal-body table .form-control.color-control {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    max-width: 100%;
+    width: 60px !important;
+    height: 40px;
+    overflow: hidden;
+    font-size: 0;
+    cursor: pointer;
+    display: inline-flex;
+}
+.modal_table .modal-body table thead th {
+    text-align: left !important;
+}
+.modal_table .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal_table .modal-footer button.btn.btn-dark {
+    background: #d9b100;
+    border-color: #d9b100;
+    color: #fff;
+}
+
+
 .modal-header {
     padding-bottom: 10px;
 }

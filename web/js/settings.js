@@ -339,10 +339,13 @@ $(document).on("change", ".slider", function () {
 $(document).on("change input", "SELECT", function () {
     //save enum value when changes
     saveSettingValue(this);
+
+
 });
 
 $(document).on("input change", "input:checkbox", function () {
     //save enum value when changes
+
     saveSettingValue(this);
 });
 
@@ -355,6 +358,7 @@ function saveSettingValue(target) {
     var parent = $(target).parent();
     var children = parent.children();
     var value = children[1].value;
+
     var dataType = children[1].getAttribute("data-type");
 
     if (dataType == "enum") {
