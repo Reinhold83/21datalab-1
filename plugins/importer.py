@@ -411,9 +411,10 @@ def annotation_import_function(functionNode):
     #first find all tags in the imported annos
     newTags = set()
     for anno in data:
-        if "tags" in anno:
-            for tag in anno["tags"]:
-                newTags.add(tag)
+        if "type" in anno and anno["type"]=="time":
+            if "tags" in anno:
+                for tag in anno["tags"]:
+                    newTags.add(tag)
 
     cols = ["#050F2C", "#003666", "#00AEFF", "#3369E7", "#8E43E7", "#B84592", "#FF4F81", "#FF6C5F", "#FFC168", "#2DDE98", "#1CC7D0"]
     # from http://brandcolors.net/ algolia
@@ -437,5 +438,6 @@ def annotation_import_function(functionNode):
         widget.get_child("hasAnnotation.visibleTags").set_value(visibleTags)
         widget.get_child("hasAnnotation.tags").set_value(tags)
         model.enable_observers()
+        model.notify_observers(targetFolder.get_id(),"children") # to trigger the widgets for reload 
         widget.get_child("hasAnnotation.colors").set_value(colors)
     return True
