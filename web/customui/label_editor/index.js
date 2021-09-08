@@ -79,6 +79,11 @@ function cockpit_init(path) {
   });
 }
 
+function updateLabelName(labelId, labelNameString) {
+  currentLabels[labelId].name = labelNameString;
+}
+
+
 function updateLabelColor(labelId, labelColorString) {
   currentLabels[labelId].color.hexCode = labelColorString;
 }
@@ -94,7 +99,7 @@ function updateLabelsView(labels) {
         let labelNameInputId = "labelName" + labelId;
         removeButtonHtml = '<button type="button" class="btn btn-danger" onclick="removeLabel(' + labelId + ')"><i class="fas fa-trash"></i></button>';
         tableRowHtml += '<tr> <div class="form-group">'
-            + '<td><input type="text" class="form-control w-50" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '">'
+            + '<td><input type="text" class="form-control w-50" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '" onchange="updateLabelName(\'' + labelId + '\', this.value)">'
             + '<td><input type="color" class="form-control color-control" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'
             + '<td>' + removeButtonHtml + '</td></div></tr>'
     }
@@ -133,6 +138,7 @@ function renameExistingAnnotations(oldNameToNewNameDict) {
       let newName = oldNameToNewNameDict[oldName];
       console.log("Updating annotation", tagsNode['browsePath'], ':', oldName, '->', newName);
       // need to update
+      
       http_post(
         '/setProperties',
         JSON.stringify([ { 'id': tagsNode['id'], 'value': [newName] } ]),
@@ -212,6 +218,7 @@ function saveLabels(labels) {
   // ignore deleted labels marked with null
   let visibleTagsDict = Object.fromEntries(labels.filter(label => label != null).map(label => [label.name, true]));
   [labelNameToIndexMap, labelIndexToColorMap] = createHoverMap(labels);
+
 
   for (const slaveFrontend of slaveFrontends) {
     console.log("Updating ", slaveFrontend + '.hasAnnotation.visibleTags');
