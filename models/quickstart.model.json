@@ -83,7 +83,12 @@
             "17333622775446030886",
             "7406513117600242278",
             "15499764811511790654",
-            "17600842871211210203"
+            "17600842871211210203",
+            "10011207773448055733",
+            "9964023167566708706",
+            "15823148225629396080",
+            "1855797899278555728",
+            "134503650504710693"
         ],
         "backRefs": [
             "526",
@@ -194,7 +199,8 @@
             "12416654533870087467"
         ],
         "forwardRefs": [
-            "25998318472993105"
+            "25998318472993105",
+            "135"
         ],
         "value": null,
         "browsePath": "root.visualization.workbench.hasAnnotation.annotations"
@@ -207,7 +213,8 @@
         "children": [],
         "backRefs": [
             "12416654533870087467",
-            "25998318472993105"
+            "25998318472993105",
+            "134"
         ],
         "forwardRefs": [],
         "value": null,
@@ -2423,7 +2430,9 @@
             "17177222182679038115",
             "17748757606801855470",
             "9329024201256318871",
-            "3933475239006226126"
+            "3933475239006226126",
+            "7223380533703630121",
+            "13758181320359699415"
         ],
         "backRefs": [
             "6744037968663413026",
@@ -2552,7 +2561,8 @@
             "3893737263005185798"
         ],
         "forwardRefs": [
-            "25998318472993105"
+            "25998318472993105",
+            "5156640814601994346"
         ],
         "value": null,
         "browsePath": "root.visualization.expert.hasAnnotation.annotations"
@@ -2565,7 +2575,8 @@
         "children": [],
         "backRefs": [
             "25998318472993105",
-            "3893737263005185798"
+            "3893737263005185798",
+            "6129772571357712590"
         ],
         "forwardRefs": [],
         "value": null,
@@ -7260,5 +7271,235 @@
         "forwardRefs": [],
         "value": "async",
         "browsePath": "root.evaluate thresholds.control.executionType"
+    },
+    "10011207773448055733": {
+        "id": "10011207773448055733",
+        "name": "table",
+        "type": "referencer",
+        "parent": "127",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.workbench.table"
+    },
+    "9964023167566708706": {
+        "id": "9964023167566708706",
+        "name": "showLegend",
+        "type": "const",
+        "parent": "127",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": true,
+        "browsePath": "root.visualization.workbench.showLegend"
+    },
+    "15823148225629396080": {
+        "id": "15823148225629396080",
+        "name": "hasEvents",
+        "type": "const",
+        "parent": "127",
+        "children": [
+            "7439653386833272233",
+            "14286930320464493056",
+            "2841170813922862181",
+            "13110260180935042569"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": false,
+        "browsePath": "root.visualization.workbench.hasEvents"
+    },
+    "7439653386833272233": {
+        "id": "7439653386833272233",
+        "name": "events",
+        "type": "referencer",
+        "parent": "15823148225629396080",
+        "children": [],
+        "backRefs": [
+            "10747692693407318786"
+        ],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.workbench.hasEvents.events"
+    },
+    "14286930320464493056": {
+        "id": "14286930320464493056",
+        "name": "newEvents",
+        "type": "eventseries",
+        "parent": "15823148225629396080",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "None",
+        "eventMap": {},
+        "browsePath": "root.visualization.workbench.hasEvents.newEvents"
+    },
+    "2841170813922862181": {
+        "id": "2841170813922862181",
+        "name": "colors",
+        "type": "const",
+        "parent": "15823148225629396080",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": {},
+        "browsePath": "root.visualization.workbench.hasEvents.colors"
+    },
+    "13110260180935042569": {
+        "id": "13110260180935042569",
+        "name": "visibleEvents",
+        "type": "variable",
+        "parent": "15823148225629396080",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": {},
+        "browsePath": "root.visualization.workbench.hasEvents.visibleEvents"
+    },
+    "1855797899278555728": {
+        "id": "1855797899278555728",
+        "name": "observerEventSeries",
+        "type": "observer",
+        "parent": "127",
+        "children": [
+            "16773471683102170278",
+            "14133144925666243932",
+            "4857127707169670279",
+            "10747692693407318786",
+            "15111840690178365867",
+            "12246969311982094119",
+            "9172388744581605269",
+            "14884164017088723292"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.workbench.observerEventSeries"
+    },
+    "16773471683102170278": {
+        "id": "16773471683102170278",
+        "name": "enabled",
+        "type": "const",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": true,
+        "browsePath": "root.visualization.workbench.observerEventSeries.enabled"
+    },
+    "14133144925666243932": {
+        "id": "14133144925666243932",
+        "name": "triggerCounter",
+        "type": "variable",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.visualization.workbench.observerEventSeries.triggerCounter"
+    },
+    "4857127707169670279": {
+        "id": "4857127707169670279",
+        "name": "lastTriggerTime",
+        "type": "variable",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "",
+        "browsePath": "root.visualization.workbench.observerEventSeries.lastTriggerTime"
+    },
+    "10747692693407318786": {
+        "id": "10747692693407318786",
+        "name": "targets",
+        "type": "referencer",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "7439653386833272233"
+        ],
+        "value": null,
+        "browsePath": "root.visualization.workbench.observerEventSeries.targets"
+    },
+    "15111840690178365867": {
+        "id": "15111840690178365867",
+        "name": "properties",
+        "type": "const",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": [
+            "value"
+        ],
+        "browsePath": "root.visualization.workbench.observerEventSeries.properties"
+    },
+    "12246969311982094119": {
+        "id": "12246969311982094119",
+        "name": "onTriggerFunction",
+        "type": "referencer",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.workbench.observerEventSeries.onTriggerFunction"
+    },
+    "9172388744581605269": {
+        "id": "9172388744581605269",
+        "name": "hasEvent",
+        "type": "const",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": true,
+        "browsePath": "root.visualization.workbench.observerEventSeries.hasEvent"
+    },
+    "14884164017088723292": {
+        "id": "14884164017088723292",
+        "name": "eventString",
+        "type": "const",
+        "parent": "1855797899278555728",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "timeSeriesWidget.eventSeries",
+        "browsePath": "root.visualization.workbench.observerEventSeries.eventString"
+    },
+    "134503650504710693": {
+        "id": "134503650504710693",
+        "name": "aggregation",
+        "type": "const",
+        "parent": "127",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.workbench.aggregation"
+    },
+    "7223380533703630121": {
+        "id": "7223380533703630121",
+        "name": "table",
+        "type": "referencer",
+        "parent": "6326365480006829771",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.expert.table"
+    },
+    "13758181320359699415": {
+        "id": "13758181320359699415",
+        "name": "aggregation",
+        "type": "const",
+        "parent": "6326365480006829771",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.visualization.expert.aggregation"
     }
 }

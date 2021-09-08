@@ -86,19 +86,19 @@ annotation_export = {
 }
 
 
-def preview_file(iN):
+def preview_file(functionNode):
 
-    logger = iN.get_logger()
+    logger = functionNode.get_logger()
     logger.debug(f"importer.preview_file()")
 
     # --- define vars
-    observer = iN.get_parent().get_child("observer")
+    observer = functionNode.get_parent().get_child("observer")
     event = observer.get_child("eventString")
-    parentName = iN.get_parent().get_name()
+    parentName = functionNode.get_parent().get_name()
     event.set_value(f"{parentName}.importer_preview.data_imported")
 
     # --- set vars
-    filename = 'upload/' + iN.get_child("fileName").get_value()
+    filename = 'upload/' + functionNode.get_child("fileName").get_value()
     pathBase = os.getcwd()
 
     # --- load csv data
@@ -107,23 +107,46 @@ def preview_file(iN):
     previewDataString = previewData.to_json(orient='table')
 
     # --- update node with preview data
-    node = iN.get_child("data_preview")
+    node = functionNode.get_child("data_preview")
     node.set_value(previewDataString)
 
     # --- return
     return True
 
-def import_run(iN):
+def find_existing_variable(functionNode, name, typ ="timeseries"):
+    """
+        try to find the variable which is given just as a name (the name from the csv file)
+        we will look in to the import folder first then all remaining variable of the widget
 
-    logger = iN.get_logger()
+    """
+    importsFolder = functionNode.get_parent().get_child("imports")
+    children = importsFolder.get_children(10)#get all deep children
+    for child in children:
+        if child.get_name()==name:
+            return child
+    #now found, try all existing time series
+    allTs = functionNode.get_model().find_nodes("root", matchProperty={"type": typ})
+    for ts in allTs:
+        if ts.get_name()==name:
+            return child
+    return None
+
+
+
+    
+
+
+def import_run(functionNode):
+
+    logger = functionNode.get_logger()
     logger.debug(f"import running..")
     timeStartImport = dt.datetime.now()
 
     # --- define vars
-    importerNode = iN.get_parent()
+    importerNode = functionNode.get_parent()
 
     # --- [vars] define
-    tablename = iN.get_child("tablename").get_value()
+    tablename = functionNode.get_child("tablename").get_value()
     logger.debug(f"tablename: {tablename}")
 
     #  # --- create needed nodes
@@ -140,7 +163,7 @@ def import_run(iN):
     cols = table.get_child("columns")
 
     # --- read metadata and fields
-    metadataRaw = iN.get_child("metadata").get_value()
+    metadataRaw = functionNode.get_child("metadata").get_value()
     metadata = json.loads(metadataRaw)
     table.get_child("metadata").set_value(metadata)
     fields = metadata["fields"] 
@@ -180,15 +203,32 @@ def import_run(iN):
         if timefield == fieldno:
             continue # skip the time field
         # now check if the column is data or event
+        data = csv_data.iloc[:, fieldno].to_list()
         try:
-            data = csv_data.iloc[:,fieldno].to_list()
-            values = numpy.asarray(data,dtype=numpy.float64)
-            fieldvar = vars.create_child(fieldname, type="timeseries")
-            fieldvar.set_time_series(values=values, times=epochs)
-            logger.debug(f"import val: {fieldname} as timeseries")
+            isTs = True
+            values = numpy.asarray(data,dtype=numpy.float64) #if that works, it's a time series data
         except Exception as ex:
+            isTs = False
+
+        if isTs:
+            #now check if that variables already exists, and try to put the data there
+            fieldVar = find_existing_variable(functionNode,fieldname)
+            if not fieldVar:
+                fieldVar = vars.create_child(fieldname, type="timeseries")
+                fieldVar.set_time_series(values=values, times=epochs)
+            else:
+                logger.debug(f"variable {fieldname} exists already as {fieldVar.get_browse_path()}, we use that")
+                fieldVar.insert_time_series(values=values, times=epochs)
+
+            logger.debug(f"import val: {fieldname} as timeseries")
+        else:
             #conversion was not possible, this is an event col
-            eventVar = table.create_child(fieldname,type="eventseries")
+            #now check if that exists already
+            isNewEventVar = False
+            eventVar = find_existing_variable(functionNode,fieldname,typ="eventseries")
+            if not eventVar:
+                eventVar = table.create_child(fieldname,type="eventseries")
+                isNewEventVar = True
             #now build up the series, leave out the nans (which were created by making rows like 15.2,,,start,,,4
             vals = []
             tims = []
@@ -209,12 +249,15 @@ def import_run(iN):
                         continue
                 vals.append(evStr.strip(" "))#remove space at start and end
                 tims.append(tim)
-            eventVar.set_event_series(values=vals, times=tims)
+            if isNewEventVar:
+                eventVar.set_event_series(values=vals, times=tims)
+            else:
+                eventVar.insert_event_series(values=vals, times=tims)
             hasEvents = True
             logger.debug(f"import val: {fieldname} as eventseries")
 
     # look for nodes of type widget and ensure variables can be selected
-    workbench_model = iN.get_model()
+    workbench_model = functionNode.get_model()
     widget_nodes: List[Node] = workbench_model.find_nodes("root", matchProperty={"type": "widget"})
     for widget_node in widget_nodes:
         selectable_variables_referencer: Node = widget_node.get_child("selectableVariables")
@@ -222,15 +265,23 @@ def import_run(iN):
 
         #now hook the events in
         if hasEvents:
+            #use the event variable as the new standard event variable
             widget_node.get_child("hasEvents.events").add_references(eventVar,deleteAll=True)
-            #prepare the visibleEvents
-            visibleEvents = {ev:False for ev in set(vals)}
+
+            #prepare the visibleEvents: get the old setting and update if there is any new
+            #visibleEvents = {ev:False for ev in set(vals)}
+            visibleEvents = widget_node.get_child("hasEvents.visibleEvents").get_value()
+            for event in set(vals):
+                if event not in visibleEvents:
+                    visibleEvents[event]=False
             widget_node.get_child("hasEvents.visibleEvents").set_value(visibleEvents)
+
             #prepare the colors
             palette = ["#f41fb3","#b20083","#a867dd","#68b8e7","#04a75e","#41ff87","#618a04","#eaf4c7","#ffce18","#8f4504"] #from https://loading.io/color/random/
-            cols = {}
+            cols = widget_node.get_child("hasEvents.colors").get_value()
             for idx,ev in enumerate(set(vals)):#
-                cols[ev]={"color":palette[idx%10]}
+                if ev not in cols:
+                    cols[ev]={"color":palette[idx%10]}
             widget_node.get_child("hasEvents.colors").set_value(cols)
             widget_node.get_child("hasEvents.events").add_references(eventVar,deleteAll=True)
             #turn on events
@@ -243,7 +294,7 @@ def import_run(iN):
             #watch the state
             widget_node.get_child("observerVisibleElements.targets").add_references(widget_node.get_child("hasEvents.visibleEvents"),allowDuplicates=False)
             #trigger the event
-            model = iN.get_model()
+            model = functionNode.get_model()
             model.notify_observers(eventVar.get_id(), ["value"]) #to trigger the widget to reload the event data
 
     logger.debug(f"import complete (seconds: {(dt.datetime.now()-timeStartImport).seconds})")

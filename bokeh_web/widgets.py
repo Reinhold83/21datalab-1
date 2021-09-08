@@ -2340,6 +2340,7 @@ class TimeSeriesWidget():
 
 
     def __make_tooltips(self, force=False):
+        #return
         #make the hover tool
         """
             if we create a hover tool, it only appears if we plot a line, we need to hook the hover tool to the figure and the toolbar separately:
