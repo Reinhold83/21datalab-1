@@ -158,7 +158,7 @@ function files_delete_confirm()
 function files_download_csv()
 {
     // dummy api call to download .csv files from the download/.
-    http_post("/_downloadfiles",JSON.stringify({"filenames":dataFiles}), null, null, null);
+    http_file_post("/_downloadfiles",JSON.stringify({"filenames":dataFiles}), null, null, null);
 }
 
 function downloadCsvAction(){

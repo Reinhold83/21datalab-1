@@ -97,7 +97,7 @@ function updateLabelsView(labels) {
         if (label == null)
             continue;
         let labelNameInputId = "labelName" + labelId;
-        removeButtonHtml = '<button type="button" class="btn btn-danger" onclick="removeLabel(' + labelId + ')"><i class="fas fa-trash"></i></button>';
+        removeButtonHtml = '<button type="button" class="btn btn-secondary button-border" onclick="removeLabel(' + labelId + ')"><i class="fas fa-trash"></i></button>';
         tableRowHtml += '<tr> <div class="form-group">'
             + '<td><input type="text" class="form-control w-50" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '" onchange="updateLabelName(\'' + labelId + '\', this.value)">'
             + '<td><input type="color" class="form-control color-control" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'

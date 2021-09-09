@@ -19,6 +19,11 @@
     color: #d9b100;
 }
 
+.button-border {
+    border-color: white !important; 
+    cursor: pointer
+}
+
 .nav-jump-top {
     width: 100%;
 }
@@ -183,7 +188,7 @@ div#fileuploadCol input#fileupload {
 
 .modal_table .modal-body {
     padding: 0;
-    height: 80vh;
+    max-height: 80vh;
     overflow-y: scroll;
 }
 
@@ -203,6 +208,9 @@ div#fileuploadCol input#fileupload {
     padding-bottom: 10px;
 }
 
+div#label-editor-modal {
+    max-width: 900px;
+}
 
 @media (min-width: 768px) {
     body {

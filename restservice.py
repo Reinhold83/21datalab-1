@@ -1137,12 +1137,13 @@ def all(path):
                                 if file in filenames:
                                     zf.write(os.path.join(dirname, file))
                                     zfpath = dirname+"/"+file
-                                    
                         zf.close()
                         # print(flask.send_file(os.path.join(flask.current_app.root_path, 'download', 'myzipfile.zip'), as_attachment=True))
-                        print(os.walk('./download'))
-                        responseCode = 200
-                        response = "files downloaded."
+                        # print(os.walk('./download'))
+                        # responseCode = 200
+                        # response = "files downloaded."
+                        return flask.send_file(os.path.join(flask.current_app.root_path, 'download', 'myzipfile.zip'), as_attachment=True)
+                        # return flask.send_file('/home/techstriker3/workspace/project/21datalab/download/myzipfile.zip', as_attachment=True)
 
             except Exception as ex:
                 logger.error("Can't download the file to the upload folder: " + str(ex) + str(sys.exc_info()[0]))

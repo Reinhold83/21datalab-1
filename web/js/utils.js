@@ -5,6 +5,33 @@ function http_get(myUrl) {
   return xmlHttp.responseText;
 }
 
+// Create new function for file download
+
+function http_file_post(url, data, params, obj, cb) {
+  // construct an HTTP request
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true); //asynchronous call
+  xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  xhr.responseType = 'blob';
+  xhr.onload = function (e) {
+    var blob = e.currentTarget.response;
+    var contentDispo = e.currentTarget.getResponseHeader('Content-Disposition');
+    // https://stackoverflow.com/a/23054920/
+    var fileName = contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1];
+    saveOrOpenBlob(blob, fileName);
+  }
+  xhr.send(data);
+}
+
+
+function saveOrOpenBlob(blob, fileName) {
+  var a = document.createElement('a');
+  a.href = window.URL.createObjectURL(blob);
+  a.download = fileName;
+  a.dispatchEvent(new MouseEvent('click'));
+}
+
+
 function http_post(url, data, params, obj, cb) {
   // construct an HTTP request
   var xhr = new XMLHttpRequest();
