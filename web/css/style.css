@@ -10,6 +10,17 @@
 }
 
 
+
+
+
+  
+    
+   
+  
+  
+
+
+
 .navbar-dark .navbar-nav .nav-link.active {
     color: #d9b100;
 }
@@ -20,7 +31,6 @@
 }
 
 .button-border {
-    border-color: white !important; 
     cursor: pointer
 }
 
@@ -153,6 +163,21 @@ div#fileuploadCol input#fileupload {
     background: #545454;
     font-weight: 800;
     color: #fff;
+    width: 100%;
+    display: block;
+}
+.modal_table .modal-body table tr {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+}
+.modal_table .modal-body table td {
+    width: 33.3%;
+    text-align: center;
+}
+.modal_table .modal-body table thead th:first-child, .modal_table .modal-body table td:first-child {
+    text-align: left !important;
 }
 .modal_table .modal-body table .form-control {
     max-width: 230px;
@@ -179,6 +204,14 @@ div#fileuploadCol input#fileupload {
 }
 .modal_table .modal-body table thead th {
     text-align: left !important;
+    width: 33.3%;
+    text-align: center !important;
+    border: none;
+}
+tbody#label-table-body {
+    max-height: 65vh;
+    overflow-y: auto;
+    display: block;
 }
 
 .modal-open .modal {
@@ -188,8 +221,8 @@ div#fileuploadCol input#fileupload {
 
 .modal_table .modal-body {
     padding: 0;
-    max-height: 80vh;
-    overflow-y: scroll;
+    /* max-height: 80vh;
+    overflow-y: scroll; */
 }
 
 .modal_table .modal-footer {
