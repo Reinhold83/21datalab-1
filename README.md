@@ -11,7 +11,9 @@ Further reading:
 # system requirements
 The framework is prepared to run on edge, desktop or cloud. The core software is based on python 3.6
 ## setup
-* install python 3.6, recommended https://www.anaconda.com/
+* install python 3.7, 
+  * recommended https://www.anaconda.com/ 
+  * version https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe (contains python 3.7.4)
 * clone this repo into a folder named 21datalab (e.g. git clone https://github.com/smartyal/21datalab.git 21datalab)
 * run 21datalab/scripts/install.bat
 * a venv is created, the needed pip packages are installed and the web packages are installed

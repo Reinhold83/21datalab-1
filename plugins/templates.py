@@ -166,6 +166,8 @@ timeseriesWidget = {
              {"name": "eventString", "type": "const", "value": "timeSeriesWidget.eventSeries"}
              # the string of the event
          ]
-         }
+         },
+        {"name": "backgroundHighlight", "type": "variable"},
+        {"name": "aggregation", "type": "const", "value": None},
     ]
 }
