@@ -703,6 +703,13 @@ class TimeSeriesWidgetDataServer():
                     return info["uiInfo"]["marker"]
         return "cross"
 
+    def get_static_line_color(self,variableBrowsePath):
+        for id,info in self.mirror["selectedVariables"][".properties"]["leavesProperties"].items():
+            if "browsePath" in info and info["browsePath"]==variableBrowsePath:
+                if "uiInfo" in info and "lineColor" in info["uiInfo"]:
+                    return info["uiInfo"]["lineColor"]
+        return None
+
 
     #start and end are ms(!) sice epoch, tag is a string
     def add_annotation(self,start=0,end=0,tag="unknown",type="time",min=0,max=0, var = None):
@@ -3153,6 +3160,12 @@ class TimeSeriesWidget():
             if varName in currentLinesColors:
                 return currentLinesColors[varName]["lineColor"]
 
+            #not found, get the static color if given
+            col = self.server.get_static_line_color(varName)
+            if col:
+                return col
+
+
         #not found, get a new one
 
         usedColors =  [self.lines[lin].glyph.line_color for lin in self.lines if hasattr(self.lines[lin],"glyph")]
@@ -3248,12 +3261,13 @@ class TimeSeriesWidget():
         if newVars != []:
             #sort the limits to the end so that the lines are created first, then the band can take the same color
             newList = []
+            newMaxes = []
             for elem in newVars:
                 if elem.endswith("_limitMax") or elem.endswith("_limitMin") or elem.endswith("_expected"):
-                    newList.append(elem)
+                    newMaxes.append(elem)
                 else:
-                    newList.insert(0,elem)
-            newVars = newList
+                    newList.append(elem)
+            newVars = newList+newMaxes
 
         if newVars and not self.lines:
             #this is the first lines after a blank canvas
@@ -3516,6 +3530,11 @@ class TimeSeriesWidget():
         # the _limitMin lines are not listed in the self.lines, as we keep only the limitMax to store the band, so the limitmin
         # is a variable in the backend but not in the lines, keep them out of the discussio here
         newLines = [line for line in newLines if not line.endswith("_limitMin")]
+
+        #now restore original order
+        newLinesOrdered=[line for line in backendLines if line in newLines]
+        newLines = newLinesOrdered
+
 
         scoreVars = self.server.get_score_variables()  # we assume ending in _score
 

@@ -86,6 +86,29 @@ annotation_export = {
 }
 
 
+annoImportPipeline = {
+    "name":"importAnnotations","type":"folder","children": [
+        {"name":"cockpit","type":"const","value":"customui/importer/annotationsimport.htm"},
+        {"name":"importedAnnotations","type":"folder"},
+        {   "name":"annotation_import_function",
+            "type": "function",
+            "functionPointer": "importer.annotation_import_function",  # filename.functionname
+            "autoReload": True,  # set this to true to reload the module on each execution
+            "children": [
+                {"name": "targetFolder", "type": "referencer","references":["importAnnotations.importedAnnotations"]},
+                {"name": "fileName", "type": "variable"},
+                {"name": "importReferences", "type": "const", "value": False},
+                # if import references is set, we try to reconnect the annotations to variables using the id
+                # => this might fail when the ids in the new project are different, be careful here
+                {"name": "widgets", "type": "referencer"},
+                # if widgets are set, we integrate the annotations in the widgets and give them colors etc.
+                __functioncontrolfolder
+            ]
+        }
+    ]
+}
+
+
 def preview_file(functionNode):
 
     logger = functionNode.get_logger()
