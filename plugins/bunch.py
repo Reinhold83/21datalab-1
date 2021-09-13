@@ -21,7 +21,7 @@ bunchPlot= {
 
 
 def get_color_map(size):
-    map = cm.get_cmap("gist_rainbow", size)
+    map = cm.get_cmap("gist_rainbow", size) # https://matplotlib.org/stable/tutorials/colors/colormaps.html
     palette = map(range(size))
     colors = []
     for rgb in palette:
@@ -50,7 +50,7 @@ def bunch_plot(functionNode):
 
     indices = numpy.where(events["values"]==syncEventNo)[0]
 
-    times = events["__time"][indices]
+    times = events["__time"][indices] # get the time points of the given event
 
     timeLen = times[1]-times[0] #we take the distance of the first as the length
     #now create nodes:
