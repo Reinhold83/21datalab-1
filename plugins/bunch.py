@@ -65,7 +65,7 @@ def bunch_plot(functionNode):
     for count,idx in enumerate(indices):
         progressNode.set_value(float(count)/float(len(indices)))
         startTime = times[count]
-        data = variable.get_time_series(start = startTime,end = startTime+timeLen)
+        data = variable.get_time_series(start = startTime-timeLen,end = startTime+timeLen)
         timeOffset = startTime-times[0]
         #create a new node
         varName = "bunch_" + variable.get_name() + "_" + str(idx) + "#" + str(count)

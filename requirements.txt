@@ -32,12 +32,12 @@ lxml==4.4.1               # via -r requirements.in (line 5)
 markupsafe==1.1.1         # via jinja2
 mistune==0.8.4            # via nbconvert
  
-numpy==1.19.0             # via -r requirements.in (line 10), bokeh, scikit-learn, scipy
+numpy==1.16.6             # via -r requirements.in (line 10), bokeh, scikit-learn, scipy
 packaging==20.3           # via bokeh
 numba==0.53
  
  
-pandas==1.01
+pandas==1.0.5
  
 pillow==7.0.0             # via bokeh
  
@@ -53,7 +53,7 @@ pyyaml==5.3               # via bokeh
 requests==2.23.0          # via sseclient
 scikit-learn==0.21.3      # via -r requirements.in (line 6)
 sklearn
-scipy              # via scikit-learn
+scipy==1.7.1              # via scikit-learn
  
 six==1.14.0               # via bleach, bokeh, jsonschema, packaging, pyrsistent, python-dateutil, sseclient, traitlets
 soupsieve==2.0            # via beautifulsoup4

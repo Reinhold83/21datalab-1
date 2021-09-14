@@ -1047,7 +1047,7 @@ def all(path):
                     filenames.append({
                         "name": filename,
                         "time": datetime.datetime.fromtimestamp(
-                            os.path.getmtime(fullPath)).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                            os.path.getmtime(fullPath)).strftime('%Y-%m-%dT%H:%M:%S%z'),
                         "size": round((float(os.path.getsize(fullPath))/1024)/1024, 3)
                     })
 
