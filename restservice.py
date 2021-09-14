@@ -1046,7 +1046,8 @@ def all(path):
                     #for filename in f:
                     filenames.append({
                         "name": filename,
-                        "time": time.ctime(os.path.getmtime(fullPath)),
+                        "time": datetime.datetime.fromtimestamp(
+                            os.path.getmtime(fullPath)).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
                         "size": round((float(os.path.getsize(fullPath))/1024)/1024, 3)
                     })
 
@@ -1131,12 +1132,10 @@ def all(path):
                         except:
                             pass
                         zf = zipfile.ZipFile("./download/myzipfile.zip", "w")
-                        zfpath = ''
                         for dirname, subdirs, files in os.walk(web.config['UPLOAD_FOLDER']):
                             for file in files:
                                 if file in filenames:
                                     zf.write(os.path.join(dirname, file))
-                                    zfpath = dirname+"/"+file
                         zf.close()
                         # print(flask.send_file(os.path.join(flask.current_app.root_path, 'download', 'myzipfile.zip'), as_attachment=True))
                         # print(os.walk('./download'))

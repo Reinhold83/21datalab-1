@@ -26,8 +26,6 @@ function populate_settings() {
     }
 }
 
-
-
 function drop_nodes(nodeIds,path)
 {
     let query={"nodes":nodeIds,"path":path};
@@ -159,6 +157,8 @@ function files_download_csv()
 {
     // dummy api call to download .csv files from the download/.
     http_file_post("/_downloadfiles",JSON.stringify({"filenames":dataFiles}), null, null, null);
+    populate_file_list()
+    dataFiles = []; 
 }
 
 function downloadCsvAction(){
@@ -195,7 +195,7 @@ function populate_file_list() {
     var html = '<div class="table-responsive"><table class="table"><thead><tr><th></th><th>Name</th><th>Size</th><th>Date Created</th></tr></thead><tbody>'
 
     for (let f of files) {
-        html += `<tr><td><input type="checkbox" onchange="fileSelected(this,'${f.name}')" value="${f.name}"></td><td>${f.name}</td><td>${f.size} mb</td><td>${f.time}</td></tr>`
+        html += `<tr><td><input type="checkbox" onchange="fileSelected(this,'${f.name}')" value="${f.name}"></td><td>${f.name}</td><td>${f.size} MB</td><td>${f.time}</td></tr>`
     }
     
     html += '</tbody></table></div>'
@@ -215,7 +215,7 @@ function initialize_upload() {
         add: function (e, data) {
             $('#fileuploadicon').fadeIn();
             $('#fileuploadCol').css({"background-color": "transparent"});
-            $('#fileuploadCol').removeClass("btn-warning")
+            $('#fileuploadCol').removeClass("btn btn-secondary");
             $('#fileuploadCol').append(`<button id="uploadButton" class="btn btn-dark" style="display: none">Upload</button>`);
             $('#uploadButton').click(function() {
                 data.submit();
@@ -236,8 +236,8 @@ function initialize_upload() {
             console.log("successfully uploaded.");
 
             $('#uploadStatusProgress').text("Successfully uploaded!");
-            $('#fileuploadCol').addClass("btn-warning")
-            $('#fileuploadCol').css({"background-color": "#F39C12"});
+            $('#fileuploadCol').addClass("btn btn-secondary");
+            $('#fileuploadCol').css({"background-color": "transparent"});
             $('#fileuploadicon').fadeIn();
         },
         fail: function(e, data) {
