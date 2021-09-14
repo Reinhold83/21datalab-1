@@ -97,7 +97,7 @@
       </button>
       <div class="navbar-collapse collapse mt-4" id="navbarResponsive">
         <ul class="navbar-nav">
-          <li class="nav-item">
+          <li class="nav-item" onclick="populate_file_list()">
             <a
               class="nav-link nav-item-hover"
               href="#nav-data"
@@ -204,26 +204,35 @@
           <div class="container mt-4">
             <div class="row mb-4">
               <div class="col">
-                <div class="card">
-                  <div class="card-header">Files</div>
+                <div class="card file_upload_card">
+                  <div class="card-header">Files
+
+                  <div>
+                    <div class=" hidden pt-2" id="uploadStatusRow">
+                     
+                      <p id="uploadStatusProgress"></p>
+                   
+                  </div>
+                    <div class="btn btn-secondary button-border" id="fileuploadCol" title="Upload Files">
+                      <i class="fas fa-plus" id="fileuploadicon"></i>
+                      <input
+                        id="fileupload"
+                        type="file"
+                        name="file"
+                        data-url="/_upload"
+                        multiple="multiple"
+                        text="generic test"
+                      />
+                    </div>
+                    <button class="btn btn-secondary button-border" id="files_download" onclick="downloadCsvAction()" title="Download Files"><i class="fas fa-arrow-down"></i></button>
+                    <button class="btn btn-secondary button-border" id="files_remove" onclick="removeCsvAction()" title="Delete Files"><i class="fa fa-trash"></i></button>
+                  </div>
+                  </div>
                   <div class="card-body">
-                    <div class="row" id="fileuploadRow">
-                      <div class="col" id="fileuploadCol">
-                        <input
-                          id="fileupload"
-                          type="file"
-                          name="file"
-                          data-url="/_upload"
-                          multiple="multiple"
-                          text="generic test"
-                        />
-                      </div>
+                    <div class="" id="fileuploadRow">
+                      
                     </div>
-                    <div class="row hidden pt-2" id="uploadStatusRow">
-                      <div class="col">
-                        <p id="uploadStatusProgress"></p>
-                      </div>
-                    </div>
+
                   </div>
                 </div>
               </div>
@@ -787,7 +796,7 @@
 
     <div id="cockpitplaceholder">
       <!-- insert cockpit test code here -->
-
+    
       <!-- end of cockpit test code -->
     </div>
   </body>

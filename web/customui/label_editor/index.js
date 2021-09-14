@@ -79,6 +79,11 @@ function cockpit_init(path) {
   });
 }
 
+function updateLabelName(labelId, labelNameString) {
+  currentLabels[labelId].name = labelNameString;
+}
+
+
 function updateLabelColor(labelId, labelColorString) {
   currentLabels[labelId].color.hexCode = labelColorString;
 }
@@ -92,11 +97,11 @@ function updateLabelsView(labels) {
         if (label == null)
             continue;
         let labelNameInputId = "labelName" + labelId;
-        removeButtonHtml = '<button type="button" class="btn btn-primary" onclick="removeLabel(' + labelId + ')">Remove</button>';
-        tableRowHtml += '<tr><td><input type="text" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '">'
-            + '<button type="button" class="btn btn-primary" onclick="changeLabelName(' + labelId + ', document.querySelector(\'#' + labelNameInputId + '\').value)">Save</button></td>'
-            + '<td><input type="color" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'
-            + '<td>' + removeButtonHtml + '</td></tr>'
+        removeButtonHtml = '<button type="button" class="btn btn-secondary button-border" onclick="removeLabel(' + labelId + ')"><i class="fas fa-trash"></i></button>';
+        tableRowHtml += '<tr> <div class="form-group">'
+            + '<td><input type="text" class="form-control w-50" minlength="1" value="' + label.name + '" id="' + labelNameInputId + '" onchange="updateLabelName(\'' + labelId + '\', this.value)">'
+            + '<td><input type="color" class="form-control color-control" value="' + label.color.hexCode + '" onchange="updateLabelColor(\'' + labelId + '\', this.value)"></td>'
+            + '<td>' + removeButtonHtml + '</td></div></tr>'
     }
     $(selector).html(tableRowHtml)
 }
@@ -133,6 +138,7 @@ function renameExistingAnnotations(oldNameToNewNameDict) {
       let newName = oldNameToNewNameDict[oldName];
       console.log("Updating annotation", tagsNode['browsePath'], ':', oldName, '->', newName);
       // need to update
+      
       http_post(
         '/setProperties',
         JSON.stringify([ { 'id': tagsNode['id'], 'value': [newName] } ]),
@@ -212,6 +218,7 @@ function saveLabels(labels) {
   // ignore deleted labels marked with null
   let visibleTagsDict = Object.fromEntries(labels.filter(label => label != null).map(label => [label.name, true]));
   [labelNameToIndexMap, labelIndexToColorMap] = createHoverMap(labels);
+
 
   for (const slaveFrontend of slaveFrontends) {
     console.log("Updating ", slaveFrontend + '.hasAnnotation.visibleTags');

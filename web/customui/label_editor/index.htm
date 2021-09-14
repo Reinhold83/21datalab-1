@@ -1,14 +1,14 @@
 <script src="customui/label_editor/index.js"></script>
 <div id="cockpit" class="modal fade" role="dialog" path="" style="margin-top: 67;margin-left: 0">
-  <div class="modal-dialog modal-xl" role="dialog" id="label-editor-modal">
+  <div class="modal-dialog modal-xl modal_table" role="dialog" id="label-editor-modal">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="doublechecktitl2e"><i class="fas fa-file-import"></i> &nbsp &nbsp Label editor</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body">
-        <button type="button" class="btn btn-primary" onclick="addLabel()">Add label</button>
-        <table class="table table-dark table-striped">
+        <div class="table-responsive">
+        <table class="table">
           <thead>
             <tr style="text-align: center;">
               <th>Label</th>
@@ -21,8 +21,10 @@
           <tfoot>
           </tfoot>
         </table>
+        </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal" id="doublecheckButtonSave2">Close</button>
+        <button type="button" class="btn btn-secondary button-border" onclick="addLabel()" title="Add Label"><i class="fas fa-plus"></i></button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="doublecheckButtonSave2">Close</button>
       </div>
     </div>
   </div>
