@@ -25,7 +25,7 @@ curl -L https://momentjs.com/downloads/moment.js --output %mypath%temp\moment.mi
 curl -L https://momentjs.com/downloads/moment-timezone-with-data.min.js --output %mypath%temp\moment-timezone-with-data.min.js
 curl -L https://github.com/blueimp/jQuery-File-Upload/archive/refs/tags/v10.31.0.zip --output %mypath%temp\fileupload.zip
 curl -L https://jqueryui.com/resources/download/jquery-ui-1.12.1.zip --output %mypath%temp\jqueryui.zip
-curl -L https://github.com/pwnedgod/supercontextmenu/archive/refs/heads/master.zip --output %mypath%temp\supercontext.zip
+curl -L https://github.com/smartyal/supercontextmenu/archive/refs/heads/master.zip --output %mypath%temp\supercontext.zip
 :skipdownload
 
 
