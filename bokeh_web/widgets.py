@@ -573,10 +573,14 @@ class TimeSeriesWidgetDataServer():
                 varList.append(self.settings["background"]["background"])
              
         # now get data from server
-        if start:
-            start=start/1000
-        if end:
-            end=end/1000
+        if "xAxisType" in self.mirror and self.mirror["xAxisType"][".properties"]["value"]=="number":
+            pass
+        else:
+            #default is datetime and we must do the *1000
+            if start:
+                start=start/1000
+            if end:
+                end=end/1000
 
         #include the nans for _limitMin, _limitMax _expected
         includeAllNan = [var for var in varList if (var.endswith("_limitMin") or var.endswith("_limitMax") or var.endswith("_expected")) ]
@@ -601,7 +605,11 @@ class TimeSeriesWidgetDataServer():
             if entry.endswith("__time"):
                 times = numpy.asarray(r[entry])
                 debug = copy.deepcopy(times.tolist())
-                r[entry]=(times*1000).tolist()
+                if "xAxisType" in self.mirror and self.mirror["xAxisType"][".properties"]["value"]=="number":
+                    r[entry]=times.tolist()
+                else:
+                    #need to convert
+                    r[entry]=(times*1000).tolist()
                 #print(f"times {debug}")
                 #print(f"times {entry} {[epochToIsoString(t) for t in debug]}")
         #make them all lists and make all inf/nan etc to nan
@@ -1879,11 +1887,18 @@ class TimeSeriesWidget():
 
 
 
-
-        fig = figure(toolbar_location=None, plot_height=self.height,
+        if "xAxisType" in mirror and mirror ["xAxisType"][".properties"]["value"]=="number":
+            fig = figure(toolbar_location=None, plot_height=self.height,
+                     plot_width=self.width,
+                     sizing_mode="scale_width",
+                     y_range=Range1d(),x_range=(0,1))
+        else:
+            fig = figure(toolbar_location=None, plot_height=self.height,
                      plot_width=self.width,
                      sizing_mode="scale_width",
                      x_axis_type='datetime', y_range=Range1d(),x_range=(0,1))
+        
+        
         self.plot = fig
 
         # set the theme
@@ -1937,16 +1952,18 @@ class TimeSeriesWidget():
         self.tools = toolBarBox
         self.toolBarBox = toolBarBox
 
+        if "xAxisType" in mirror and mirror ["xAxisType"][".properties"]["value"]=="number":
+            pass
+        else:
+            self.plot.xaxis.formatter = FuncTickFormatter(code = """
+                let local = moment(tick).tz('%s');
+                let datestring =  local.format();
+                return datestring.slice(0,-6);
+                """%settings["timeZone"])
 
-        self.plot.xaxis.formatter = FuncTickFormatter(code = """
-            let local = moment(tick).tz('%s');
-            let datestring =  local.format();
-            return datestring.slice(0,-6);
-            """%settings["timeZone"])
+            self.plot.xaxis.ticker = DatetimeTicker(desired_num_ticks=5)# give more room for the date time string (default was 6)
 
-        self.plot.xaxis.ticker = DatetimeTicker(desired_num_ticks=5)# give more room for the date time string (default was 6)
-
-        self.plot.xgrid.ticker = self.plot.xaxis.ticker
+            self.plot.xgrid.ticker = self.plot.xaxis.ticker
 
         self.build_second_y_axis()
 
@@ -2431,7 +2448,12 @@ class TimeSeriesWidget():
 
             #hover.formatters={'__time': 'datetime'}
             #custom = """var local = moment(value).tz('%s'); return local.format();"""%self.server.get_settings()["timeZone"]
-            custom = """var local = moment(value).tz('%s'); return local.format();""" % self.server.get_settings()["timeZone"]
+
+            mirror = self.server.get_mirror()
+            if "xAxisType" in mirror and mirror["xAxisType"][".properties"]["value"]=="number":
+                custom = """ return value;""" #just return the plain number
+            else:
+                custom = """var local = moment(value).tz('%s'); return local.format();""" % self.server.get_settings()["timeZone"]
             #custom2 = """var neu;neu = source.data['test'][0]; return String(value);"""
             #self.testSource = ColumnDataSource({"test":[67]*1000})
             hover.formatters = {'__time': CustomJSHover(code=custom)}

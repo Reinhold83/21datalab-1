@@ -235,7 +235,7 @@ class TimeSeries:
 
 
             if type(start) is not type(None):
-                if start < 0:
+                if start < 0 and (type(end) is type(None)):
                     # we support the -start time, endtime = None, typically used for streaming
                     # to query interval from the end
                     # get the last time and subtract the query time

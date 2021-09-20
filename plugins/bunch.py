@@ -15,6 +15,7 @@ bunchPlot= {
         {"name":"variables","type":"referencer"},                        # the variable to create bunch plots from
         {"name":"outputFolder","type":"referencer"},                    # folder to create the bunch plot variables in
         {"name":"syncEvent","type":"const","value":"eventName"},        # give the name of the event to sync on
+        {"name":"targetWidget","type":"referencer"},
         __functioncontrolfolder
     ]
 }
@@ -64,9 +65,9 @@ def bunch_plot(functionNode):
     palette = get_color_map(len(indices))
     for count,idx in enumerate(indices):
         progressNode.set_value(float(count)/float(len(indices)))
-        startTime = times[count]
+        startTime = times[count] #this is the start time of this round of data 
         data = variable.get_time_series(start = startTime-timeLen,end = startTime+timeLen)
-        timeOffset = startTime-times[0]
+        timeOffset = startTime#-times[0]
         #create a new node
         varName = "bunch_" + variable.get_name() + "_" + str(idx) + "#" + str(count)
         new = folder.create_child(varName,type="timeseries")
@@ -93,6 +94,16 @@ def bunch_plot(functionNode):
         cur.update(currentColorsNew)
         widget.get_child("currentColors").set_value(cur)
     """
+
+    #now hook all results in
+    widget = functionNode.get_child("targetWidget").get_target()
+    widget.get_child("selectableVariables").add_references(folder,deleteAll=True,allowDuplicates=False)
+    widget.get_child("selectedVariables").add_references(newNodes,deleteAll=True,allowDuplicates=False)
+    
+    
+
+
+
 
     return True
  

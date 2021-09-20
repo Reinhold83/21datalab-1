@@ -89,7 +89,8 @@
             "9964023167566708706",
             "15823148225629396080",
             "1855797899278555728",
-            "134503650504710693"
+            "134503650504710693",
+            "2757629369872237201"
         ],
         "backRefs": [
             "526",
@@ -146,7 +147,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "1970-01-01T01:00:00.000156+01:00",
+        "value": "1970-01-01T00:51:43+01:00",
         "browsePath": "root.visualization.workbench.startTime"
     },
     "131": {
@@ -159,7 +160,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "1970-01-01T01:00:00.000253+01:00",
+        "value": "1970-01-01T01:08:16+01:00",
         "browsePath": "root.visualization.workbench.endTime"
     },
     "132": {
@@ -630,7 +631,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 218,
+        "value": 220,
         "browsePath": "root.visualization.workbench.observerVariables.triggerCounter"
     },
     "645": {
@@ -641,7 +642,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-19T08:29:17.159358",
+        "value": "2021-09-20T16:54:46.213727",
         "browsePath": "root.visualization.workbench.observerVariables.lastTriggerTime"
     },
     "646": {
@@ -1129,7 +1130,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 1642,
+        "value": 1718,
         "browsePath": "root.visualization.workbench.observerVisibleElements.triggerCounter"
     },
     "15683200324838571042": {
@@ -1140,7 +1141,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-09-08T21:51:47.915294",
+        "value": "2021-09-20T16:38:45.453927",
         "browsePath": "root.visualization.workbench.observerVisibleElements.lastTriggerTime"
     },
     "13071347114919871021": {
@@ -1471,8 +1472,8 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": {
-            "root.importer.imports.occupancydemo_csv.variables.Temperature": {
-                "lineColor": "#D9B100"
+            "root.importer.imports.new.negative": {
+                "lineColor": "#eba4fc"
             }
         },
         "browsePath": "root.visualization.workbench.currentColors"
@@ -4317,7 +4318,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 4,
+        "value": 6,
         "browsePath": "root.Streaming.Head.control.executionCounter"
     },
     "16327941073161340613": {
@@ -4328,7 +4329,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0.061962,
+        "value": 8.520708,
         "browsePath": "root.Streaming.Head.control.lastExecutionDuration"
     },
     "1209295173097826380": {
@@ -4339,7 +4340,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:43:24.257241",
+        "value": "2021-09-20T16:24:54.841192",
         "browsePath": "root.Streaming.Head.control.lastStartTime"
     },
     "5208201603528010686": {
@@ -7717,5 +7718,16 @@
         "forwardRefs": [],
         "value": "async",
         "browsePath": "root.annoImporter.annotation_import_function.control.executionType"
+    },
+    "2757629369872237201": {
+        "id": "2757629369872237201",
+        "name": "xAxisType",
+        "type": "const",
+        "parent": "127",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "number",
+        "browsePath": "root.visualization.workbench.xAxisType"
     }
 }
