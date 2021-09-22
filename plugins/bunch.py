@@ -2,6 +2,7 @@
 import numpy
 from system import __functioncontrolfolder
 from matplotlib import cm
+from model import getRandomId
 
 
 
@@ -12,11 +13,21 @@ bunchPlot= {
     "autoReload":True,                                 #set this to true to reload the module on each execution
     "children":[
         {"name":"eventseries","type":"referencer"},                     # the events to use for syncing
-        {"name":"variables","type":"referencer"},                        # the variable to create bunch plots from
+        {"name":"variables","type":"referencer"},                        # the variable to create bunch plots from, if multiple, we take the first
         {"name":"outputFolder","type":"referencer"},                    # folder to create the bunch plot variables in
         {"name":"syncEvent","type":"const","value":"eventName"},        # give the name of the event to sync on
         {"name":"targetWidget","type":"referencer"},
         __functioncontrolfolder
+    ]
+}
+
+
+bunchPlotCockpit= {
+    "name":"bunchplotCockpit","type":"folder","children":[
+        
+        {"name": "cockpit", "type": "const", "value": "/customui/bunchcockpit.htm"},  #the cockpit for the motif miner
+        {"name":"variables","type":"referencer"},           #pointing to the selectable variable for the dialog
+        bunchPlot,                                          #the bunchplot function
     ]
 }
 
@@ -34,6 +45,8 @@ def get_color_map(size):
 def bunch_plot(functionNode):
     logger = functionNode.get_logger()
     model = functionNode.get_model()
+    widget = functionNode.get_child("targetWidget").get_target()
+
     m=functionNode.get_model()
     logger.info("==>>>> in bunch_plot " + functionNode.get_browse_path())
     progressNode = functionNode.get_child("control").get_child("progress")
@@ -58,49 +71,40 @@ def bunch_plot(functionNode):
     outputFolder = functionNode.get_child("outputFolder").get_target()
     folder = outputFolder.create_child("bunch",type="folder")
     #delete all existing children of this folder
-    for child in folder.get_children():
+    
+    #widget.get_child("selectableVariables").add_references([],deleteAll=True)#remove all existing
+    model.disable_observers()
+    children = folder.get_children()
+    for child in children[:-1]:
         child.delete()
+    model.enable_observers()
+    children[-1].delete() # delete the last to trigger the update
 
+
+    thisRunId = getRandomId()#creating a the name each time we run to force the widget to reload all variables 
     newNodes=[]
-    palette = get_color_map(len(indices))
-    for count,idx in enumerate(indices):
-        progressNode.set_value(float(count)/float(len(indices)))
-        startTime = times[count] #this is the start time of this round of data 
-        data = variable.get_time_series(start = startTime-timeLen,end = startTime+timeLen)
-        timeOffset = startTime#-times[0]
-        #create a new node
-        varName = "bunch_" + variable.get_name() + "_" + str(idx) + "#" + str(count)
-        new = folder.create_child(varName,type="timeseries")
-        new.set_properties({"uiInfo":{"lineColor":palette[count]}})
-        newNodes.append(new)
-        new.set_time_series(times = data["__time"]-timeOffset,values = data["values"])
-
-    """
-    #now also generate the color map
-    size = len(newNodes)
-    map = cm.get_cmap("gist_rainbow",size)
-    palette = map(range(size))
-    currentColorsNew={}
-
-    for idx,node in enumerate(newNodes):
-        colorcode = "#%06x"%int(palette[idx][0]*256*256+palette[idx][1]*256+palette[idx][2])
-        currentColorsNew[node.get_browse_path()]={"lineColor":colorcode}
-
-    #distribute on the widgets
-    for widget in model.find_nodes("root",{"type":"widget"}):
-        cur = widget.get_child("currentColors").get_value()
-        if not cur:
-            cur = {}
-        cur.update(currentColorsNew)
-        widget.get_child("currentColors").set_value(cur)
-    """
+    model.disable_observers()
+    try:
+        palette = get_color_map(len(indices))
+        for count,idx in enumerate(indices):
+            progressNode.set_value(float(count)/float(len(indices)))
+            startTime = times[count] #this is the start time of this round of data 
+            data = variable.get_time_series(start = startTime-timeLen,end = startTime+timeLen)
+            timeOffset = startTime#-times[0]
+            #create a new node
+            varName = "bunch_" + variable.get_name() + "_" + str(idx)+"_"+thisRunId + "#" + str(count)
+            new = folder.create_child(varName,type="timeseries")
+            new.set_properties({"uiInfo":{"lineColor":palette[count]}})
+            newNodes.append(new)
+            new.set_time_series(times = data["__time"]-timeOffset,values = data["values"])
+    finally:
+        model.enable_observers()
 
     #now hook all results in
-    widget = functionNode.get_child("targetWidget").get_target()
-    widget.get_child("selectableVariables").add_references(folder,deleteAll=True,allowDuplicates=False)
-    widget.get_child("selectedVariables").add_references(newNodes,deleteAll=True,allowDuplicates=False)
-    
-    
+    model.disable_observers()
+    widget.get_child("selectedVariables").add_references(newNodes[0:-1],deleteAll=True)
+    model.enable_observers()
+    widget.get_child("selectedVariables").add_references(newNodes[-1]) # add the last to trigger the observers 
 
 
 

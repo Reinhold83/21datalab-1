@@ -1,0 +1,187 @@
+
+      <div id="cockpit" class="modal fade" role="dialog" path="" style="width:600;height:700">
+
+        <div class="modal-dialog modal-lg" role="dialog" id="cockpitmodal">
+    
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="doublechecktitl2e"><i class="fas fa-gamepad"></i> &nbsp &nbsp Bunch Plot Cockpit</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class ="col-3"> select Variable </div>
+                        <div class ="col-9">
+                          <select class="form-control" id="select-variable" ></select>
+                        </div>
+
+                    </div>              
+                    <div class="form-group row">
+                        <div class ="col-3"> select Event</div>
+                        <div class ="col-9">
+                            <select class="form-control" id="select-event" ></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class ="col-3"> create Bunch Plot</div>
+                        <div class ="col-9">
+                            <button type="button" class="btn btn-secondary float-right"  onclick="run_bunch()">run</button>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-primary"  data-dismiss="modal" id ="doublecheckButtonSave2">Close</button>
+                </div>
+            </div>
+        <script>
+    
+     
+    var cockpitPath = "";
+     
+    
+    function cockpit_init(path)
+    {
+        //activate first tab
+    
+    
+        cockpitPath = path;
+        $("#cockpit").attr("path",path);
+    
+        http_post("/_getleaves",JSON.stringify(path+".variables"),null,null, function(obj,status,data,params)
+        {
+            if (status==200)
+            {
+                
+                var variables = JSON.parse(data);
+                $("#select-variable").empty();
+                for (var variable of variables)
+                {
+                  $("#select-variable").append("<option value=0 nodeid="+variable.id+">"+variable.name+"</option>");
+                }
+                $("#select-variable")[0].selectedIndex=-1; //select none
+                http_post("/_getleaves",JSON.stringify(path+".bunchplot.variables"),null,null, function(obj,status,data,params)
+                {
+                    if (status==200)
+                    {
+                        var variable = JSON.parse(data)[0].name;
+                        $("#select-variable option:contains("+variable+")").each(function(){
+                            if ($(this).text() == variable) $(this).prop('selected', 'selected');
+                        });
+                    }
+                });
+    
+            }
+            else
+            {
+                console.log("problem init bunch cockpit1");
+            }
+        });
+    
+        http_post("/_getleaves",JSON.stringify(path+".bunchplot.eventseries"),null,null, function(obj,status,data,params)
+        {
+            if (status==200)
+            {
+                var events = JSON.parse(data);
+                console.log("in cockpit init");
+    
+                $("#select-event").empty(); //delete the selections
+                for (event in events[0].eventMap)
+                {
+
+                    $("#select-event").append("<option value=0>"+event+"</option>");
+
+                }
+                $("#select-event")[0].selectedIndex=-1;
+                http_post("/_getvalue",JSON.stringify([path+".bunchplot.syncEvent"]),null,null, function(obj,status,data,params)
+                {
+                    if (status==200)
+                    {
+                        var event = JSON.parse(data)[0];
+                        $('#select-event  option:contains(' + event + ')').each(function(){
+                            if ($(this).text() == event) $(this).prop('selected', 'selected');
+                        });
+                    }
+                });
+    
+    
+            }
+            else
+            {
+                console.log("problem init bunch cockpit");
+            }
+        });
+
+        
+
+         
+    }
+
+
+    function run_bunch()
+    {
+       //start the bunch createion
+      let path =$("#cockpit").attr("path")+".bunchplot";
+
+       
+      var selectedEvent = $("#select-event :selected").text(); // The text content of the selected option
+      var selectedVariable = $("#select-variable :selected").attr("nodeid");
+      console.log(selectedEvent,selectedVariable);
+
+
+      var query = [{"browsePath":path+".syncEvent","value":selectedEvent}];
+      http_post("/setProperties",JSON.stringify(query),null,null, function(obj,status,data,params){
+        if (status==201)
+        {
+            var query = {"deleteExisting":true,"parent":path+".variables","add":[selectedVariable]};
+            http_post("/_references",JSON.stringify(query),null,null,function(obj,status,data,params){
+              if (status==201)
+              {
+                http_post("/_execute",JSON.stringify(path),null,null,null);
+                //console.log("EXECURTE")
+              }
+            });
+        }
+
+      });
+
+       
+    
+    }
+     
+    
+    function cockpit_close()
+    {
+        //hide potentially shown parts
+         
+        console.log("cockpit close");
+     
+    }
+    
+     
+        </script>
+        </div>
+    </div>
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

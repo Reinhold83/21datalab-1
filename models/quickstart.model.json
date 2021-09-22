@@ -7727,7 +7727,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "number",
+        "value": "date",
         "browsePath": "root.visualization.workbench.xAxisType"
     }
 }
