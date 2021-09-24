@@ -45,16 +45,18 @@ function cockpit_importer_1_choose_file() {
   $(selector).html('Waiting for file list to load!')
   let filesHtml = '<b>No files available!</b>';
   if (filesLength > 0) {
-    filesHtml = `<thead><tr style="text-align: center;"><th>Select</th><th>File</th></tr></thead><tbody style="text-align: center;">`;
+    filesHtml = `<thead><tr style="text-align: left;"><th style="text-align: center;">Select</th><th>File</th><th>Size</th><th>Date Created</th></tr></thead><tbody style="text-align: left;">`;
     for (var fileNo = 0, length = filesLength; fileNo < length; fileNo++) {
       const file = files[fileNo];
       filesHtml = `${filesHtml}<tr>`;
-      filesHtml += `<td><input type="checkbox" class="" id="importer-choose-file-select-${file.name}" filename="${file.name}" onchange="cockpit_importer_1_select_file(this)"></td>`;
+      filesHtml += `<td style="text-align: center;"><input type="checkbox" class="" id="importer-choose-file-select-${file.name}" filename="${file.name}" onchange="cockpit_importer_1_select_file(this)"></td>`;
       filesHtml += `<td>${file.name}</td>`;
+      filesHtml += `<td>${file.size} MB</td>`;
+      filesHtml += `<td>${file.time} </td>`;
       // filesHtml += `<td><button type="button" class="btn btn-info" onclick="cockpit_importer_2_approve_file('${file.name}')">Next (Import File) ></button></td>`;
       filesHtml += `</tr>`;
     }
-    filesHtml = `<div style="max-height:400px; overflow:auto"><table class="table table-dark table-striped">${filesHtml}</tbody></table></div>`;
+    filesHtml = `<div style="max-height:400px; overflow:auto;"><table class="table table-dark table-striped">${filesHtml}</tbody></table></div>`;
   }
   $(selector).html(filesHtml);
 
@@ -62,19 +64,17 @@ function cockpit_importer_1_choose_file() {
 }
 
 function cockpit_importer_1_select_file(filename) {
-  $("input[id^=importer-choose-file-select-]").each(function (index, el) {
-    $(el).removeAttr('checked')
-    $(el).prop('checked', false)
-    $(el).attr('checked', false)
-  })
-  $(filename).prop('checked', true)
-  $(filename).attr('checked', true)
-
   importerFileNameList = [];
   $("input[id^=importer-choose-file-select-]").each(function (index, el) {
-    if ($(el).prop('checked') == true)
-      importerFileNameList.push($(el).attr('filename'))
-  })
+    if (el.checked == true){
+      importerFileNameList.push(el.getAttribute('filename'))
+    }else{
+      const index = importerFileNameList.indexOf(el.getAttribute('filename'));
+      if (index > -1) {
+        importerFileNameList.splice(index, 1);
+      }
+    };
+  });
 }
 
 // --- Approve File (STEP 2)
@@ -84,13 +84,17 @@ function cockpit_importer_2_approve_file(filename) {
   // --- set global filename
   if (importerFileNameList.length == 0)
     return;
-  importerFileName = importerFileNameList[0]
   _helper_modal_activate_step_no(2)
   const selector = '#importer-content-2'
   $(selector).html('Waiting for file preview to load!')
   // --- set filename
   let path = $("#cockpit").attr("path");
-  let query = [{ browsePath: path + ".importer_preview.fileName", value: importerFileName }];
+  let query = [];
+  for (let x of importerFileNameList){
+    query.push({ browsePath: path + ".importer_preview.fileName",
+    value: x })
+  }
+  // let query = importerFileNameList.map({ browsePath: path + ".importer_preview.fileName", value: importerFileName })
   http_post("/setProperties", JSON.stringify(query), null, null, function (obj, status, data, params) {
 
     // --- delete current data_preview
@@ -106,7 +110,6 @@ function cockpit_importer_2_approve_file(filename) {
         } else {
           importerApproveHtml = `<p>Waiting for file to load!</p>`
           $(selector).html(importerApproveHtml)
-
         }
       })
     })
@@ -194,7 +197,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
             <th>Name</th>
             <th>
               <input type="checkbox" class="" checked id="importer-field-nameall" onchange="cockpit_importer_3_field_import_select_all()">
-              &nbsp;&nbsp;Import
+              &nbsp;&nbsp;Import all
             </th>
           </tr>
         </thead>

@@ -6,6 +6,8 @@ var nodesMovingFromUpdate = false;
 var eventSource = 0;
 var newMiddle;
 
+var dataFiles = []; //upload files action
+
 function populate_settings() {
     // Try to retrieve the current setting from the local storage
     let data = localStorage.getItem("21dataSettings");
@@ -23,8 +25,6 @@ function populate_settings() {
         }
     }
 }
-
-
 
 function drop_nodes(nodeIds,path)
 {
@@ -113,13 +113,76 @@ function populate_ui()
 
 }
 
+
+
+// $('.customCheck').change(function() { console.log('hello') });
+function fileSelected(event, fileUploadCsv){
+    if (event.checked==true){
+        dataFiles.push(fileUploadCsv)
+    }
+    if (event.checked==false){
+        const index = dataFiles.indexOf(fileUploadCsv);
+        if (index > -1) {
+            dataFiles.splice(index, 1);
+        }
+    }
+    console.log(dataFiles.length)
+    if (dataFiles.length>=1){
+        $('#files_remove').prop('disabled', false);
+        $('#files_download').prop('disabled', false);
+    }
+    if (dataFiles.length==0){
+        $('#files_remove').prop('disabled', true);
+        $('#files_download').prop('disabled', true);
+    }
+}
+
+$(function() {
+    // initially disabled the two button
+    $('#files_remove').prop('disabled', true);
+    $('#files_download').prop('disabled', true);
+});
+
+function files_delete_confirm()
+{
+    // send the DELETE request to delete the selected files.
+    http_delete("/_upload",JSON.stringify({"filenames":dataFiles}), null, null, null);
+    populate_file_list()
+    dataFiles = []; 
+    $('#files_remove').prop('disabled', true);
+    $('#files_download').prop('disabled', true);
+}
+
+function files_download_csv()
+{
+    // dummy api call to download .csv files from the download/.
+    http_file_post("/_downloadfiles",JSON.stringify({"filenames":dataFiles}), null, null, null);
+    populate_file_list()
+    dataFiles = []; 
+}
+
+function downloadCsvAction(){
+    // action button on download button
+    confirm_dialog("Download Files","Selected files will be downloaded.","Download",files_download_csv,null)
+
+    
+}
+
+function removeCsvAction(){
+    // action button on delete button
+    confirm_dialog("Delete Files","Selected files will be deleted.","Delete",files_delete_confirm,null)
+    // empty the array and disbaled the bbuttons again.
+    
+}
+
+
 function populate_file_list() {
     // Delete all files from the list
-    $(".filenameRow").remove();
-
+    $('#fileuploadRow').empty();
     // Get the list of files
     let data = http_get('/_upload');
-    let files = []
+    // $('').insertBefore('#fileuploadRow');
+    let files = [];
 
     try {
         files = JSON.parse(data);
@@ -128,9 +191,18 @@ function populate_file_list() {
         return;
     }
 
+    // generate the table with new data
+    var html = '<div class="table-responsive"><table class="table"><thead><tr><th></th><th>Name</th><th>Size</th><th>Date Created</th></tr></thead><tbody>'
+
     for (let f of files) {
-        $(`<div class="row filenameRow"><div class="col">` + f.name + `</div></div>`).insertBefore('#fileuploadRow');
+        html += `<tr><td><input type="checkbox" onchange="fileSelected(this,'${f.name}')" value="${f.name}"></td><td>${f.name}</td><td>${f.size} MB</td><td>${f.time}</td></tr>`
     }
+    
+    html += '</tbody></table></div>'
+
+    // set the table
+    $('#fileuploadRow').html(html);
+
 }
 
 function initialize_upload() {
@@ -141,20 +213,32 @@ function initialize_upload() {
     $('#fileupload').fileupload({
         dataType: 'text',
         add: function (e, data) {
-            $('#fileuploadCol').append(`<button id="uploadButton" class="btn btn-primary" style="display: none">Upload</button>`);
+            $('#fileuploadicon').fadeIn();
+            $('#fileuploadCol').css({"background-color": "transparent"});
+            $('#fileuploadCol').removeClass("btn btn-secondary");
+            $('#fileuploadCol').append(`<button id="uploadButton" class="btn btn-dark" style="display: none">Upload</button>`);
             $('#uploadButton').click(function() {
                 data.submit();
                 $('#uploadStatusRow').fadeIn();
                 $('#uploadStatusProgress').text("Progress: 0%");
             });
             $('#uploadButton').fadeIn();
+            $('#fileuploadicon').fadeOut();
         },
         done: function (e, data) {
             populate_file_list();
 
+            // empty the array and disbaled the bbuttons again.
+            dataFiles = []; 
+            $('#files_remove').prop('disabled', true);
+            $('#files_download').prop('disabled', true);
+
             console.log("successfully uploaded.");
 
             $('#uploadStatusProgress').text("Successfully uploaded!");
+            $('#fileuploadCol').addClass("btn btn-secondary");
+            $('#fileuploadCol').css({"background-color": "transparent"});
+            $('#fileuploadicon').fadeIn();
         },
         fail: function(e, data) {
             populate_file_list();
@@ -2193,6 +2277,9 @@ function launch_cockpit(url,path,widget)
     if (url!="")
     {
         var data=http_get(url);
+        console.log('------------------------------------------------------------------------ example -----------------------------------')
+        console.log(data)
+        // var data='<p>this is label</p>'
         $("#cockpit").remove();
         $("#cockpitplaceholder").html(data);
     }

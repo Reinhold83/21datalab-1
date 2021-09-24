@@ -27,6 +27,8 @@ import argparse
 
 from utils import str_lim
 from logging.handlers import RotatingFileHandler
+import time
+import zipfile
 
 
 UPLOAD_FOLDER = './upload'
@@ -102,6 +104,7 @@ POST /_setlen        <setlenquery.json>           -                      # adjus
 POST /_push          [<nodedict.json>]                                   # push a list of nodes into the model, we accept the full dict, no checking whatsoever !! dangerous
 GET  /_upload        -                          [<fileinfo.json>]        # get the list of files in the /upload folder
 POST /_upload       <jquery file upload>                                 # upload files via jquery file upload module-style
+DELETE /_upload                                                          # delete the list of files in the /upload folder
 POST /_clone        <clone.json>                -                        # clone a node and its subnodes
 POST /_insertEvents  <eventinsert.json>           -                       # insert event series data
 POST /_getEvents    <eventquery.json>           <eventresponse.json>     # get event series data
@@ -336,7 +339,6 @@ settsquery
 
 
 '''
-
 # Special handler for Server Sent Events
 @web.route('/event/stream')
 def event_stream_handler():
@@ -346,8 +348,8 @@ def event_stream_handler():
     # Start processing the new events and send them to the client
     return flask.Response(observer.get_event(), mimetype="text/event-stream")
 
-@web.route('/',defaults={'path':''},methods=['GET','POST'])
-@web.route('/<path:path>', methods=['GET', 'POST'])
+@web.route('/',defaults={'path':''},methods=['GET','POST', 'DELETE'])
+@web.route('/<path:path>', methods=['GET', 'POST', 'DELETE'])
 def all(path):
 
     if path in ["/",""]: path="index.html"
@@ -1044,7 +1046,9 @@ def all(path):
                     #for filename in f:
                     filenames.append({
                         "name": filename,
-                        "time": os.path.getmtime(fullPath)
+                        "time": datetime.datetime.fromtimestamp(
+                            os.path.getmtime(fullPath)).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        "size": round((float(os.path.getsize(fullPath))/1024)/1024, 3)
                     })
 
                 responseCode = 200
@@ -1076,6 +1080,72 @@ def all(path):
                         response = "success"
             except Exception as ex:
                 logger.error("Can't save the file to the upload folder: " + str(ex) + str(sys.exc_info()[0]))
+                responseCode = 404
+                    
+
+        elif ((str(path) == "_upload") and str(flask.request.method) in ["DELETE"]):
+            # Upload a file to the server
+
+            try:
+                data = json.loads(flask.request.data.decode('utf-8'))
+                # check if the post request has the file part
+                if 'filenames' not in data:
+                    responseCode = 404
+                    logger.error("File part missing in upload request")
+                else:
+                    # get the list of file names
+                    filesnames = data['filenames']
+                    # if user does not select file, browser also
+                    # submit an empty part without filename
+                    if filesnames == '':
+                        responseCode = 404
+                        logger.error("Filename not specified")
+                    else:
+                        # loop and remove the files
+                        for name in filesnames:
+                            os.remove(web.config['UPLOAD_FOLDER']+"/"+name)
+                        responseCode = 200
+                        response = "deleted successfully"
+            except Exception as ex:
+                logger.error("Can't delete the file to the upload folder: " + str(ex) + str(sys.exc_info()[0]))
+                responseCode = 404
+                
+
+        elif ((str(path) == "_downloadfiles") and str(flask.request.method) in ["POST"]):
+            # Upload a file to the server
+            try:
+                data = json.loads(flask.request.data.decode('utf-8'))
+                # check if the post request has the file part
+                if 'filenames' not in data:
+                    responseCode = 404
+                    logger.error("File part missing in upload request")
+                else:
+                    filenames = data['filenames']
+                    # if user does not select file, browser also
+                    # submit an empty part without filename
+                    if filenames == '':
+                        responseCode = 404
+                        logger.error("Filename not specified")
+                    else:
+                        try:
+                            os.remove("./download/myzipfile.zip")
+                        except:
+                            pass
+                        zf = zipfile.ZipFile("./download/myzipfile.zip", "w")
+                        for dirname, subdirs, files in os.walk(web.config['UPLOAD_FOLDER']):
+                            for file in files:
+                                if file in filenames:
+                                    zf.write(os.path.join(dirname, file))
+                        zf.close()
+                        # print(flask.send_file(os.path.join(flask.current_app.root_path, 'download', 'myzipfile.zip'), as_attachment=True))
+                        # print(os.walk('./download'))
+                        # responseCode = 200
+                        # response = "files downloaded."
+                        return flask.send_file(os.path.join(flask.current_app.root_path, 'download', 'myzipfile.zip'), as_attachment=True)
+                        # return flask.send_file('/home/techstriker3/workspace/project/21datalab/download/myzipfile.zip', as_attachment=True)
+
+            except Exception as ex:
+                logger.error("Can't download the file to the upload folder: " + str(ex) + str(sys.exc_info()[0]))
                 responseCode = 404
 
 
