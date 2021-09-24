@@ -329,18 +329,23 @@ function cockpit_importer_5_finish_import() {
   // --- define importer object
   const fields = []
   let timefield = undefined
-  $("input[id^=importer-field-name-]").each(function (index, el) {
-    const id = $(el).attr('id')
-    const no = id.substr(id.lastIndexOf('-') + 1)
-    // const val = $(el).val() === "" ? no : $(el).val()
-    const val = $('#importer-field-name-' + no).attr('fieldvalue')
-    const use = $('#importer-field-name-' + no).is(":checked")
 
-    if (use === true) {
-      fields.push({ id, no, val, use })
-    }
-    timefield = no
-  })
+  if ($("input[id^=importer-field-nameall]").prop('checked')){
+    fields.push("*")
+  }else{
+    $("input[id^=importer-field-name-]").each(function (index, el) {
+      const id = $(el).attr('id')
+      const no = id.substr(id.lastIndexOf('-') + 1)
+      // const val = $(el).val() === "" ? no : $(el).val()
+      const val = $('#importer-field-name-' + no).attr('fieldvalue')
+      const use = $('#importer-field-name-' + no).is(":checked")
+
+      if (use === true) {
+        fields.push({ id, no, val, use })
+      }
+      timefield = no
+    })
+  }
 
   let tablename = $("#importer-tablename").val()
   let tablepath = $("#importer-tablepath").val()
@@ -379,10 +384,10 @@ function cockpit_importer_5_finish_import() {
   if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] create referencer columns
-  if (res.status <= 201)
-    res = http_post_sync('/_create', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, type: 'const' }])
-  msg = `Failed creating const '${tablepath + ".metadata"}'!`
-  if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
+  // if (res.status <= 201)
+  //   res = http_post_sync('/_create', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, type: 'const' }])
+  // msg = `Failed creating const '${tablepath + ".metadata"}'!`
+  // if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 
   // --- [api] set fields
   if (res.status <= 201)
