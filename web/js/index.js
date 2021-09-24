@@ -3038,10 +3038,10 @@ function new_view(parameter,name)
                 }
             };
 
-            http_post("/_create",JSON.stringify([query]),null,null,function(obj,status,data,params)
-            {
-                 context_menu_views();
-            });
+            // http_post("/_create",JSON.stringify([query]),null,null,function(obj,status,data,params)
+            // {
+            //      context_menu_views();
+            // });
         }
 
 
