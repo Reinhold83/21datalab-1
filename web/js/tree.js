@@ -982,7 +982,7 @@ class TreeWidget
         var newBrowsePath = this.treeNodes[this.id2idx(node.id)].browsePath+".new_"+type+"_"+Math.random().toString(16).substring(2,6);
         var query=[{"browsePath":newBrowsePath,"type":type}];
         console.log("context_menu_create",newBrowsePath);
-        // http_post('/_create',JSON.stringify(query),node,null);
+        http_post('/_create',JSON.stringify(query),node,null);
     }
 
     context_menu_copy(node)
