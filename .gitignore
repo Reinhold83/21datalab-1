@@ -29,8 +29,5 @@ web/plugins
 /web/customui/hybif6.html
 /log/whatsinsidehere.txt
 /upload/whatsinsidehere.txt
-<<<<<<< HEAD
-venv/
-=======
-venv/
->>>>>>> master
+
+_shgo_lib

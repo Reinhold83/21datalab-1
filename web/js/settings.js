@@ -180,14 +180,14 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             if (jsonValidation == undefined) {
                 // input widget
                 input = document.createElement("input");
-
+                input.setAttribute("globalSettings",true);
                 input.value = referenceLeaves.value;
                 input.setAttribute("data-type", "string");
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation.enum != undefined) {
                 // when enum has value, it is a select widget
                 var input = document.createElement("SELECT");
-
+                input.setAttribute("globalSettings",true);
                 var inner = "";
                 var possibleValues = jsonValidation.enum;
                 for (var i in possibleValues) {
@@ -198,15 +198,18 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.value = typeof referenceLeaves.value + ":" + referenceLeaves.value;
                 input.setAttribute("data-type", "enum");
                 input.setAttribute("path", entry.name);
+                input.setAttribute("globalSettings",true);
             } else if (jsonValidation.type == undefined) {
                 // input widget
                 input = document.createElement("input");
+                input.setAttribute("globalSettings",true);
 
                 input.value = referenceLeaves.value;
                 input.setAttribute("data-type", "string");
                 input.setAttribute("path", entry.name);
             } else if (jsonValidation.type == "integer") {
                 input = document.createElement("input");
+                input.setAttribute("globalSettings",true);
                 input.setAttribute("path", entry.name);
                 if (jsonValidation.minimum == undefined || jsonValidation.maximum == undefined) {
                     input.setAttribute("data-type", "number integer");
@@ -221,6 +224,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.value = referenceLeaves.value;
             } else if (jsonValidation.type == "float") {
                 input = document.createElement("input");
+                input.setAttribute("globalSettings",true);
                 input.setAttribute("path", entry.name);
                 if (jsonValidation.minimum == undefined || jsonValidation.maximum == undefined) {
                     input.setAttribute("data-type", "number float");
@@ -236,6 +240,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.value = referenceLeaves.value;
             } else if (jsonValidation.type == "boolean") {
                 input = document.createElement("input");
+                input.setAttribute("globalSettings",true);
 
                 input.setAttribute("type", "checkbox");
                 if (referenceLeaves.value == 'true' || referenceLeaves.value == true)
@@ -244,6 +249,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
                 input.setAttribute("path", entry.name);
             } else {
                 input = document.createElement("input");
+                input.setAttribute("globalSettings",true);
 
                 input.value = referenceLeaves.value;
                 input.setAttribute("data-type", "string");
@@ -268,6 +274,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
 
             // add browse Path 
             var browsePath = document.createElement("input");
+            input.setAttribute("globalSettings",true);
             browsePath.className = "form-control col-7 hidden";
 
             var browsePathValue = "";
@@ -284,11 +291,13 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             if (jsonValidation == undefined) {
                 // apply button
                 var btn = document.createElement("BUTTON");   // Create a <button> element
+                btn.setAttribute("globalSettings",true);
                 btn.className = "btn btn-primary btn-sm w-100 h-100";
                 btn.id = "apply-" + entry.id;
                 btn.innerHTML = 'Apply';
 
                 var buttonWrapper = document.createElement("div");
+                buttonWrapper.setAttribute("globalSettings",true)
                 buttonWrapper.className = "col-1 pl-2 pr-0 button-wrapper";
                 buttonWrapper.append(label, input, browsePath, btn);
                 row.append(label, input, browsePath, buttonWrapper);
@@ -298,11 +307,13 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
             } else if (input.getAttribute("data-type") == "string" || input.getAttribute("data-type") == "number float" || input.getAttribute("data-type") == "number integer") {
                 // apply button
                 var btn = document.createElement("BUTTON");   // Create a <button> element
+                btn.setAttribute("globalSettings",true);
                 btn.className = "btn btn-primary btn-sm w-100 h-100";
                 btn.id = "apply-" + entry.id;
                 btn.innerHTML = 'Apply';
 
                 var buttonWrapper = document.createElement("div");
+                buttonWrapper.setAttribute("globalSettings",true);
                 buttonWrapper.className = "col-1 pl-2 pr-0 button-wrapper";
                 buttonWrapper.append(label, input, browsePath, btn);
                 row.append(label, input, browsePath, buttonWrapper);
@@ -325,6 +336,7 @@ function createSettingWidgetsSync(table, settingPath, entries, branchDataArray) 
 
 $(document).on("click input", ".slider", function () {
     //do stuff
+    if (!this.hasAttribute("globalSettings")) return; //the callback is too general, we only look at "our" controls
     var parent = $(this).parent();
     var children = parent.children();
     var value = children[1].value;
@@ -333,11 +345,13 @@ $(document).on("click input", ".slider", function () {
 
 $(document).on("change", ".slider", function () {
     //save slider value when changes
+    if (!this.hasAttribute("globalSettings")) return; //the callback is too general, we only look at "our" controls
     saveSettingValue(this);
 });
 
 $(document).on("change input", "SELECT", function () {
     //save enum value when changes
+    if (!this.hasAttribute("globalSettings")) return; //the callback is too general, we only look at "our" controls
     saveSettingValue(this);
 
 
@@ -345,12 +359,13 @@ $(document).on("change input", "SELECT", function () {
 
 $(document).on("input change", "input:checkbox", function () {
     //save enum value when changes
-
+    if (!this.hasAttribute("globalSettings")) return; //the callback is too general, we only look at "our" controls
     saveSettingValue(this);
 });
 
 $(document).on("click", ".button-wrapper", function () {
     //save enum value when changes
+    if (!this.hasAttribute("globalSettings")) return; //the callback is too general, we only look at "our" controls
     saveSettingValue(this);
 });
 

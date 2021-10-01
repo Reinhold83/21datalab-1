@@ -113,8 +113,15 @@ def logistic_regression(functionNode):
     else:
         scoreTimes = times
 
-
     # now grab the values from the columns
+    scoreMask = numpy.full(len(times),True)
+    for node in inputNodes:
+        data = node.get_time_series(resampleTimes=scoreTimes)["values"]
+        scoreMask = scoreMask & numpy.isfinite(data)
+
+    #now filter only the all finite areas
+    scoreTimes = scoreTimes[scoreMask]
+
     scoreData = []
     for node in inputNodes:
         data = node.get_time_series(resampleTimes=scoreTimes)["values"]

@@ -13,7 +13,8 @@
             "17162802681501881648",
             "17484300536057046772",
             "967600582435318974",
-            "2308509262368844394"
+            "2308509262368844394",
+            "16434623969465700144"
         ],
         "parent": "0",
         "id": "1",
@@ -88,14 +89,16 @@
             "9964023167566708706",
             "15823148225629396080",
             "1855797899278555728",
-            "134503650504710693"
+            "134503650504710693",
+            "2757629369872237201"
         ],
         "backRefs": [
             "526",
             "6949918641293764627",
             "9534121590586708044",
             "14290236553442220804",
-            "17223766277109164005"
+            "17223766277109164005",
+            "8124961755807485042"
         ],
         "forwardRefs": [],
         "value": null,
@@ -144,7 +147,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "2015-02-11T15:20:00+01:00",
+        "value": "1970-01-01T00:51:43+01:00",
         "browsePath": "root.visualization.workbench.startTime"
     },
     "131": {
@@ -157,7 +160,7 @@
             "13071347114919871021"
         ],
         "forwardRefs": [],
-        "value": "2015-02-18T08:34:00+01:00",
+        "value": "1970-01-01T01:08:16+01:00",
         "browsePath": "root.visualization.workbench.endTime"
     },
     "132": {
@@ -628,7 +631,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 218,
+        "value": 220,
         "browsePath": "root.visualization.workbench.observerVariables.triggerCounter"
     },
     "645": {
@@ -639,7 +642,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-19T08:29:17.159358",
+        "value": "2021-09-20T16:54:46.213727",
         "browsePath": "root.visualization.workbench.observerVariables.lastTriggerTime"
     },
     "646": {
@@ -956,8 +959,8 @@
         "backRefs": [],
         "forwardRefs": [
             "10961192520235699890",
-            "2422443752542391788",
-            "2308509262368844394"
+            "2308509262368844394",
+            "2422443752542391788"
         ],
         "value": null,
         "browsePath": "root.visualization.workbench.contextMenuFunctions"
@@ -1127,7 +1130,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 1640,
+        "value": 1718,
         "browsePath": "root.visualization.workbench.observerVisibleElements.triggerCounter"
     },
     "15683200324838571042": {
@@ -1138,7 +1141,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-19T16:24:14.810443",
+        "value": "2021-09-20T16:38:45.453927",
         "browsePath": "root.visualization.workbench.observerVisibleElements.lastTriggerTime"
     },
     "13071347114919871021": {
@@ -1469,8 +1472,8 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": {
-            "root.importer.imports.occupancydemo_csv.variables.Temperature": {
-                "lineColor": "#D9B100"
+            "root.importer.imports.new.negative": {
+                "lineColor": "#eba4fc"
             }
         },
         "browsePath": "root.visualization.workbench.currentColors"
@@ -2353,7 +2356,7 @@
     },
     "4307244501275852324": {
         "id": "4307244501275852324",
-        "name": "label_editor",
+        "name": "edit annotation tags",
         "type": "folder",
         "parent": "1",
         "children": [
@@ -2368,7 +2371,7 @@
         ],
         "forwardRefs": [],
         "value": null,
-        "browsePath": "root.label_editor"
+        "browsePath": "root.edit annotation tags"
     },
     "13276717875008721266": {
         "id": "13276717875008721266",
@@ -2379,7 +2382,7 @@
         "backRefs": [],
         "forwardRefs": [],
         "value": "customui/label_editor/index.htm",
-        "browsePath": "root.label_editor.cockpit"
+        "browsePath": "root.edit annotation tags.cockpit"
     },
     "6326365480006829771": {
         "id": "6326365480006829771",
@@ -3904,7 +3907,7 @@
             "127"
         ],
         "value": null,
-        "browsePath": "root.label_editor.master_frontend"
+        "browsePath": "root.edit annotation tags.master_frontend"
     },
     "9534121590586708044": {
         "id": "9534121590586708044",
@@ -3918,7 +3921,7 @@
             "6326365480006829771"
         ],
         "value": null,
-        "browsePath": "root.label_editor.slave_frontends"
+        "browsePath": "root.edit annotation tags.slave_frontends"
     },
     "10961192520235699890": {
         "id": "10961192520235699890",
@@ -4146,7 +4149,7 @@
             "25998318472993105"
         ],
         "value": null,
-        "browsePath": "root.label_editor.annotations"
+        "browsePath": "root.edit annotation tags.annotations"
     },
     "3933475239006226126": {
         "id": "3933475239006226126",
@@ -4315,7 +4318,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 4,
+        "value": 6,
         "browsePath": "root.Streaming.Head.control.executionCounter"
     },
     "16327941073161340613": {
@@ -4326,7 +4329,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0.061962,
+        "value": 8.520708,
         "browsePath": "root.Streaming.Head.control.lastExecutionDuration"
     },
     "1209295173097826380": {
@@ -4337,7 +4340,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-16T17:43:24.257241",
+        "value": "2021-09-20T16:24:54.841192",
         "browsePath": "root.Streaming.Head.control.lastStartTime"
     },
     "5208201603528010686": {
@@ -6720,8 +6723,8 @@
             "11126017505814379794"
         ],
         "backRefs": [
-            "14814504338557830832",
-            "13272872670477514282"
+            "13272872670477514282",
+            "14814504338557830832"
         ],
         "forwardRefs": [],
         "value": null,
@@ -6825,7 +6828,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 6,
+        "value": 7,
         "browsePath": "root.annotations im export.export annotations.control.executionCounter"
     },
     "8378744625840929710": {
@@ -6836,7 +6839,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": 0.002975,
+        "value": 0.0,
         "browsePath": "root.annotations im export.export annotations.control.lastExecutionDuration"
     },
     "11137750179343860105": {
@@ -6847,7 +6850,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "2021-08-18T13:55:15.709106",
+        "value": "2021-09-08T21:52:13.367014",
         "browsePath": "root.annotations im export.export annotations.control.lastStartTime"
     },
     "11524343358746245336": {
@@ -7331,7 +7334,7 @@
         "children": [],
         "backRefs": [],
         "forwardRefs": [],
-        "value": "None",
+        "value": "len 5",
         "eventMap": {},
         "browsePath": "root.visualization.workbench.hasEvents.newEvents"
     },
@@ -7501,5 +7504,230 @@
         "forwardRefs": [],
         "value": null,
         "browsePath": "root.visualization.expert.aggregation"
+    },
+    "16434623969465700144": {
+        "id": "16434623969465700144",
+        "name": "annoImporter",
+        "type": "folder",
+        "parent": "1",
+        "children": [
+            "6620369100875270578",
+            "6590882017691350737",
+            "12461885731567157296"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.annoImporter"
+    },
+    "6620369100875270578": {
+        "id": "6620369100875270578",
+        "name": "cockpit",
+        "type": "const",
+        "parent": "16434623969465700144",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "customui/importer/annotationsimport.htm",
+        "browsePath": "root.annoImporter.cockpit"
+    },
+    "6590882017691350737": {
+        "id": "6590882017691350737",
+        "name": "importedAnnotations",
+        "type": "folder",
+        "parent": "16434623969465700144",
+        "children": [],
+        "backRefs": [
+            "6582224482844585727"
+        ],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.annoImporter.importedAnnotations"
+    },
+    "12461885731567157296": {
+        "id": "12461885731567157296",
+        "name": "annotation_import_function",
+        "type": "function",
+        "parent": "16434623969465700144",
+        "children": [
+            "6582224482844585727",
+            "353131483866381332",
+            "1701960316735757748",
+            "8124961755807485042",
+            "13891618093563518943"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "functionPointer": "importer.annotation_import_function",
+        "autoReload": true,
+        "browsePath": "root.annoImporter.annotation_import_function"
+    },
+    "6582224482844585727": {
+        "id": "6582224482844585727",
+        "name": "targetFolder",
+        "type": "referencer",
+        "parent": "12461885731567157296",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "6590882017691350737"
+        ],
+        "value": null,
+        "browsePath": "root.annoImporter.annotation_import_function.targetFolder"
+    },
+    "353131483866381332": {
+        "id": "353131483866381332",
+        "name": "fileName",
+        "type": "variable",
+        "parent": "12461885731567157296",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.annoImporter.annotation_import_function.fileName"
+    },
+    "1701960316735757748": {
+        "id": "1701960316735757748",
+        "name": "importReferences",
+        "type": "const",
+        "parent": "12461885731567157296",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": false,
+        "browsePath": "root.annoImporter.annotation_import_function.importReferences"
+    },
+    "8124961755807485042": {
+        "id": "8124961755807485042",
+        "name": "widgets",
+        "type": "referencer",
+        "parent": "12461885731567157296",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [
+            "127"
+        ],
+        "value": null,
+        "browsePath": "root.annoImporter.annotation_import_function.widgets"
+    },
+    "13891618093563518943": {
+        "id": "13891618093563518943",
+        "name": "control",
+        "type": "folder",
+        "parent": "12461885731567157296",
+        "children": [
+            "12591490059349027212",
+            "35621660920543007",
+            "122226317441257471",
+            "474834408586820103",
+            "17684607849432457883",
+            "4883237663561809296",
+            "1866194092635537461",
+            "1711937993173411410"
+        ],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": null,
+        "browsePath": "root.annoImporter.annotation_import_function.control"
+    },
+    "12591490059349027212": {
+        "id": "12591490059349027212",
+        "name": "status",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "idle",
+        "browsePath": "root.annoImporter.annotation_import_function.control.status"
+    },
+    "35621660920543007": {
+        "id": "35621660920543007",
+        "name": "progress",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.annoImporter.annotation_import_function.control.progress"
+    },
+    "122226317441257471": {
+        "id": "122226317441257471",
+        "name": "result",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "ok",
+        "browsePath": "root.annoImporter.annotation_import_function.control.result"
+    },
+    "474834408586820103": {
+        "id": "474834408586820103",
+        "name": "signal",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "nosignal",
+        "browsePath": "root.annoImporter.annotation_import_function.control.signal"
+    },
+    "17684607849432457883": {
+        "id": "17684607849432457883",
+        "name": "executionCounter",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.annoImporter.annotation_import_function.control.executionCounter"
+    },
+    "4883237663561809296": {
+        "id": "4883237663561809296",
+        "name": "lastExecutionDuration",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": 0,
+        "browsePath": "root.annoImporter.annotation_import_function.control.lastExecutionDuration"
+    },
+    "1866194092635537461": {
+        "id": "1866194092635537461",
+        "name": "lastStartTime",
+        "type": "variable",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "not yet",
+        "browsePath": "root.annoImporter.annotation_import_function.control.lastStartTime"
+    },
+    "1711937993173411410": {
+        "id": "1711937993173411410",
+        "name": "executionType",
+        "type": "const",
+        "parent": "13891618093563518943",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "async",
+        "browsePath": "root.annoImporter.annotation_import_function.control.executionType"
+    },
+    "2757629369872237201": {
+        "id": "2757629369872237201",
+        "name": "xAxisType",
+        "type": "const",
+        "parent": "127",
+        "children": [],
+        "backRefs": [],
+        "forwardRefs": [],
+        "value": "date",
+        "browsePath": "root.visualization.workbench.xAxisType"
     }
 }

@@ -61,7 +61,7 @@ timeseriesWidget = {
             {"name": "enabled", "type": "const", "value": True},                # on by default to enable drag + drop
             {"name": "triggerCounter", "type": "variable", "value": 0},         # increased on each trigger
             {"name": "lastTriggerTime", "type": "variable", "value": ""},       # last datetime when it was triggered
-            {"name": "targets", "type": "referencer", "references":["timeseriesWidget.selectedVariables"]},  # pointing to the nodes observed
+            {"name": "targets", "type": "referencer", "references":["timeseriesWidget.selectedVariables","timeseriesWidget.selectedVariablesY2"]},  # pointing to the nodes observed
             {"name": "properties", "type": "const", "value": ["forwardRefs"]},  # properties to observe [“children”,“value”, “forwardRefs”]
             {"name": "onTriggerFunction", "type": "referencer"},                # the function(s) to be called when triggering
             {"name": "hasEvent", "type": "const", "value": True},               # set to true if we want an event as well
@@ -83,7 +83,7 @@ timeseriesWidget = {
             {"name": "enabled", "type": "const", "value": False},                # turn on/off the observer
             {"name": "triggerCounter", "type": "variable", "value": 0},         # increased on each trigger
             {"name": "lastTriggerTime", "type": "variable", "value": ""},       # last datetime when it was triggered
-            {"name": "targets", "type": "referencer","references":["timeseriesWidget.selectableVariables"]},    # pointing to the all nodes,
+            {"name": "targets", "type": "referencer","references":["timeseriesWidget.selectableVariables","timeseriesWidget.selectedVariablesY2"]},    # pointing to the all nodes,
             {"name": "properties", "type": "const", "value": ["value"]},        # look for value change properties to observe [“children”,“value”, “forwardRefs”]
             {"name": "onTriggerFunction", "type": "referencer"},                # the function(s) to be called when triggering
             {"name": "hasEvent", "type": "const", "value": True},               # set to true if we want an event as well
@@ -168,6 +168,8 @@ timeseriesWidget = {
          ]
          },
         {"name": "backgroundHighlight", "type": "variable"},
-        {"name": "aggregation", "type": "const", "value": None},
+        {"name": "aggregation", "type": "const", "value": None},    #options: "outlier"
+        {"name": "hasY2Axis","type":"const","value":False},         #set true for second y axis on the right
+        {"name": "selectedVariablesY2","type":"referencer"}         #contains the selected vars on the y2 axis, make sure you also connect the observer variables and observer stream to this
     ]
 }
