@@ -170,7 +170,7 @@ function cockpit_importer_3a_define_header_file_contains_header() {
   const selector = '#importer-content-3'
   $(selector).html('Waiting for header fields to load!')
   let html = ``
-  for (var fieldNo = 1, fieldsLen = importerFields.length; fieldNo < fieldsLen; fieldNo++) {
+  for (var fieldNo = 2, fieldsLen = importerFields.length; fieldNo < fieldsLen; fieldNo++) {
     const field = importerFields[fieldNo]
     html = `${html}
       <tr style="text-align: center;">
@@ -341,7 +341,7 @@ function cockpit_importer_5_finish_import() {
       const use = $('#importer-field-name-' + no).is(":checked")
 
       if (use === true) {
-        fields.push({ id, no, val, use })
+        fields.push(val)
       }
       timefield = no
     })
@@ -360,13 +360,14 @@ function cockpit_importer_5_finish_import() {
   } else {
     tablepath = 'root.' + $("#importer-tablepath").val().replace('/', '.') + tablename
   } */
-  const importerObj = { fields, filenames: importerFileNameList, timefield, headerexists: importerHeaderExists }
+  const importerObj = { variables:fields, filenames: importerFileNameList}
   // --- update html
   msg = 'Waiting for import to be finished!'
   $(selector).html(_helper_html_wrap(msg, btnHtml))
   // --- create response var
   let res
 
+  /*
   // // --- [api] create table node
   // res = http_post_sync('/_create', true, [ { browsePath: tablepath, type: 'table' } ])
   // msg = `Failed creating table '${tablepath}'!`
@@ -391,7 +392,8 @@ function cockpit_importer_5_finish_import() {
 
   // --- [api] set fields
   if (res.status <= 201)
-    res = http_post_sync('/setProperties', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, value: JSON.stringify(importerObj) }])
+  */
+  res = http_post_sync('/setProperties', true, [{ browsePath: `${cockpitPath}.importer_import.metadata`, value: JSON.stringify(importerObj) }])
   msg = `Failed setting value for const '${tablepath + ".metadata"}'!`
   if (res.status > 201) $(selector).html(_helper_html_wrap(msg, btnHtml))
 

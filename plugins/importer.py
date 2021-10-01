@@ -146,33 +146,33 @@ def import_run(functionNode):
     importerNode = functionNode.get_parent()
 
     # --- [vars] define
-    tablename = functionNode.get_child("tablename").get_value()
-    logger.debug(f"tablename: {tablename}")
+    #tablename = functionNode.get_child("tablename").get_value()
+    #logger.debug(f"tablename: {tablename}")
 
     #  # --- create needed nodes
-    importerNode.create_child('imports', type="folder")
-    importsNode = importerNode.get_child("imports")
+    #importerNode.create_child('imports', type="folder")
+    imports = importerNode.get_child("imports")
 
     # TODO importsNode.get_child(tablename).delete()
-    importsNode.create_child(tablename, type="folder")
-    table = importsNode.get_child(tablename)
-    table.create_child('variables', type="folder")
-    table.create_child('columns', type="referencer")
-    table.create_child('metadata', type="const")
-    vars = table.get_child("variables")
-    cols = table.get_child("columns")
+    #importsNode.create_child(tablename, type="folder")
+    #table = importsNode.get_child(tablename)
+    #table.create_child('variables', type="folder")
+    #table.create_child('columns', type="referencer")
+    #table.create_child('metadata', type="const")
+    #vars = table.get_child("variables")
+    #cols = table.get_child("columns")
 
     # --- read metadata and fields
     metadataRaw = functionNode.get_child("metadata").get_value()
     metadata = json.loads(metadataRaw)
-    table.get_child("metadata").set_value(metadata)
-    fields = metadata["fields"] 
+    #table.get_child("metadata").set_value(metadata)
+    #fields = metadata["variables"] 
     # timefield = int(metadata["timefield"]) - 1
-    timefield = 0
-    filenames = metadata["filenames"]
-    headerexists = metadata["headerexists"]
+    #timefield = 0
+    #filenames = metadata["filenames"]
+    #headerexists = metadata["headerexists"]
 
-    csv_data : any
+    #csv_data : any
     # --- load csv data
     # * https://www.shanelynn.ie/python-pandas-read_csv-load-data-from-csv-files/
     # * [ ] optimize speed? https://stackoverflow.com/questions/16476924/how-to-iterate-over-rows-in-a-dataframe-in-pandas
@@ -185,83 +185,88 @@ def import_run(functionNode):
 
     # csv_data = pd.concat(csv_data, axis=1, join='inner').sort_index()
 
-    filepath = 'upload/' + filenames[0] 
-    csv_data = pd.read_csv(filepath)
-    
-    # --- define time list
-    # * select rows and columns from dataframe https://thispointer.com/select-rows-columns-by-name-or-index-in-dataframe-using-loc-iloc-python-pandas/
-    timeList = csv_data.iloc[:,timefield].to_list()
-    epochs = [date2secs(time) for time in timeList]
-    #print(epochs)
+    for fileName in metadata["filenames"]:
+        
+        filepath = 'upload/' + fileName
+        csv_data = pd.read_csv(filepath)
+        fileFolderName = fileName.replace('.','_')
+        
+        # --- define time list
+        # * select rows and columns from dataframe https://thispointer.com/select-rows-columns-by-name-or-index-in-dataframe-using-loc-iloc-python-pandas/
+        timeList = csv_data.iloc[:,0].to_list()
+        epochs = [date2secs(time) for time in timeList]
+        #print(epochs)
 
-    # --- import data, set vars and columns
-    data = {}
-    hasEvents = False
-    for field in fields:
-        fieldno = int(field["no"]) - 1
-        fieldname = str(field["val"]).replace('.','_')
-        if timefield == fieldno:
-            continue # skip the time field
-        # now check if the column is data or event
-        data = csv_data.iloc[:, fieldno].to_list()
-        try:
-            isTs = True
-            values = numpy.asarray(data,dtype=numpy.float64) #if that works, it's a time series data
-        except Exception as ex:
-            isTs = False
+        # --- import data, set vars and columns
+        data = {}
+        hasEvents = False
+        #metadata["variables"]=["*"]#["Temperature","Humidity"]#hack for testing
+        for colName in csv_data.columns[1:]: 
+            if not (colName in metadata["variables"] or metadata["variables"]==["*"] or metadata["variables"]=="*"):
+                continue
+            fieldname = str(colName).replace('.','_')
+            # now check if the column is data or event
+            data = csv_data.loc[:,fieldname].to_list()
+            try:
+                isTs = True
+                values = numpy.asarray(data,dtype=numpy.float64) #if that works, it's a time series data
+            except Exception as ex:
+                isTs = False
 
-        if isTs:
-            #now check if that variables already exists, and try to put the data there
-            fieldVar = find_existing_variable(functionNode,fieldname)
-            if not fieldVar:
-                fieldVar = vars.create_child(fieldname, type="timeseries")
-                fieldVar.set_time_series(values=values, times=epochs)
-            else:
-                logger.debug(f"variable {fieldname} exists already as {fieldVar.get_browse_path()}, we use that")
-                fieldVar.insert_time_series(values=values, times=epochs)
-
-            logger.debug(f"import val: {fieldname} as timeseries")
-        else:
-            #conversion was not possible, this is an event col
-            #now check if that exists already
-            isNewEventVar = False
-            eventVar = find_existing_variable(functionNode,fieldname,typ="eventseries")
-            if not eventVar:
-                eventVar = table.create_child(fieldname,type="eventseries")
-                isNewEventVar = True
-            #now build up the series, leave out the nans (which were created by making rows like 15.2,,,start,,,4
-            vals = []
-            tims = []
-            for ev,tim in zip(data,epochs):
-                if type(ev) is str:
-                    evStr = str(ev)
+            if isTs:
+                #now check if that variables already exists, and try to put the data there
+                fieldVar = find_existing_variable(imports,fieldname)
+                if not fieldVar:
+                    #need to create it
+                    folder = imports.create_child("variables",type="folder").create_child(fileFolderName,type="folder") # if is exists, we just get the folder
+                    fieldVar = folder.create_child(fieldname, type="timeseries")
+                    fieldVar.set_time_series(values=values, times=epochs)
                 else:
-                    #it still might be number, so try to convert
-                    try:
-                        number = numpy.float64(ev)
-                        if numpy.isfinite(number):
-                            evStr = str(number)
-                        else:
+                    logger.debug(f"variable {fieldname} exists already as {fieldVar.get_browse_path()}, we use that")
+                    fieldVar.insert_time_series(values=values, times=epochs)
+
+                logger.debug(f"import val: {fieldname} as timeseries")
+            else:
+                #conversion was not possible, this is an event col
+                #now check if that exists already
+                isNewEventVar = False
+                eventVar = find_existing_variable(imports,fieldname,typ="eventseries")
+                if not eventVar:
+                    eventVar = imports.create_child(fieldname,type="eventseries")
+                    isNewEventVar = True
+                #now build up the series, leave out the nans (which were created by making rows like 15.2,,,start,,,4
+                vals = []
+                tims = []
+                for ev,tim in zip(data,epochs):
+                    if type(ev) is str:
+                        evStr = str(ev)
+                    else:
+                        #it still might be number, so try to convert
+                        try:
+                            number = numpy.float64(ev)
+                            if numpy.isfinite(number):
+                                evStr = str(number)
+                            else:
+                                logger.error(f"cant convert {ev}")
+                                continue
+                        except:
                             logger.error(f"cant convert {ev}")
                             continue
-                    except:
-                        logger.error(f"cant convert {ev}")
-                        continue
-                vals.append(evStr.strip(" "))#remove space at start and end
-                tims.append(tim)
-            if isNewEventVar:
-                eventVar.set_event_series(values=vals, times=tims)
-            else:
-                eventVar.insert_event_series(values=vals, times=tims)
-            hasEvents = True
-            logger.debug(f"import val: {fieldname} as eventseries")
+                    vals.append(evStr.strip(" "))#remove space at start and end
+                    tims.append(tim)
+                if isNewEventVar:
+                    eventVar.set_event_series(values=vals, times=tims)
+                else:
+                    eventVar.insert_event_series(values=vals, times=tims)
+                hasEvents = True
+                logger.debug(f"import val: {fieldname} as eventseries")
 
     # look for nodes of type widget and ensure variables can be selected
     workbench_model = functionNode.get_model()
     widget_nodes: List[Node] = workbench_model.find_nodes("root", matchProperty={"type": "widget"})
     for widget_node in widget_nodes:
         selectable_variables_referencer: Node = widget_node.get_child("selectableVariables")
-        selectable_variables_referencer.add_references([vars])
+        selectable_variables_referencer.add_references(imports.get_child("variables").get_children())
 
         #now hook the events in
         if hasEvents:
