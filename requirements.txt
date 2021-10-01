@@ -29,6 +29,7 @@ joblib==0.14.1            # via scikit-learn
  
  
 lxml==4.4.1               # via -r requirements.in (line 5)
+matplotlib
 markupsafe==1.1.1         # via jinja2
 mistune==0.8.4            # via nbconvert
  
@@ -39,7 +40,7 @@ numba==0.53
  
 pandas==1.0.5
  
-pillow==7.0.0             # via bokeh
+pillow==7.1.0             # via bokeh
  
 prompt-toolkit==3.0.3     # via ipython, jupyter-console
 ptyprocess==0.6.0         # via pexpect, terminado
@@ -58,7 +59,7 @@ scipy==1.7.1              # via scikit-learn
 six==1.14.0               # via bleach, bokeh, jsonschema, packaging, pyrsistent, python-dateutil, sseclient, traitlets
 soupsieve==2.0            # via beautifulsoup4
 sseclient==0.0.24         # via -r requirements.in (line 11)
- 
+stumpy 
 tornado==6.0.4            # via bokeh, ipykernel, jupyter-client, notebook, terminado
  
 urllib3==1.25.8           # via requests
