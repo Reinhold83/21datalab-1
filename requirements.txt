@@ -40,7 +40,7 @@ numba==0.53
  
 pandas==1.0.5
  
-pillow==7.1.0             # via bokeh
+pillow==8.3.2             # via bokeh
  
 prompt-toolkit==3.0.3     # via ipython, jupyter-console
 ptyprocess==0.6.0         # via pexpect, terminado
