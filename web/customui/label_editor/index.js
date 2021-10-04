@@ -287,12 +287,12 @@ function updateBackend(currentLabels, initialLabels) {
 }
 
 function addLabel() {
-  let labelName = "NewLabel";
+  let labelName = "NewAnno";
   let labelNames = currentLabels.filter(label => label != null).map(label => label.name);
   let i = 0;
   while (true) {
     if (labelNames.includes(labelName)) {
-      labelName = "NewLabel" + i;
+      labelName = "NewAnno" + i;
       ++i;
     } else {
       break;
