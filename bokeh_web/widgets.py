@@ -2709,8 +2709,14 @@ class TimeSeriesWidget():
 
         if len(lineData) > 0:
             all_data = numpy.asarray(lineData, dtype=numpy.float)
-            dataMin = numpy.nanmin(lineData)
-            dataMax = numpy.nanmax(lineData)
+            try:
+                dataMin = numpy.nanmin(lineData)
+                dataMax = numpy.nanmax(lineData)
+            except:
+                self.logger.error("all values are nan")
+                dataMin = dataMax = 0
+            if not numpy.isfinite(dataMin) or not numpy.isfinite(dataMax):
+                dataMin=dataMax=0
             if dataMin==dataMax:
                 dataMin -= 1
                 dataMax += 1
