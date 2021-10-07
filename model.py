@@ -1964,7 +1964,7 @@ class Model:
             result = {}
             #now collect all info
             values = ["currentColors","startTime","endTime","hasAnnotation.visibleTags","visibleElements","autoScaleY","panOnlyX","streamingMode","hasEvents.visibleEvents"]
-            refs = ["selectedVariables"]
+            refs = ["selectedVariables","selectedVariablesY2"]
 
             for v in values:
                 if widget.get_child(v):
@@ -2010,6 +2010,9 @@ class Model:
                         if target:
                             target.set_value(v["value"])
                     else:
+                        if not widget.get_child(k):
+                            self.logger.warning(f"cant restore child {k}")
+                            continue
                         if "value" in v:
                             child = widget.get_child(k)
                             child.set_value(v["value"])
