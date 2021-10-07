@@ -3232,7 +3232,7 @@ class TimeSeriesWidget():
         if self.streamingMode and appendingDataArrived:
             getData = self.server.get_data(variablesRequest, -self.streamingInterval, None,self.server.get_settings()["bins"])
         else:
-            if not self.lines:
+            if 0:#not self.lines:
                 # if we don't have lines yet, we get the full time range of the "new" variable
                 start,end = None,None
             else:
@@ -3472,7 +3472,8 @@ class TimeSeriesWidget():
             self.plot.legend.items = legendItems #replace them
 
         if resetXAxis:
-            self.reset_x_axis()
+            #self.reset_x_axis() #took this out again, as it is not wanted in most cases, e.g. when we remove a var and add a var, we want to keep the zoom
+            pass
         self.set_x_axis()
         self.server.set_y_range(self.plot.y_range.start,self.plot.y_range.end)
         #self.adjust_y_axis_limits()
